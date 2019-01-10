@@ -1,5 +1,6 @@
 package com.pineconeindustries.client.desktop;
 
+import com.pineconeindustries.client.desktop.ecryption.LCrypto;
 import com.pineconeindustries.client.desktop.login.LoginClient;
 
 public class ClientLauncher {

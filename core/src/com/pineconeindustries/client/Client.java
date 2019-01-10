@@ -43,7 +43,8 @@ import box2dLight.RayHandler;
 
 public class Client extends ApplicationAdapter {
 
-	public static String TEST_IP = "127.0.0.1";// "142.93.48.155";// "127.0.0.1"; "142.93.48.155";
+	public static String TEST_IP = "127.0.0.1";
+	public static String LOGIN_SERVER_IP = "142.93.48.155";
 
 	SpriteBatch batch;
 	Texture img, loadingScreen;
@@ -139,6 +140,8 @@ public class Client extends ApplicationAdapter {
 		game.Assets().finishLoading();
 		game.Assets().update();
 		game.Assets().loadShipTiles();
+
+		System.out.println(data.getX() + "   " + data.getY());
 
 		player = new Player(data.getName(), new Vector2(data.getX(), data.getY()), game, 1, 0, data.getCharID(),
 				camera);

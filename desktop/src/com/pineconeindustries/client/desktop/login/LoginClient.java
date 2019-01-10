@@ -26,6 +26,7 @@ import com.google.gson.*;
 import com.pineconeindustries.client.Client;
 import com.pineconeindustries.client.data.LocalPlayerData;
 import com.pineconeindustries.client.desktop.debug.Debug;
+import com.pineconeindustries.client.desktop.ecryption.LCrypto;
 
 public class LoginClient extends JFrame {
 
@@ -121,7 +122,8 @@ public class LoginClient extends JFrame {
 				} else {
 
 					try {
-						url = new URL("http://" + Client.TEST_IP + "/authserver/auth/" + user + "/" + password);
+						url = new URL("http://" + Client.LOGIN_SERVER_IP + "/authserver/auth/" + LCrypto.encrypt(user)
+								+ "/" + LCrypto.encrypt(password));
 						HttpURLConnection con = (HttpURLConnection) url.openConnection();
 						con.setRequestMethod("GET");
 
