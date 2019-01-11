@@ -45,6 +45,7 @@ public class Client extends ApplicationAdapter {
 
 	public static String TEST_IP = "127.0.0.1";
 	public static String LOGIN_SERVER_IP = "142.93.48.155";
+	public static String GAME_SERVER_IP = "142.93.48.155";
 
 	SpriteBatch batch;
 	Texture img, loadingScreen;
@@ -53,6 +54,7 @@ public class Client extends ApplicationAdapter {
 	NetworkLayer lnet;
 	UserInterface ui;
 	OrthographicCamera camera;
+	OrthographicCamera fixedCamera;
 	Player player;
 
 	Viewport viewport;
@@ -118,13 +120,19 @@ public class Client extends ApplicationAdapter {
 		loadingScreen = new Texture("textures/loadingscreen.png");
 
 		bg = new Sprite(new Texture("textures/lachlangalaxy.jpg"));
-		bg.setPosition(0, 0);
-		bg.setSize(WORLD_WIDTH, WORLD_HEIGHT);
+		// bg.setPosition(-WORLD_WIDTH / 2, -WORLD_HEIGHT / 2);
+		// bg.setSize(WORLD_WIDTH, WORLD_HEIGHT);
 
 		float aspectRatio = (float) Gdx.graphics.getHeight() / (float) Gdx.graphics.getWidth();
 
 		camera = new OrthographicCamera();
+		fixedCamera = new OrthographicCamera();
 		viewport = new ScalingViewport(Scaling.fit, 1080, 1080 * aspectRatio, camera);
+
+		ScalingViewport dsfjkdf = new ScalingViewport(Scaling.fit, 1080, 1080 * aspectRatio, fixedCamera);
+
+		dsfjkdf.apply();
+
 		viewport.apply();
 
 		stage = new Stage();
@@ -162,6 +170,8 @@ public class Client extends ApplicationAdapter {
 		rh = new RayHandler(world);
 
 		rh.setAmbientLight(0.01f, 0.01f, 0.01f, 0.6f);
+
+		camera.position.set(player.getLoc().x, player.getLoc().y, 0);
 		// PointLight p1 = new PointLight(rh, 10, new Color(0.1f, 0, 0, 1), 2000, 4000,
 		// 750);
 		// p1.setSoft(true);
@@ -189,26 +199,31 @@ public class Client extends ApplicationAdapter {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+		batch.setProjectionMatrix(fixedCamera.combined);
+
+		batch.begin();
+
+		batch.draw(bg, -(WORLD_WIDTH / 2), -(WORLD_HEIGHT / 2), WORLD_WIDTH, WORLD_HEIGHT);
+
+		batch.end();
+
 		batch.setProjectionMatrix(camera.combined);
 
 		if (player.shouldTickRender()) {
 
 			update();
 
-			float lerp = 0.5f;
+			float lerp = 0.9f;
 			Vector3 position = camera.position;
-			position.x += (player.getLoc().x - position.x) * lerp * Gdx.graphics.getDeltaTime();
-			position.y += (player.getLoc().y - position.y) * lerp * Gdx.graphics.getDeltaTime();
 
-			// camera.position.set(player.getLoc().x, player.getLoc().y, 0);
+			if (new Vector2(position.x, position.y).dst(player.getLoc()) > 100) {
+				position.x += (player.getLoc().x - position.x) * lerp * Gdx.graphics.getDeltaTime();
+				position.y += (player.getLoc().y - position.y) * lerp * Gdx.graphics.getDeltaTime();
+			}
+
 			camera.update();
 			batch.begin();
 			batch.enableBlending();
-
-			bg.draw(batch);
-
-			batch.draw(bg, player.getLoc().x - (WORLD_WIDTH / 2), player.getLoc().y - (WORLD_HEIGHT / 2), WORLD_WIDTH,
-					WORLD_HEIGHT);
 
 			for (Ship sp : zone.getShips()) {
 				sp.render(batch);

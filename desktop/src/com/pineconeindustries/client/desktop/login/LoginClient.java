@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -25,6 +26,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.google.gson.*;
 import com.pineconeindustries.client.Client;
 import com.pineconeindustries.client.data.LocalPlayerData;
+import com.pineconeindustries.client.desktop.character.CharacterScreen;
 import com.pineconeindustries.client.desktop.debug.Debug;
 import com.pineconeindustries.client.desktop.ecryption.LCrypto;
 
@@ -81,7 +83,7 @@ public class LoginClient extends JFrame {
 		passwordPanel.add(passwordLabel);
 		passwordPanel.add(passwordField);
 
-		JButton temp = new JButton("Submit");
+		JButton temp = new JButton("Connect");
 
 		temp.addActionListener(new ActionListener() {
 
@@ -124,7 +126,9 @@ public class LoginClient extends JFrame {
 					try {
 						url = new URL("http://" + Client.LOGIN_SERVER_IP + "/authserver/auth/" + LCrypto.encrypt(user)
 								+ "/" + LCrypto.encrypt(password));
+
 						HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
 						con.setRequestMethod("GET");
 
 						BufferedReader in = null;
@@ -137,14 +141,10 @@ public class LoginClient extends JFrame {
 						while ((line = in.readLine()) != null) {
 							sb.append(line);
 						}
-
 						in.close();
-
 					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 
@@ -152,21 +152,29 @@ public class LoginClient extends JFrame {
 
 					Gson g = new Gson();
 
+					ArrayList<LocalPlayerData> dataList = new ArrayList<LocalPlayerData>();
+
 					LocalPlayerData temp = g.fromJson(sb.toString(), LocalPlayerData.class);
+					LocalPlayerData data = temp;
 
 					if (temp.getStatus().equals("ok")) {
 
-						LocalPlayerData data = temp;
+						dataList.add(data);
+
+						new CharacterScreen(dataList);
+
 						frameReference.dispose();
-						LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-						config.width = 1920;
-						config.height = 1080;
-						config.foregroundFPS = 60;
-						new LwjglApplication(new Client(data), config);
 
 					} else {
 
-						System.out.println("Login failed: " + temp.getStatus());
+						if (temp.getStatus().equals("nocharacter")) {
+
+							new CharacterScreen(dataList);
+
+						} else {
+							System.out.println("Login failed: " + temp.getStatus());
+
+						}
 
 					}
 

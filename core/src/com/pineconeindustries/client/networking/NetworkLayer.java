@@ -32,7 +32,7 @@ public class NetworkLayer {
 	UserInterface ui;
 
 	Executor executor;
-
+	
 	public NetworkLayer(Player player, Zone zone, Connection conn, Game game, UserInterface ui) {
 		this.player = player;
 		this.zone = zone;
@@ -214,8 +214,6 @@ public class NetworkLayer {
 			break;
 
 		case Packet.MOVE_PACKET:
-
-			Log.print(p.getData());
 
 			String[] dataSplit = p.getData().split("=");
 

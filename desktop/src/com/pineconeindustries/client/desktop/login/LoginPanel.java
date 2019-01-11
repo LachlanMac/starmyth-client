@@ -12,6 +12,8 @@ import javax.swing.JPanel;
 public class LoginPanel extends JPanel{
 
 	Image image;
+
+	
 	
 	public LoginPanel() {
 		

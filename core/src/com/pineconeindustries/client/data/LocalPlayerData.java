@@ -95,11 +95,11 @@ public class LocalPlayerData {
 	public void setY(float y) {
 		this.y = y;
 	}
-	
+
 	public String toString() {
-		
-		return "ID:"+charID+" NAME:" + name + "  ["+x +", " + y + "] SECTOR: " + sector;
-		
+
+		return "ID:" + charID + " NAME:" + name + "  [" + x + ", " + y + "] SECTOR: " + sector;
+
 	}
 
 }

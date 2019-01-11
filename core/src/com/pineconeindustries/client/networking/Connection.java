@@ -39,7 +39,7 @@ public class Connection implements Runnable {
 	public void connect() {
 
 		try {
-			socket = new Socket(Client.TEST_IP, port);
+			socket = new Socket(Client.GAME_SERVER_IP, port);
 
 			out = new PrintWriter(socket.getOutputStream());
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
