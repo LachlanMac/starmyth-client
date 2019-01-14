@@ -4,6 +4,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -25,6 +26,7 @@ public class LAssetManager extends AssetManager {
 
 	public void loadTextures() {
 
+		load("textures/plasma.png", Texture.class);
 		load("textures/shiptiles/shipSS.png", Texture.class);
 		load("textures/playerfront.png", Texture.class);
 		load("textures/shiptiles/diagwall.png", Texture.class);

@@ -2,6 +2,7 @@ package com.pineconeindustries.client.manager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.math.Vector2;
 
 public class InputManager {
 
@@ -12,6 +13,7 @@ public class InputManager {
 	public static int SPRINT = Input.Keys.SHIFT_LEFT;
 	public static int ENTER = Input.Keys.ENTER;
 	public static int CENTER_CAMERA = Input.Keys.Y;
+	public static int MOUSE_DOWN = Input.Buttons.LEFT;
 
 	public static boolean isPressed(int keycode) {
 
@@ -19,6 +21,17 @@ public class InputManager {
 			return true;
 		} else {
 			return false;
+		}
+
+	}
+
+	public static Vector2 mouseDown(int mouseCode) {
+
+		if (Gdx.input.isButtonPressed(mouseCode)) {
+			return new Vector2(Gdx.input.getX(), Gdx.input.getY());
+
+		} else {
+			return null;
 		}
 
 	}

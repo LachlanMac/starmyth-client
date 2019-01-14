@@ -1,6 +1,10 @@
 package com.pineconeindustries.client.objects;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -8,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.pineconeindustries.client.AnimationSet;
 import com.pineconeindustries.client.chat.Chatbox;
 import com.pineconeindustries.client.data.RoomData;
@@ -18,6 +23,8 @@ import com.pineconeindustries.client.networking.NetworkLayer;
 public class Player extends Entity {
 
 	// TEST
+
+	ArrayList<Projectile> projectiles;
 
 	final float camspeed = 0.1f, icamspeed = 1.0f - camspeed;
 	BitmapFont font = new BitmapFont();
@@ -38,6 +45,8 @@ public class Player extends Entity {
 		this.camera = camera;
 		this.playerID = playerID;
 
+		projectiles = new ArrayList<Projectile>();
+
 	}
 
 	@Override
@@ -46,7 +55,7 @@ public class Player extends Entity {
 
 		currentFrame = animSet.getAnimation(lastDirectionFaced, velocity);
 		if (velocity == 999) {
-			
+
 			TextureRegion t = currentFrame.getKeyFrame(state, true);
 
 			b.draw(currentFrame.getKeyFrame(state, true), renderLoc.x, renderLoc.y, 32, 32, t.getRegionWidth(),
@@ -76,6 +85,11 @@ public class Player extends Entity {
 				velocity = 0;
 		}
 
+		for (Projectile project : projectiles) {
+			project.render(b);
+
+		}
+
 	}
 
 	@Override
@@ -86,7 +100,10 @@ public class Player extends Entity {
 	public void update() {
 
 		checkCurrentRoom();
+		for (Projectile project : projectiles) {
+			project.update();
 
+		}
 		if (chatbox == null || lnet == null) {
 			return;
 		}
@@ -106,7 +123,7 @@ public class Player extends Entity {
 	}
 
 	public void move() {
-
+		Vector2 click;
 		float x = 0;
 		float y = 0;
 
@@ -122,7 +139,6 @@ public class Player extends Entity {
 
 		if (InputManager.isPressed(InputManager.UP)) {
 			y++;
-
 		}
 
 		if (InputManager.isPressed(InputManager.RIGHT)) {
@@ -133,6 +149,14 @@ public class Player extends Entity {
 			x--;
 		}
 		if (InputManager.isPressed(InputManager.CENTER_CAMERA)) {
+
+		}
+
+		if ((click = InputManager.mouseDown(InputManager.MOUSE_DOWN)) != null) {
+			Vector3 worldCoordinates = camera.unproject(new Vector3(click.x, click.y, 0));
+
+			projectiles.add(new Projectile("pew!", new Vector2(this.loc), game,
+					new Vector2(worldCoordinates.x, worldCoordinates.y)));
 
 		}
 
