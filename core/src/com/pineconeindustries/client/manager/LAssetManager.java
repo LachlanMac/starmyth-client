@@ -61,7 +61,7 @@ public class LAssetManager extends AssetManager {
 		room = shipTiles[0][3];
 	}
 
-	public TextureRegion getShipTileByID(int id) {
+	public TextureRegion getStructureTileByID(int id) {
 
 		switch (id) {
 

@@ -9,37 +9,37 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import com.pineconeindustries.client.log.Log;
 import com.pineconeindustries.client.objects.Ship;
+import com.pineconeindustries.client.objects.Station;
 
-public class ShipData {
+public class StationData {
 
-	private int shipID, sectorID, localX, localY, tileWidth, tileHeight, checksum;
-	private String shipName, shipClass, filePath, shipData, roomData;
+	private int stationID, sectorID, localX, localY, tileWidth, tileHeight, checksum;
+	private String stationName, stationClass, filePath, stationData, roomData;
 	private float x, y;
 	private boolean ready = false;
 	private boolean pendingDataRequest = false;
 
 	private boolean roomDataLoaded = false;
 
-	Ship ship;
+	Station station;
 
 	ArrayList<RoomData> rooms;
 
 	StructureTileData[][] layout;
 
-	public ShipData(int shipID, int sectorID, String shipName, String shipClass, int localX, int localY,
+	public StationData(int stationID, int sectorID, String stationName, String stationClass, int localX, int localY,
 			String filePath, int checksum) {
 
-		this.shipID = shipID;
+		this.stationID = stationID;
 		this.sectorID = sectorID;
-		this.shipName = shipName;
-		this.shipClass = shipClass;
+		this.stationName = stationName;
+		this.stationClass = stationClass;
 		this.localX = localX;
 		this.localY = localY;
 		this.checksum = checksum;
 
-		if (shipClass.toLowerCase().equals("Cruiser-A")) {
+		if (stationClass.toLowerCase().equals("Cruiser-A")) {
 
 			this.tileWidth = 64;
 			this.tileHeight = 64;
@@ -52,7 +52,7 @@ public class ShipData {
 
 		layout = new StructureTileData[tileWidth][tileHeight];
 
-		loadShipLayout();
+		loadStationLayout();
 
 		// parseTileData();
 	}
@@ -66,12 +66,12 @@ public class ShipData {
 		return ready;
 	}
 
-	public int getShipID() {
-		return shipID;
+	public int getStationID() {
+		return stationID;
 	}
 
-	public void setShipID(int shipID) {
-		this.shipID = shipID;
+	public void setStationID(int stationID) {
+		this.stationID = stationID;
 	}
 
 	public int getSectorID() {
@@ -114,20 +114,20 @@ public class ShipData {
 		this.tileHeight = tileHeight;
 	}
 
-	public String getShipName() {
-		return shipName;
+	public String getStationName() {
+		return stationName;
 	}
 
-	public void setShipName(String shipName) {
-		this.shipName = shipName;
+	public void setStationName(String stationName) {
+		this.stationName = stationName;
 	}
 
-	public String getShipClass() {
-		return shipClass;
+	public String getStationClass() {
+		return stationClass;
 	}
 
-	public void setShipClass(String shipClass) {
-		this.shipClass = shipClass;
+	public void setStationClass(String stationClass) {
+		this.stationClass = stationClass;
 	}
 
 	public String getFilePath() {
@@ -138,17 +138,17 @@ public class ShipData {
 		this.filePath = filePath;
 	}
 
-	public String getShipData() {
-		return shipData;
+	public String getStationData() {
+		return stationData;
 	}
 
-	public void setShipData(String shipData) {
-		this.shipData = shipData;
+	public void setStationData(String stationData) {
+		this.stationData = stationData;
 	}
 
-	public void writeShipData(String shipData) {
+	public void writeStationData(String stationData) {
 
-		File f = new File("shiplayouts/" + filePath);
+		File f = new File("stationlayouts/" + filePath);
 		BufferedWriter bw;
 
 		try {
@@ -156,7 +156,7 @@ public class ShipData {
 				f.createNewFile();
 			}
 			bw = new BufferedWriter(new FileWriter(f));
-			bw.write(shipData);
+			bw.write(stationData);
 			bw.close();
 
 		} catch (FileNotFoundException e) {
@@ -194,18 +194,18 @@ public class ShipData {
 
 	}
 
-	public void loadShipLayout() {
+	public void loadStationLayout() {
 
-		File f = new File("shiplayouts/" + filePath);
+		File f = new File("stationlayouts/" + filePath);
 
 		if (f.exists()) {
 
 			BufferedReader br = null;
 
 			try {
-				br = new BufferedReader(new FileReader(new File("shiplayouts/" + filePath)));
+				br = new BufferedReader(new FileReader(new File("stationlayouts/" + filePath)));
 
-				shipData = br.readLine();
+				stationData = br.readLine();
 
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -221,8 +221,8 @@ public class ShipData {
 				}
 			}
 
-			if (shipData == null) {
-				shipData = "";
+			if (stationData == null) {
+				stationData = "";
 			}
 
 			int pChecksum = parseTileData();
@@ -246,7 +246,7 @@ public class ShipData {
 
 	public int parseTileData() {
 
-		if (shipData.length() < 100) {
+		if (stationData.length() < 100) {
 
 			return 0;
 		}
@@ -260,7 +260,7 @@ public class ShipData {
 
 			for (int x = 0; x < tileWidth; x++) {
 
-				String data = shipData.substring(startIndex, endIndex);
+				String data = stationData.substring(startIndex, endIndex);
 				startIndex += 2;
 				endIndex += 2;
 
@@ -316,7 +316,8 @@ public class ShipData {
 		this.pendingDataRequest = b;
 	}
 
-	public void setShip(Ship ship) {
-		this.ship = ship;
+	public void setStation(Station station) {
+		this.station = station;
 	}
+
 }

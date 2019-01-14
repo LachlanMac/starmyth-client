@@ -144,4 +144,6 @@ public class Entity extends GameObject {
 		this.structureID = structureID;
 	}
 
+	
+
 }

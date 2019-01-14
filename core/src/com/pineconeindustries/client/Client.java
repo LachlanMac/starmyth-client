@@ -32,6 +32,7 @@ import com.pineconeindustries.client.objects.NPC;
 import com.pineconeindustries.client.objects.Player;
 import com.pineconeindustries.client.objects.PlayerMP;
 import com.pineconeindustries.client.objects.Ship;
+import com.pineconeindustries.client.objects.Station;
 import com.pineconeindustries.client.ui.UserInterface;
 import com.pineconeindustries.client.zones.Zone;
 
@@ -69,7 +70,6 @@ public class Client extends ApplicationAdapter {
 	Stage stage, loadingStage;
 
 	// TEST
-
 	Ship shippo;
 
 	public int WORLD_WIDTH = 1920;
@@ -227,6 +227,10 @@ public class Client extends ApplicationAdapter {
 
 			for (Ship sp : zone.getShips()) {
 				sp.render(batch);
+			}
+
+			for (Station st : zone.getStations()) {
+				st.render(batch);
 			}
 
 			for (PlayerMP mp : zone.getPlayers()) {

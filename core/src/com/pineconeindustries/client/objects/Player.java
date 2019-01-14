@@ -36,6 +36,8 @@ public class Player extends Entity {
 	Chatbox chatbox;
 	Camera camera;
 
+	int sectorX, sectorY;
+
 	RoomData currentRoom;
 
 	private float state = 0f;
@@ -46,6 +48,9 @@ public class Player extends Entity {
 		this.playerID = playerID;
 
 		projectiles = new ArrayList<Projectile>();
+
+		sectorX = (int) this.loc.x / 8192;
+		sectorY = (int) this.loc.y / 8192;
 
 	}
 
@@ -207,6 +212,32 @@ public class Player extends Entity {
 
 	public Camera getCamera() {
 		return camera;
+	}
+
+	public boolean changedStructure() {
+
+		int tempSectorX = (int) this.loc.x / 8192;
+		int tempSectorY = (int) this.loc.y / 8192;
+
+		if (tempSectorX != sectorX || tempSectorY != sectorY) {
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+
+	public void updateLocalLoc() {
+		sectorX = (int) this.loc.x / 8192;
+		sectorY = (int) this.loc.y / 8192;
+	}
+
+	public int getLocalX() {
+		return sectorX;
+	}
+
+	public int getLocalY() {
+		return sectorY;
 	}
 
 }

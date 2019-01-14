@@ -11,6 +11,7 @@ import com.pineconeindustries.client.objects.NPC;
 
 import com.pineconeindustries.client.objects.PlayerMP;
 import com.pineconeindustries.client.objects.Ship;
+import com.pineconeindustries.client.objects.Station;
 
 public class Zone {
 
@@ -20,6 +21,7 @@ public class Zone {
 	Game game;
 	ArrayBlockingQueue<PlayerMP> playerList;
 	ArrayBlockingQueue<Ship> shipList;
+	ArrayBlockingQueue<Station> stationList;
 	ArrayBlockingQueue<NPC> npcList;
 
 	public Zone(String name, int port, Game game) {
@@ -27,6 +29,7 @@ public class Zone {
 		this.port = port;
 		this.game = game;
 		shipList = new ArrayBlockingQueue<Ship>(32);
+		stationList = new ArrayBlockingQueue<Station>(32);
 		playerList = new ArrayBlockingQueue<PlayerMP>(1024);
 		npcList = new ArrayBlockingQueue<NPC>(1024);
 	}
@@ -41,8 +44,13 @@ public class Zone {
 	}
 
 	public void addShip(Ship ship) {
-		System.out.println("ADDING " + ship.getName());
+		System.out.println("Adding Ship " + ship.getName());
 		shipList.add(ship);
+	}
+
+	public void addStation(Station station) {
+		Log.print("Adding Station " + station.getName());
+		stationList.add(station);
 	}
 
 	public void removeNPC(NPC npc) {
@@ -51,6 +59,10 @@ public class Zone {
 
 	public void removeShip(Ship ship) {
 		shipList.remove(ship);
+	}
+
+	public void removeStation(Station station) {
+		stationList.remove(station);
 	}
 
 	public void addPlayer(PlayerMP playerMP) {
@@ -66,6 +78,10 @@ public class Zone {
 
 	public ArrayBlockingQueue<Ship> getShips() {
 		return shipList;
+	}
+
+	public ArrayBlockingQueue<Station> getStations() {
+		return stationList;
 	}
 
 	public ArrayBlockingQueue<PlayerMP> getPlayers() {
@@ -100,6 +116,43 @@ public class Zone {
 		return ship;
 	}
 
+	public int getStructureIDB(int sectorX, int sectorY) {
+		int structID = 0;
+		int secX = 0;
+		int secY = 0;
+
+		for (Station s : stationList) {
+
+			if (s.getData().getLocalX() == sectorX && s.getData().getLocalY() == sectorY) {
+				structID = s.getData().getStationID();
+			}
+
+		}
+
+		for (Ship s : shipList) {
+
+			if (s.getData().getLocalX() == sectorX && s.getData().getLocalY() == sectorY) {
+				structID = s.getData().getShipID();
+			}
+
+		}
+		Log.print("RETURNING STRCUT THO " + structID);
+		return structID;
+
+	}
+
+	public Station getStationByID(int id) {
+		Station station = null;
+		for (Station s : stationList) {
+
+			if (s.getData().getStationID() == id) {
+				station = s;
+			}
+
+		}
+		return station;
+	}
+
 	public PlayerMP getPlayerByID(int id) {
 
 		PlayerMP player = null;
@@ -124,6 +177,15 @@ public class Zone {
 			}
 
 		}
+
+		for (Station s : stationList) {
+
+			if (!s.getData().isReady() && s.getData().isPendingDataRequest() == false) {
+				game.getLnet().sendStationLayoutRequest(s);
+			}
+
+		}
+
 		// for all players
 		for (PlayerMP p : playerList) {
 

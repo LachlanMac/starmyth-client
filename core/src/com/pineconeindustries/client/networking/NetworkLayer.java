@@ -9,6 +9,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.pineconeindustries.client.data.ShipData;
+import com.pineconeindustries.client.data.StationData;
 import com.pineconeindustries.client.log.Log;
 import com.pineconeindustries.client.manager.Game;
 import com.pineconeindustries.client.objects.NPC;
@@ -16,6 +17,7 @@ import com.pineconeindustries.client.objects.Player;
 import com.pineconeindustries.client.objects.PlayerMP;
 import com.pineconeindustries.client.objects.PlayerMPLight;
 import com.pineconeindustries.client.objects.Ship;
+import com.pineconeindustries.client.objects.Station;
 import com.pineconeindustries.client.ui.UserInterface;
 import com.pineconeindustries.client.zones.Zone;
 
@@ -32,7 +34,7 @@ public class NetworkLayer {
 	UserInterface ui;
 
 	Executor executor;
-	
+
 	public NetworkLayer(Player player, Zone zone, Connection conn, Game game, UserInterface ui) {
 		this.player = player;
 		this.zone = zone;
@@ -48,11 +50,15 @@ public class NetworkLayer {
 
 		// check if move is for this player
 		if (player.getPlayerID() == id) {
-
 			player.setLoc(newLoc);
 			player.setLastDirectionFaced(lastDir);
 			player.setVelocity(velocity);
 			player.setFramesSinceLastMove(0);
+			player.updateLocalLoc();
+
+			if (player.changedStructure()) {
+				zone.getStructureIDB(player.getLocalX(), player.getLocalY());
+			}
 
 		} else {
 
@@ -76,6 +82,14 @@ public class NetworkLayer {
 
 	}
 
+	public void sendStationLayoutRequest(Station s) {
+
+		conn.send(new Packet(player.getPlayerID(), Integer.toString(s.getData().getStationID()),
+				Packet.STATION_LAYOUT_PACKET));
+		executor.execute(new WaitForStationData(s));
+
+	}
+
 	public void sendMove(int id, Vector2 mov) {
 
 		float clampedX = mov.x * Gdx.graphics.getDeltaTime();
@@ -92,6 +106,15 @@ public class NetworkLayer {
 				Packet.SHIP_ROOM_INFO_PACKET));
 
 		executor.execute(new WaitForRoomData(s, this));
+
+	}
+
+	public void sendStationRoomDataRequest(Station s) {
+
+		conn.send(new Packet(player.getPlayerID(), Integer.toString(s.getData().getStationID()),
+				Packet.SHIP_ROOM_INFO_PACKET));
+
+		executor.execute(new WaitForStationRoomData(s, this));
 
 	}
 
@@ -156,44 +179,7 @@ public class NetworkLayer {
 
 		case Packet.SHIP_INFO_PACKET:
 
-			String[] shipInfoSplit = p.getData().split("=");
-
-			for (int i = 0; i < shipInfoSplit.length; i++) {
-
-				String[] shipData = shipInfoSplit[i].split("-");
-
-				int shipID = Integer.parseInt(shipData[0]);
-
-				Ship s = zone.getShipByID(shipID);
-
-				if (s == null) {
-					String shipName = shipData[1];
-					String shipClass = shipData[2];
-					int localX = Integer.parseInt(shipData[3]);
-					int localY = Integer.parseInt(shipData[4]);
-
-					int checksum = Integer.parseInt(shipData[5]);
-
-					String path = shipID + "-" + shipName + ".txt";
-
-					ShipData d = new ShipData(shipID, zone.getSectorID(), shipName, shipClass, localX, localY, path,
-							checksum);
-					Ship ship = new Ship(d.getShipName(), new Vector2(0, 0), game, d);
-
-					sendRoomDataRequest(ship);
-
-					Gdx.app.postRunnable(new Runnable() {
-
-						@Override
-						public void run() {
-							zone.addShip(ship);
-
-						}
-					});
-
-				}
-
-			}
+			RXShipInfoPacket(p.getData());
 
 			break;
 
@@ -211,6 +197,31 @@ public class NetworkLayer {
 
 			}
 
+			break;
+
+		case Packet.STATION_ROOM_INFO_PACKET:
+			Log.print("Received station room ifno packet : " + p.getData());
+			RXStationRoomInfoPacket(p.getData());
+			break;
+
+		case Packet.STATION_INFO_PACKET:
+			Log.print("Received station info packet : " + p.getData());
+			RXStationInfoPacket(p.getData());
+			break;
+
+		case Packet.STATION_LAYOUT_PACKET:
+			Log.print("Received station layout packet : " + p.getData());
+			String[] stationLayoutSplit = p.getData().split("=");
+
+			int stationID = Integer.parseInt(stationLayoutSplit[0]);
+
+			Station st = zone.getStationByID(stationID);
+			if (st != null) {
+
+				st.getData().writeStationData(stationLayoutSplit[1]);
+				st.getData().loadStationLayout();
+
+			}
 			break;
 
 		case Packet.MOVE_PACKET:
@@ -331,6 +342,108 @@ public class NetworkLayer {
 
 	}
 
+	public void RXShipInfoPacket(String data) {
+
+		String[] shipInfoSplit = data.split("=");
+
+		for (int i = 0; i < shipInfoSplit.length; i++) {
+
+			String[] shipData = shipInfoSplit[i].split("-");
+
+			int shipID = Integer.parseInt(shipData[0]);
+
+			Ship s = zone.getShipByID(shipID);
+
+			if (s == null) {
+				String shipName = shipData[1];
+				String shipClass = shipData[2];
+				int localX = Integer.parseInt(shipData[3]);
+				int localY = Integer.parseInt(shipData[4]);
+
+				int checksum = Integer.parseInt(shipData[5]);
+
+				String path = shipID + "-" + shipName + ".txt";
+
+				ShipData d = new ShipData(shipID, zone.getSectorID(), shipName, shipClass, localX, localY, path,
+						checksum);
+				Ship ship = new Ship(d.getShipName(), new Vector2(0, 0), game, d);
+
+				sendRoomDataRequest(ship);
+
+				Gdx.app.postRunnable(new Runnable() {
+
+					@Override
+					public void run() {
+						zone.addShip(ship);
+
+					}
+				});
+
+			}
+
+		}
+
+	}
+
+	public void RXStationInfoPacket(String data) {
+
+		String[] split = data.split("=");
+
+		for (int i = 0; i < split.length; i++) {
+
+			String[] stationData = split[i].split("-");
+
+			int stationID = Integer.parseInt(stationData[0]);
+
+			Station s = zone.getStationByID(stationID);
+
+			if (s == null) {
+				String shipName = stationData[1];
+				String shipClass = stationData[2];
+				int localX = Integer.parseInt(stationData[3]);
+				int localY = Integer.parseInt(stationData[4]);
+
+				int checksum = Integer.parseInt(stationData[5]);
+
+				String path = stationID + "-" + shipName + ".txt";
+
+				StationData d = new StationData(stationID, zone.getSectorID(), shipName, shipClass, localX, localY,
+						path, checksum);
+				Station station = new Station(d.getStationName(), new Vector2(0, 0), game, d);
+
+				sendStationRoomDataRequest(station);
+
+				Gdx.app.postRunnable(new Runnable() {
+
+					@Override
+					public void run() {
+						zone.addStation(station);
+
+					}
+				});
+
+			}
+
+		}
+
+	}
+
+	public void RXStationRoomInfoPacket(String data) {
+
+		String dataSplit[] = data.split("=");
+
+		int stationID = Integer.parseInt(dataSplit[0]);
+
+		Station station = zone.getStationByID(stationID);
+
+		if (station != null) {
+
+			station.getData().loadRoomData(data);
+
+		}
+
+	}
+
 	public Game getGame() {
 		return game;
 	}
@@ -345,6 +458,33 @@ class WaitForShipData implements Runnable {
 	Ship s;
 
 	public WaitForShipData(Ship s) {
+		this.s = s;
+	}
+
+	@Override
+	public void run() {
+
+		s.getData().setPendingDataRequest(true);
+
+		try {
+			Thread.sleep(3000);
+
+			s.getData().setPendingDataRequest(false);
+
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+
+	}
+
+}
+
+class WaitForStationData implements Runnable {
+
+	Station s;
+
+	public WaitForStationData(Station s) {
 		this.s = s;
 	}
 
@@ -385,6 +525,40 @@ class WaitForRoomData implements Runnable {
 
 			if (!s.getData().roomDataLoaded()) {
 				lnet.sendRoomDataRequest(s);
+			} else {
+
+				if (NetworkLayer.ROOM_INFO_ATTEMPTS > 10) {
+					lnet.getConnection().disconnect("Failed to get Room Info Attempts");
+				}
+
+				NetworkLayer.ROOM_INFO_ATTEMPTS++;
+			}
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+	}
+
+}
+
+class WaitForStationRoomData implements Runnable {
+
+	Station s;
+	NetworkLayer lnet;
+
+	public WaitForStationRoomData(Station s, NetworkLayer lnet) {
+		this.s = s;
+		this.lnet = lnet;
+	}
+
+	@Override
+	public void run() {
+
+		try {
+			Thread.sleep(2000);
+
+			if (!s.getData().roomDataLoaded()) {
+				lnet.sendStationRoomDataRequest(s);
 			} else {
 
 				if (NetworkLayer.ROOM_INFO_ATTEMPTS > 10) {

@@ -15,6 +15,11 @@ public class Packet {
 	public static final int SHIP_LAYOUT_PACKET = 3001;
 	public static final int SHIP_DATA_PACKET = 3002;
 	public static final int SHIP_ROOM_INFO_PACKET = 3005;
+	public static final int STATION_INFO_PACKET = 3100;
+	public static final int STATION_LAYOUT_PACKET = 3101;
+	public static final int STATION_DATA_PACKET = 3102;
+	public static final int STATION_ROOM_INFO_PACKET = 3105;
+
 	public static final int NPC_INFO_PACKET = 5000;
 
 	public Packet(int playerID, String data, int type) {

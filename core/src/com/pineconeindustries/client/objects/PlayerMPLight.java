@@ -16,7 +16,7 @@ public class PlayerMPLight {
 	public int getPlayerID() {
 		return playerID;
 	}
-	
+
 	public void setPlayerName(String name) {
 		this.name = name;
 	}

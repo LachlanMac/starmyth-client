@@ -5,31 +5,31 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.data.ShipData;
+import com.pineconeindustries.client.data.StationData;
 import com.pineconeindustries.client.data.StructureTileData;
-import com.pineconeindustries.client.log.Log;
 import com.pineconeindustries.client.manager.Game;
 
-public class Ship extends GameObject {
+public class Station extends GameObject {
 
 	private final int SHIP_GRID_SIZE = 8192;
 
-	ShipData data;
+	StationData data;
 
 	Texture wall, diag, hall, floor;
 
 	Vector2 interiorLoc;
 
-	public Ship(String name, Vector2 loc, Game game, ShipData data) {
+	public Station(String name, Vector2 loc, Game game, StationData data) {
 		super(name, loc, game);
 		this.data = data;
 
-		data.setShip(this);
+		data.setStation(this);
 
 		interiorLoc = new Vector2(SHIP_GRID_SIZE * data.getLocalX(), SHIP_GRID_SIZE * data.getLocalY());
 
 	}
 
-	public ShipData getData() {
+	public StationData getData() {
 		return data;
 	}
 
