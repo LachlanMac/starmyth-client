@@ -39,6 +39,7 @@ public class Chatbox extends Table {
 
 	NetworkLayer lnet;
 
+	
 	public Chatbox(float widthPercent, float heightPercent, Skin skin, Stage stage) {
 		super(skin);
 

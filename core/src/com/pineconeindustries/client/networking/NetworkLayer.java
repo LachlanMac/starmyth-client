@@ -57,7 +57,7 @@ public class NetworkLayer {
 			player.updateLocalLoc();
 
 			if (player.changedStructure()) {
-				zone.getStructureIDB(player.getLocalX(), player.getLocalY());
+				zone.getStructureID(player.getLocalX(), player.getLocalY());
 			}
 
 		} else {
@@ -140,34 +140,7 @@ public class NetworkLayer {
 
 		case Packet.NPC_INFO_PACKET:
 
-			// Console: [425=1=4150.0=710.0=100]
-			String[] npcInfoSplit = p.getData().split("=");
-
-			int npcID = Integer.parseInt(npcInfoSplit[0]);
-			String npcName = npcInfoSplit[1];
-			int npcFaction = Integer.parseInt(npcInfoSplit[2]);
-			float xNPCLoc = Float.parseFloat(npcInfoSplit[3]);
-			float yNPCLoc = Float.parseFloat(npcInfoSplit[4]);
-			int structureID = Integer.parseInt(npcInfoSplit[5]);
-
-			NPC npc = zone.getNPCByID(npcID);
-
-			if (npc == null) {
-				NPC n = new NPC(npcID, npcName, new Vector2(xNPCLoc, yNPCLoc), game, npcFaction, structureID);
-				zone.addNPC(n);
-				Gdx.app.postRunnable(new Runnable() {
-					@Override
-					public void run() {
-						zone.addNPC(n);
-
-					}
-				});
-
-			} else {
-
-				npc.setLoc(new Vector2(xNPCLoc, yNPCLoc));
-
-			}
+			RXNPCInfoPacket(p.getData());
 
 			break;
 
@@ -185,145 +158,66 @@ public class NetworkLayer {
 
 		case Packet.SHIP_LAYOUT_PACKET:
 
-			String[] layoutSplit = p.getData().split("=");
-
-			int shipID = Integer.parseInt(layoutSplit[0]);
-
-			Ship s = zone.getShipByID(shipID);
-			if (s != null) {
-
-				s.getData().writeShipData(layoutSplit[1]);
-				s.getData().loadShipLayout();
-
-			}
+			RXShipLayoutPacket(p.getData());
 
 			break;
 
 		case Packet.STATION_ROOM_INFO_PACKET:
-			Log.print("Received station room ifno packet : " + p.getData());
+
 			RXStationRoomInfoPacket(p.getData());
+
 			break;
 
 		case Packet.STATION_INFO_PACKET:
-			Log.print("Received station info packet : " + p.getData());
+
 			RXStationInfoPacket(p.getData());
+
 			break;
 
 		case Packet.STATION_LAYOUT_PACKET:
-			Log.print("Received station layout packet : " + p.getData());
-			String[] stationLayoutSplit = p.getData().split("=");
 
-			int stationID = Integer.parseInt(stationLayoutSplit[0]);
+			RXStationLayoutPacket(p.getData());
 
-			Station st = zone.getStationByID(stationID);
-			if (st != null) {
-
-				st.getData().writeStationData(stationLayoutSplit[1]);
-				st.getData().loadStationLayout();
-
-			}
 			break;
 
 		case Packet.MOVE_PACKET:
 
-			String[] dataSplit = p.getData().split("=");
-
-			try {
-
-				float x = Float.parseFloat(dataSplit[0]);
-				float y = Float.parseFloat(dataSplit[1]);
-
-				float xDir = Float.parseFloat(dataSplit[2]);
-				float yDir = Float.parseFloat(dataSplit[3]);
-
-				float velocity = Float.parseFloat(dataSplit[4]);
-
-				int structID = Integer.parseInt(dataSplit[5]);
-
-				player.setStructureID(structID);
-
-				receiveMove(p.getPlayerID(), new Vector2(x, y), new Vector2(xDir, yDir), velocity);
-
-			} catch (NumberFormatException e) {
-
-				e.printStackTrace();
-				return;
-			}
+			RXMovePacket(p.getData(), p.getPlayerID());
 
 			break;
 
 		case Packet.ZONE_PLAYER_INFO_PACKET:
 
-			String[] infoSplit = p.getData().split("=");
-
-			for (int i = 0; i < infoSplit.length; i++) {
-
-				String[] playerData = infoSplit[i].split(",");
-
-				int id = Integer.parseInt(playerData[0]);
-
-				String name = playerData[1];
-
-				if (id == player.getPlayerID()) {
-					// do nothing because its the player
-				} else {
-
-					PlayerMPLight mp = new PlayerMPLight();
-					mp.setPlayerID(id);
-					mp.setPlayerName(name);
-
-					boolean playerExists = false;
-
-					for (PlayerMP player : zone.getPlayers()) {
-						if (player.getPlayerID() == mp.getPlayerID()) {
-
-							playerExists = true;
-							player.refresh();
-
-						}
-					}
-
-					if (!playerExists) {
-
-						Gdx.app.postRunnable(new AddPlayerThread(name, new Vector2(20, 20), game, id) {
-							@Override
-							public void run() {
-								zone.addPlayer(new PlayerMP(playerName, loc, game, 1, 0, playerID));
-
-							}
-						});
-
-					}
-
-				}
-
-			}
+			RXPlayerInfoPacket(p.getData());
 
 			break;
 
 		case Packet.LOCAL_CHAT_PACKET:
 
-			String msg = p.getData().trim();
-
-			if (p.getPlayerID() == player.getPlayerID()) {
-
-				ui.getChat().addMsg("[LOCAL] : " + msg);
-
-			} else {
-
-				String userName = zone.getPlayerByID(p.getPlayerID()).getName();
-
-				ui.getChat().addMsg("[LOCAL] " + userName + " : " + msg);
-
-			}
+			RXLocalChatPacket(p.getData(), p.getPlayerID());
 
 			break;
 
 		default:
-			System.out.println("UNKNONW PACKET " + p.getData() + " ID : " + p.getPlayerID());
+
 			break;
 		}
 
+	}
+
+	public void RXShipLayoutPacket(String data) {
+
+		String[] split = data.split("=");
+
+		int shipID = Integer.parseInt(split[0]);
+
+		Ship s = zone.getShipByID(shipID);
+		if (s != null) {
+
+			s.getData().writeShipData(split[1]);
+			s.getData().loadShipLayout();
+
+		}
 	}
 
 	public void RXShipRoomInfoPacket(String data) {
@@ -387,11 +281,11 @@ public class NetworkLayer {
 
 	public void RXStationInfoPacket(String data) {
 
-		String[] split = data.split("=");
+		String[] dataSplit = data.split("=");
 
-		for (int i = 0; i < split.length; i++) {
+		for (int i = 0; i < dataSplit.length; i++) {
 
-			String[] stationData = split[i].split("-");
+			String[] stationData = dataSplit[i].split("-");
 
 			int stationID = Integer.parseInt(stationData[0]);
 
@@ -423,6 +317,146 @@ public class NetworkLayer {
 				});
 
 			}
+
+		}
+
+	}
+
+	public void RXPlayerInfoPacket(String data) {
+		String[] dataSplit = data.split("=");
+
+		for (int i = 0; i < dataSplit.length; i++) {
+
+			String[] playerData = dataSplit[i].split(",");
+
+			int id = Integer.parseInt(playerData[0]);
+
+			String name = playerData[1];
+
+			if (id == player.getPlayerID()) {
+				// do nothing because its the player
+			} else {
+
+				PlayerMPLight mp = new PlayerMPLight();
+				mp.setPlayerID(id);
+				mp.setPlayerName(name);
+
+				boolean playerExists = false;
+
+				for (PlayerMP player : zone.getPlayers()) {
+					if (player.getPlayerID() == mp.getPlayerID()) {
+
+						playerExists = true;
+						player.refresh();
+
+					}
+				}
+
+				if (!playerExists) {
+
+					Gdx.app.postRunnable(new AddPlayerThread(name, new Vector2(20, 20), game, id) {
+						@Override
+						public void run() {
+							zone.addPlayer(new PlayerMP(playerName, loc, game, 1, 0, playerID));
+
+						}
+					});
+
+				}
+
+			}
+
+		}
+	}
+
+	public void RXMovePacket(String data, int playerID) {
+		String[] dataSplit = data.split("=");
+
+		try {
+
+			float x = Float.parseFloat(dataSplit[0]);
+			float y = Float.parseFloat(dataSplit[1]);
+
+			float xDir = Float.parseFloat(dataSplit[2]);
+			float yDir = Float.parseFloat(dataSplit[3]);
+
+			float velocity = Float.parseFloat(dataSplit[4]);
+
+			int structID = Integer.parseInt(dataSplit[5]);
+
+			player.setStructureID(structID);
+
+			receiveMove(playerID, new Vector2(x, y), new Vector2(xDir, yDir), velocity);
+
+		} catch (NumberFormatException e) {
+
+			e.printStackTrace();
+			return;
+		}
+
+	}
+
+	public void RXLocalChatPacket(String data, int playerID) {
+
+		String msg = data.trim();
+
+		if (playerID == player.getPlayerID()) {
+
+			ui.getChat().addMsg("[LOCAL] : " + msg);
+
+		} else {
+
+			String userName = zone.getPlayerByID(playerID).getName();
+
+			ui.getChat().addMsg("[LOCAL] " + userName + " : " + msg);
+
+		}
+
+	}
+
+	public void RXStationLayoutPacket(String data) {
+
+		String[] dataSplit = data.split("=");
+
+		int stationID = Integer.parseInt(dataSplit[0]);
+
+		Station st = zone.getStationByID(stationID);
+		if (st != null) {
+
+			st.getData().writeStationData(dataSplit[1]);
+			st.getData().loadStationLayout();
+
+		}
+
+	}
+
+	public void RXNPCInfoPacket(String data) {
+
+		String[] dataSplit = data.split("=");
+
+		int npcID = Integer.parseInt(dataSplit[0]);
+		String npcName = dataSplit[1];
+		int npcFaction = Integer.parseInt(dataSplit[2]);
+		float xNPCLoc = Float.parseFloat(dataSplit[3]);
+		float yNPCLoc = Float.parseFloat(dataSplit[4]);
+		int structureID = Integer.parseInt(dataSplit[5]);
+
+		NPC npc = zone.getNPCByID(npcID);
+
+		if (npc == null) {
+			NPC n = new NPC(npcID, npcName, new Vector2(xNPCLoc, yNPCLoc), game, npcFaction, structureID);
+			zone.addNPC(n);
+			Gdx.app.postRunnable(new Runnable() {
+				@Override
+				public void run() {
+					zone.addNPC(n);
+
+				}
+			});
+
+		} else {
+
+			npc.setLoc(new Vector2(xNPCLoc, yNPCLoc));
 
 		}
 

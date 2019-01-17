@@ -116,7 +116,7 @@ public class Zone {
 		return ship;
 	}
 
-	public int getStructureIDB(int sectorX, int sectorY) {
+	public int getStructureID(int sectorX, int sectorY) {
 		int structID = 0;
 		int secX = 0;
 		int secY = 0;

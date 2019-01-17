@@ -3,17 +3,12 @@ package com.pineconeindustries.client.objects;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.pineconeindustries.client.AnimationSet;
 import com.pineconeindustries.client.chat.Chatbox;
 import com.pineconeindustries.client.data.RoomData;
 import com.pineconeindustries.client.manager.Game;
@@ -36,8 +31,6 @@ public class Player extends Entity {
 	Chatbox chatbox;
 	Camera camera;
 
-	int sectorX, sectorY;
-
 	RoomData currentRoom;
 
 	private float state = 0f;
@@ -48,9 +41,6 @@ public class Player extends Entity {
 		this.playerID = playerID;
 
 		projectiles = new ArrayList<Projectile>();
-
-		sectorX = (int) this.loc.x / 8192;
-		sectorY = (int) this.loc.y / 8192;
 
 	}
 
@@ -78,7 +68,7 @@ public class Player extends Entity {
 			renderLoc = loc;
 		} else {
 
-			float lerp = 7f;
+			float lerp = 15f;
 			Vector2 position = renderLoc;
 			renderLoc.x += (getLoc().x - position.x) * lerp * Gdx.graphics.getDeltaTime();
 			renderLoc.y += (getLoc().y - position.y) * lerp * Gdx.graphics.getDeltaTime();
@@ -104,7 +94,8 @@ public class Player extends Entity {
 
 	public void update() {
 
-		checkCurrentRoom();
+		hover();
+
 		for (Projectile project : projectiles) {
 			project.update();
 
@@ -115,10 +106,6 @@ public class Player extends Entity {
 
 		if (!chatbox.isTyping())
 			move();
-	}
-
-	public void checkCurrentRoom() {
-
 	}
 
 	public String printVector() {
@@ -225,19 +212,6 @@ public class Player extends Entity {
 			return false;
 		}
 
-	}
-
-	public void updateLocalLoc() {
-		sectorX = (int) this.loc.x / 8192;
-		sectorY = (int) this.loc.y / 8192;
-	}
-
-	public int getLocalX() {
-		return sectorX;
-	}
-
-	public int getLocalY() {
-		return sectorY;
 	}
 
 }

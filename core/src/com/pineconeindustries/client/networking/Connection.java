@@ -6,9 +6,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.concurrent.ArrayBlockingQueue;
+
+import javax.swing.JOptionPane;
 
 import com.pineconeindustries.client.Client;
 import com.pineconeindustries.client.config.NetworkConfiguration;
@@ -52,12 +55,12 @@ public class Connection implements Runnable {
 
 			hb.start();
 
-		} catch (UnknownHostException e) {
+		} catch (Exception e) {
 
-			e.printStackTrace();
-		} catch (IOException e) {
+			Log.print("Could not connect to server");
+			JOptionPane.showMessageDialog(null, "Could not connect to the Game Server", "Connection Error", 0);
+			System.exit(0);
 
-			e.printStackTrace();
 		}
 
 	}

@@ -1,12 +1,18 @@
 package com.pineconeindustries.client.objects;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.AnimationSet;
+import com.pineconeindustries.client.log.Log;
 import com.pineconeindustries.client.manager.Game;
+import com.pineconeindustries.client.manager.InputManager;
 
 public class Entity extends GameObject {
 
@@ -14,7 +20,7 @@ public class Entity extends GameObject {
 
 	protected final int MAX_FRAMES_SINCE_LAST_MOVE = 6;
 	protected float interval, velocity, speed;
-	protected int framesSinceLastMove, factionID, structureID;
+	protected int framesSinceLastMove, factionID, structureID, sectorX, sectorY;
 
 	AnimationSet animSet;
 	Animation<TextureRegion> currentFrame;
@@ -35,6 +41,9 @@ public class Entity extends GameObject {
 		animSet = game.Assets().getDefaultAnimations();
 		currentFrame = animSet.getAnimation(lastDirectionFaced, 0);
 
+		sectorX = (int) this.loc.x / 8192;
+		sectorY = (int) this.loc.y / 8192;
+
 	}
 
 	@Override
@@ -54,6 +63,23 @@ public class Entity extends GameObject {
 	@Override
 	public void dispose() {
 
+	}
+
+	public void netMove() {
+
+	}
+
+	public void updateLocalLoc() {
+		sectorX = (int) this.loc.x / 8192;
+		sectorY = (int) this.loc.y / 8192;
+	}
+
+	public int getLocalX() {
+		return sectorX;
+	}
+
+	public int getLocalY() {
+		return sectorY;
 	}
 
 	public float getInterval() {
@@ -144,6 +170,10 @@ public class Entity extends GameObject {
 		this.structureID = structureID;
 	}
 
-	
+	@Override
+	public void renderDebug(ShapeRenderer b) {
+		b.rect(bounds.x, bounds.y, bounds.width, bounds.height);
+
+	}
 
 }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.manager.Game;
 
@@ -26,7 +27,8 @@ public class Projectile extends GameObject {
 	@Override
 	public void update() {
 
-		this.loc.x += Gdx.graphics.getDeltaTime() * 1000;
+		this.loc.x += Gdx.graphics.getDeltaTime() * 500 * direction.x;
+		this.loc.y += Gdx.graphics.getDeltaTime() * 500 * direction.y;
 
 	}
 
@@ -40,6 +42,12 @@ public class Projectile extends GameObject {
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void renderDebug(ShapeRenderer b) {
+		b.rect(bounds.x, bounds.y, bounds.width, bounds.height);
 
 	}
 

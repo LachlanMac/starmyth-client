@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -46,9 +48,10 @@ public class Client extends ApplicationAdapter {
 
 	public static String TEST_IP = "127.0.0.1";
 	public static String LOGIN_SERVER_IP = "142.93.48.155";
-	public static String GAME_SERVER_IP = "142.93.48.155";
+	public static String GAME_SERVER_IP = "127.0.0.1";// "142.93.48.155";
 
 	SpriteBatch batch;
+	ShapeRenderer shapeBatch;
 	Texture img, loadingScreen;
 	LocalPlayerData data;
 	Connection conn;
@@ -103,7 +106,7 @@ public class Client extends ApplicationAdapter {
 
 		conn = new Connection(data.getSector());
 		conn.connect();
-
+		
 		if (conn.isConnected() == false) {
 			Log.debug("No Connection");
 		}
@@ -117,6 +120,9 @@ public class Client extends ApplicationAdapter {
 		world = new World(new Vector2(0, 0), true);
 
 		batch = new SpriteBatch();
+
+		shapeBatch = new ShapeRenderer();
+
 		loadingScreen = new Texture("textures/loadingscreen.png");
 
 		bg = new Sprite(new Texture("textures/lachlangalaxy.jpg"));
@@ -156,14 +162,17 @@ public class Client extends ApplicationAdapter {
 
 		zone = new Zone("TESTZONE", data.getSector(), game);
 
-		NetworkLayer lnet = new NetworkLayer(player, zone, conn, game, ui);
+		lnet = new NetworkLayer(player, zone, conn, game, ui);
 		conn.setNetworkLayer(lnet);
 
+		game.setZone(zone);
+		game.setUI(ui);
+		game.setCamera(camera);
 		player.setLnet(lnet);
 		player.connectToChat(ui.getChat());
-
 		game.setPlayer(player);
 		game.setLnet(lnet);
+		game.setStage(stage);
 
 		player.enableTickRender();
 
@@ -187,10 +196,6 @@ public class Client extends ApplicationAdapter {
 			camera.zoom -= 0.02;
 		}
 
-		zone.update();
-		player.update();
-		ui.getChat().update();
-
 	}
 
 	@Override
@@ -207,46 +212,8 @@ public class Client extends ApplicationAdapter {
 
 		batch.end();
 
-		batch.setProjectionMatrix(camera.combined);
+		game.render(batch, shapeBatch);
 
-		if (player.shouldTickRender()) {
-
-			update();
-
-			float lerp = 0.9f;
-			Vector3 position = camera.position;
-
-			if (new Vector2(position.x, position.y).dst(player.getLoc()) > 100) {
-				position.x += (player.getLoc().x - position.x) * lerp * Gdx.graphics.getDeltaTime();
-				position.y += (player.getLoc().y - position.y) * lerp * Gdx.graphics.getDeltaTime();
-			}
-
-			camera.update();
-			batch.begin();
-			batch.enableBlending();
-
-			for (Ship sp : zone.getShips()) {
-				sp.render(batch);
-			}
-
-			for (Station st : zone.getStations()) {
-				st.render(batch);
-			}
-
-			for (PlayerMP mp : zone.getPlayers()) {
-				mp.render(batch);
-			}
-
-			for (NPC npc : zone.getNPCs()) {
-				npc.render(batch);
-			}
-
-			player.render(batch);
-
-			batch.end();
-			stage.act(Gdx.graphics.getDeltaTime());
-			stage.draw();
-		}
 		rh.setCombinedMatrix(camera);
 		rh.updateAndRender();
 		world.step(1 / 60f, 6, 2);
@@ -258,6 +225,7 @@ public class Client extends ApplicationAdapter {
 		stage.dispose();
 		player.dispose();
 		rh.dispose();
+		shapeBatch.dispose();
 
 	}
 

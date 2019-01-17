@@ -12,20 +12,20 @@ import org.omg.CORBA.portable.InputStream;
 import com.pineconeindustries.client.desktop.login.LoginClient;
 
 public class ClientLauncher {
-	
-	
+
 	public static boolean debugmode = false;
+
+	public static boolean useLocalServer = true;
 
 	public static void main(String[] arg) {
 
 		try {
 			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Sansation-Bold.ttf")));
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		
 		new LoginClient();
 
 	}
