@@ -10,9 +10,9 @@ import com.pineconeindustries.client.data.LocalPlayerData;
 
 public class CharacterScreen extends JFrame {
 
-	CharacterScreenBackground home;
-
-	CreatorScreenBackground creator;
+	CharacterSelectionScreen home;
+	
+	CharacterCreationScreen creator;
 
 	JPanel testPane;
 	JLabel test;
@@ -31,13 +31,15 @@ public class CharacterScreen extends JFrame {
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		creator = new CreatorScreenBackground(this);
-		home = new CharacterScreenBackground(this, data);
+		this.setResizable(false);
+		creator = new CharacterCreationScreen(this);
+		home = new CharacterSelectionScreen(this, data);
 
 		this.add(home);
 		this.validate();
 		this.repaint();
+
+		this.pack();
 
 	}
 

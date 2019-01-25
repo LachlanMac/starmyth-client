@@ -6,6 +6,8 @@ public class Packet {
 	private int type, playerID;
 
 	public static final int MOVE_PACKET = 100;
+	public static final int LOCAL_TRANSPORT_PACKET = 105;
+	public static final int CROSS_TRANSPORT_PACKET = 106;
 	public static final int ZONE_PLAYER_INFO_PACKET = 505;
 	public static final int PLAYER_ID_PACKET = 5;
 	public static final int HEARTBEAT_PACKET = 2;

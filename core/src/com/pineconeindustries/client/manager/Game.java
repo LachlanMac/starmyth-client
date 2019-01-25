@@ -85,6 +85,10 @@ public class Game {
 
 			shapeBatch.setColor(Color.RED);
 
+			for (Ship sp : zone.getShips()) {
+				sp.renderDebug(shapeBatch);
+			}
+
 			player.renderDebug(shapeBatch);
 
 			shapeBatch.end();
@@ -95,6 +99,14 @@ public class Game {
 	public void update() {
 		// System.out.println("Updating");
 		InputManager.getMouseCoordinates(camera);
+
+		for (Ship sp : zone.getShips()) {
+			sp.update();
+		}
+
+		for (Station st : zone.getStations()) {
+			st.update();
+		}
 
 		zone.update();
 

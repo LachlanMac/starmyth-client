@@ -1,9 +1,12 @@
 package com.pineconeindustries.client.objects;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.data.ShipData;
 import com.pineconeindustries.client.data.StructureTileData;
@@ -20,6 +23,8 @@ public class Ship extends GameObject {
 
 	Vector2 interiorLoc;
 
+	ArrayList<ZoneBox> zones;
+
 	public Ship(String name, Vector2 loc, Game game, ShipData data) {
 		super(name, loc, game);
 		this.data = data;
@@ -28,6 +33,19 @@ public class Ship extends GameObject {
 
 		interiorLoc = new Vector2(SHIP_GRID_SIZE * data.getLocalX(), SHIP_GRID_SIZE * data.getLocalY());
 
+		int zbXStart = (int) interiorLoc.x + 10;
+		int zbYStart = (int) interiorLoc.y + 10;
+
+		// Rectangle origin = new Rectangle(zbXStart, zbYStart, 100, 100);
+		// Rectangle destination = new Rectangle(zbXStart + 300, zbYStart + 300, 100,
+		// 100);
+
+		zones = new ArrayList<ZoneBox>();
+		// load zones
+	}
+
+	public void addZone(ZoneBox b) {
+		zones.add(b);
 	}
 
 	public ShipData getData() {
@@ -72,7 +90,9 @@ public class Ship extends GameObject {
 
 	@Override
 	public void update() {
-		// TODO Auto-generated method stub
+		for (ZoneBox b : zones) {
+			b.update(game.getPlayer());
+		}
 
 	}
 
@@ -84,8 +104,9 @@ public class Ship extends GameObject {
 
 	@Override
 	public void renderDebug(ShapeRenderer b) {
-		// TODO Auto-generated method stub
-
+		for (ZoneBox zone : zones) {
+			zone.renderDebug(b);
+		}
 	}
 
 }

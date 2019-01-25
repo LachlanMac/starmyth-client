@@ -27,6 +27,8 @@ public class Player extends Entity {
 	private int playerID;
 	private boolean moveDisabled = false;
 
+	private int sectorID = 0;
+
 	NetworkLayer lnet;
 	Chatbox chatbox;
 	Camera camera;
@@ -115,6 +117,9 @@ public class Player extends Entity {
 	}
 
 	public void move() {
+
+		if (moveDisabled)
+			return;
 		Vector2 click;
 		float x = 0;
 		float y = 0;
@@ -164,6 +169,18 @@ public class Player extends Entity {
 		}
 	}
 
+	public void transport(Vector2 destination) {
+
+		lnet.sendTransport(destination);
+
+	}
+
+	public void sectorTransport(int sector, Vector2 destination) {
+
+		lnet.sendSectorTransport(sector, destination);
+
+	}
+
 	public void setLnet(NetworkLayer lnet) {
 		this.lnet = lnet;
 	}
@@ -199,6 +216,14 @@ public class Player extends Entity {
 
 	public Camera getCamera() {
 		return camera;
+	}
+
+	public int getSectorID() {
+		return sectorID;
+	}
+
+	public void setSectorID(int sectorID) {
+		this.sectorID = sectorID;
 	}
 
 	public boolean changedStructure() {

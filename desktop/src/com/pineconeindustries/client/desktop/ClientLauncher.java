@@ -6,9 +6,12 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.omg.CORBA.portable.InputStream;
 
+import com.pineconeindustries.client.data.LocalPlayerData;
+import com.pineconeindustries.client.desktop.character.CharacterScreen;
 import com.pineconeindustries.client.desktop.login.LoginClient;
 
 public class ClientLauncher {
@@ -26,7 +29,9 @@ public class ClientLauncher {
 			e.printStackTrace();
 		}
 		
-		new LoginClient();
+		//new LoginClient();
+		ArrayList<LocalPlayerData> dataList = new ArrayList<LocalPlayerData>();
+		new CharacterScreen(dataList);
 
 	}
 }

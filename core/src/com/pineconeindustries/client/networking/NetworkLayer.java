@@ -90,6 +90,21 @@ public class NetworkLayer {
 
 	}
 
+	public void sendSectorTransport(int sectorID, Vector2 destination) {
+
+		String data = sectorID + "=" + destination.x + "=" + destination.y;
+
+		conn.send(new Packet(player.getPlayerID(), data, Packet.CROSS_TRANSPORT_PACKET));
+
+	}
+
+	public void sendTransport(Vector2 destination) {
+
+		String data = destination.x + "=" + destination.y;
+		conn.send(new Packet(player.getPlayerID(), data, Packet.LOCAL_TRANSPORT_PACKET));
+
+	}
+
 	public void sendMove(int id, Vector2 mov) {
 
 		float clampedX = mov.x * Gdx.graphics.getDeltaTime();

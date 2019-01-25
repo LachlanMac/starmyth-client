@@ -38,6 +38,7 @@ public class LoginClient extends JFrame {
 	JLabel userLabel, passwordLabel;
 	JFrame frameReference;
 
+	
 	public LoginClient() {
 
 		this.setSize(700, 360);
@@ -48,7 +49,7 @@ public class LoginClient extends JFrame {
 
 		this.frameReference = this;
 	}
-
+	
 	public void buildGUI() {
 
 		Font font = new Font("Verdana", Font.BOLD, 16);

@@ -106,7 +106,7 @@ public class Client extends ApplicationAdapter {
 
 		conn = new Connection(data.getSector());
 		conn.connect();
-		
+
 		if (conn.isConnected() == false) {
 			Log.debug("No Connection");
 		}
@@ -159,6 +159,8 @@ public class Client extends ApplicationAdapter {
 
 		player = new Player(data.getName(), new Vector2(data.getX(), data.getY()), game, 1, 0, data.getCharID(),
 				camera);
+
+		player.setSectorID(data.getSector());
 
 		zone = new Zone("TESTZONE", data.getSector(), game);
 

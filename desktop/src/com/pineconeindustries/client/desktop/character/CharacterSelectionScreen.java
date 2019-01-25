@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 
 import com.pineconeindustries.client.data.LocalPlayerData;
 
-public class CharacterScreenBackground extends JPanel {
+public class CharacterSelectionScreen extends JPanel {
 
 	private int characterCount;
 
@@ -32,8 +32,10 @@ public class CharacterScreenBackground extends JPanel {
 	JPanel bufferW, bufferE, bottomPanel;
 
 	ArrayList<LocalPlayerData> data;
+	
+	public CharacterSelectionScreen(CharacterScreen screen, ArrayList<LocalPlayerData> data) {
 
-	public CharacterScreenBackground(CharacterScreen screen, ArrayList<LocalPlayerData> data) {
+		this.setPreferredSize(new Dimension(CharacterScreen.screenWidth, CharacterScreen.screenHeight));
 
 		characterCount = data.size();
 
@@ -59,7 +61,7 @@ public class CharacterScreenBackground extends JPanel {
 		topPanel.add(title);
 
 		characterPanel = new JPanel();
-		characterPanel.setLayout(new GridLayout(4, 1, 10, 10));
+		characterPanel.setLayout(new GridLayout(4, 1, 5, 5));
 		characterPanel.setPreferredSize(
 				new Dimension((int) (CharacterScreen.screenWidth * .6f), (int) (CharacterScreen.screenHeight * .6f)));
 
@@ -89,7 +91,7 @@ public class CharacterScreenBackground extends JPanel {
 		for (int ii = 0; ii < 4 - characterCount; ii++) {
 			characterPanel.add(new CButton(screen, null));
 		}
-
+		
 		topPanel.setOpaque(false);
 		bufferW.setOpaque(false);
 		bufferE.setOpaque(false);
