@@ -21,7 +21,7 @@ public class ClientLauncher {
 	public static boolean useLocalServer = true;
 
 	public static void main(String[] arg) {
-
+		
 		try {
 			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Sansation-Bold.ttf")));
@@ -29,9 +29,9 @@ public class ClientLauncher {
 			e.printStackTrace();
 		}
 		
-		//new LoginClient();
-		ArrayList<LocalPlayerData> dataList = new ArrayList<LocalPlayerData>();
-		new CharacterScreen(dataList);
+		new LoginClient();
+		//ArrayList<LocalPlayerData> dataList = new ArrayList<LocalPlayerData>();
+		//new CharacterScreen(dataList);
 
 	}
 }

@@ -13,17 +13,20 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
 import com.pineconeindustries.client.desktop.character.options.Option;
+import com.pineconeindustries.client.log.Log;
 
 public class SpritePart extends JPanel {
 
 	JButton next, previous, primaryColorBtn, secondaryColorBtn;
 
-	JLabel selected, option;
+	JLabel selected, option, description;
 
 	JPanel selector, colors;
 
-	CharacterSprite main;
+	CharacterSpritePanel main;
 
 	RGBSlider primarySliders, secondarySliders;
 
@@ -36,42 +39,56 @@ public class SpritePart extends JPanel {
 
 	int currentIndex = 0;
 	int maxIndex = 0;
+	int colorCount = 0;
 
+	String descriptor;
+	CharacterOptionsPanel optionPanel;
 	boolean showPrimarySliders = false, showSecondarySliders = false;
 
 	private boolean showSliders = false;
 
-	public SpritePart(CharacterCreationScreen screenRef, CharacterSprite main, Color primaryColor,
-			ArrayList<Option> options) {
+	public SpritePart(String descriptor, CharacterOptionsPanel optionPanel, CharacterCreationScreen screenRef,
+			CharacterSpritePanel main, Color primaryColor, ArrayList<Option> options) {
 		this.options = options;
 		this.screenRef = screenRef;
 		this.main = main;
-		this.primaryColor = primaryColor;
+		this.optionPanel = optionPanel;
+
+		this.descriptor = descriptor;
 		currentOption = options.get(0);
 		this.primaryColor = options.get(0).getPrimaryColor();
-		primarySliders = new RGBSlider(primaryColor.getRed(), primaryColor.getGreen(), primaryColor.getBlue());
+		primarySliders = new RGBSlider(this.primaryColor.getRed(), this.primaryColor.getGreen(),
+				this.primaryColor.getBlue(), 1);
 		maxIndex = options.size() - 1;
 		primarySliders.setSpritePart(this);
+		colorCount = 1;
 		buildUI();
 
 	}
 
-	public SpritePart(CharacterCreationScreen screenRef, CharacterSprite main, Color primaryColor, Color secondaryColor,
-			ArrayList<Option> options) {
+	public SpritePart(String descriptor, CharacterOptionsPanel optionPanel, CharacterCreationScreen screenRef,
+			CharacterSpritePanel main, Color primaryColor, Color secondaryColor, ArrayList<Option> options) {
+		System.out.println("Calling secondary construvtor");
 		this.options = options;
 		this.screenRef = screenRef;
 		this.main = main;
-		this.primaryColor = primaryColor;
-		this.secondaryColor = secondaryColor;
+		this.optionPanel = optionPanel;
+
+		this.descriptor = descriptor;
+
+		System.out.println(this.secondaryColor);
 
 		currentOption = options.get(0);
 		this.primaryColor = options.get(0).getPrimaryColor();
 		this.secondaryColor = options.get(0).getSecondaryColor();
-		primarySliders = new RGBSlider(primaryColor.getRed(), primaryColor.getGreen(), primaryColor.getBlue());
-		secondarySliders = new RGBSlider(secondaryColor.getRed(), secondaryColor.getGreen(), secondaryColor.getBlue());
+		primarySliders = new RGBSlider(this.primaryColor.getRed(), this.primaryColor.getGreen(),
+				this.primaryColor.getBlue(), 1);
+		secondarySliders = new RGBSlider(this.secondaryColor.getRed(), this.secondaryColor.getGreen(),
+				this.secondaryColor.getBlue(), 2);
 		maxIndex = options.size() - 1;
 		primarySliders.setSpritePart(this);
 		secondarySliders.setSpritePart(this);
+		colorCount = 2;
 		buildUI();
 
 	}
@@ -91,7 +108,7 @@ public class SpritePart extends JPanel {
 		this.setOpaque(false);
 
 		this.setPreferredSize(new Dimension(CharacterScreen.screenWidth / 2,
-				CharacterScreen.screenHeight / CharacterCreationScreen.COLUMNS));
+				(CharacterScreen.screenHeight / CharacterCreationScreen.COLUMNS) - 30));
 
 		this.setLayout(new BorderLayout());
 
@@ -102,14 +119,19 @@ public class SpritePart extends JPanel {
 		JPanel nextContainer = new JPanel();
 		JPanel prevContainer = new JPanel();
 		JPanel textContainer = new JPanel();
+		JPanel descriptionContainer = new JPanel();
 
+		descriptionContainer.setOpaque(false);
 		nextContainer.setOpaque(false);
 		prevContainer.setOpaque(false);
 		textContainer.setOpaque(false);
 
+		descriptionContainer.setLayout(new GridLayout(1, 1));
 		nextContainer.setLayout(new GridLayout(1, 1));
 		prevContainer.setLayout(new GridLayout(1, 1));
 		textContainer.setLayout(new GridLayout(1, 1));
+
+		nextContainer.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
 
 		// DEBUG
 		/*
@@ -123,24 +145,35 @@ public class SpritePart extends JPanel {
 		selector = new JPanel();
 		selector.setOpaque(false);
 
-		selector.setPreferredSize(new Dimension((int) (this.getPreferredSize().getWidth() * .70),
+		selector.setPreferredSize(new Dimension((int) (this.getPreferredSize().getWidth() * .80),
 				(int) this.getPreferredSize().getHeight()));
 
 		colors = new JPanel();
 
 		colors.setOpaque(false);
 
-		colors.setPreferredSize(new Dimension((int) (this.getPreferredSize().getWidth() * .30),
+		colors.setPreferredSize(new Dimension((int) (this.getPreferredSize().getWidth() * .20),
 				(int) this.getPreferredSize().getHeight()));
 
-		Dimension btnDim = new Dimension((int) (selector.getPreferredSize().getWidth() * .2),
+		colors.setBorder(BorderFactory.createLineBorder(Color.GREEN));
+
+		colors.setLayout(new BorderLayout());
+
+		Dimension btnDim = new Dimension((int) (selector.getPreferredSize().getWidth() * .15),
 				(int) colors.getPreferredSize().getHeight());
 
 		nextContainer.setPreferredSize(btnDim);
+
 		prevContainer.setPreferredSize(btnDim);
 
 		textContainer.setPreferredSize(new Dimension((int) (selector.getPreferredSize().getWidth() * .4),
 				(int) selector.getPreferredSize().getHeight()));
+
+		descriptionContainer.setPreferredSize(btnDim);
+
+		description = new JLabel(descriptor, SwingConstants.CENTER);
+		description.setFont(CharacterCreationScreen.font);
+		description.setForeground(Color.white);
 
 		next = new JButton(nextIcon);
 		previous = new JButton(prevIcon);
@@ -163,6 +196,14 @@ public class SpritePart extends JPanel {
 
 				currentOption = options.get(currentIndex);
 				option.setText(currentOption.getOptionDisplay());
+
+				if (descriptor.toLowerCase().equals("eyes")) {
+					screenRef.setEyePart(currentOption.getOptionID());
+				} else if (descriptor.toLowerCase().equals("hair")) {
+					screenRef.setHairPart(currentOption.getOptionID());
+				} else {
+					Log.print("ERROR");
+				}
 
 			}
 
@@ -188,63 +229,125 @@ public class SpritePart extends JPanel {
 		nextContainer.add(next);
 		prevContainer.add(previous);
 
+		descriptionContainer.add(description);
+
+		selector.add(descriptionContainer);
 		selector.add(prevContainer);
 
 		String opt = currentOption.getOptionDisplay();
 
-		option = new JLabel(opt);
+		option = new JLabel(opt, SwingConstants.CENTER);
 
 		option.setFont(CharacterCreationScreen.font);
 		option.setForeground(Color.white);
 
 		textContainer.add(option);
+		textContainer.setBorder(BorderFactory.createLineBorder(Color.blue));
 
 		selector.add(textContainer);
 
 		selector.add(nextContainer);
 
-		primaryColorBtn = new JButton();
-		primaryColorBtn.setBackground(primaryColor);
-		primaryColorBtn.setBorderPainted(false);
-		primaryColorBtn.setOpaque(true);
+		drawColorSelectors();
+		add(selector, BorderLayout.WEST);
+		add(colors, BorderLayout.EAST);
 
-		primaryColorBtn.addActionListener(new ActionListener() {
+	}
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
+	public void drawColorSelectors() {
 
-				if (showPrimarySliders) {
+		JPanel primaryContainer = new JPanel();
+		primaryContainer.setOpaque(false);
+		primaryContainer.setBorder(BorderFactory.createLineBorder(Color.yellow));
+		primaryContainer.setLayout(new GridLayout(1, 1));
+		JPanel secondaryContainer = new JPanel();
+		secondaryContainer.setOpaque(false);
+		secondaryContainer.setBorder(BorderFactory.createLineBorder(Color.yellow));
+		secondaryContainer.setLayout(new GridLayout(1, 1));
 
-					showPrimarySliders = false;
+		if (colorCount == 1) {
+			primaryColorBtn = new JButton();
+			primaryColorBtn.setBackground(primaryColor);
+			primaryColorBtn.setBorderPainted(false);
+			primaryColorBtn.setOpaque(true);
 
-					screenRef.removeRGBPanel();
-					screenRef.validate();
-					screenRef.repaint();
+			primaryColorBtn.addActionListener(new ActionListener() {
 
-				} else {
+				@Override
+				public void actionPerformed(ActionEvent e) {
 
-					showPrimarySliders = true;
-					showSecondarySliders = false;
-					screenRef.removeRGBPanel();
-					screenRef.getRGBPanel().add(primarySliders);
+					if (showPrimarySliders) {
 
-					screenRef.validate();
-					screenRef.repaint();
+						showPrimarySliders = false;
+
+						optionPanel.removeRGBSliders();
+						optionPanel.validate();
+						optionPanel.repaint();
+
+					} else {
+
+						showPrimarySliders = true;
+						showSecondarySliders = false;
+						optionPanel.removeRGBSliders();
+						optionPanel.getRGBPanel().add(primarySliders);
+
+						optionPanel.validate();
+						optionPanel.repaint();
+					}
+
 				}
 
-			}
+			});
 
-		});
+			primaryContainer.add(primaryColorBtn);
 
-		colors.add(primaryColorBtn);
+			colors.add(primaryContainer, BorderLayout.CENTER);
+		} else if (colorCount == 2) {
 
-		if (secondaryColor != null) {
+			System.out.println("COLOR COUNT IS 2");
+
+			primaryColorBtn = new JButton();
+			primaryColorBtn.setBackground(primaryColor);
+			primaryColorBtn.setBorderPainted(false);
+			primaryColorBtn.setOpaque(true);
+
+			primaryColorBtn.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+
+					if (showPrimarySliders) {
+
+						showPrimarySliders = false;
+
+						optionPanel.removeRGBSliders();
+						optionPanel.validate();
+						optionPanel.repaint();
+
+					} else {
+
+						showPrimarySliders = true;
+						showSecondarySliders = false;
+						optionPanel.removeRGBSliders();
+						optionPanel.getRGBPanel().add(primarySliders);
+
+						optionPanel.validate();
+						optionPanel.repaint();
+					}
+
+				}
+
+			});
+
+			primaryContainer.add(primaryColorBtn);
+
+			colors.add(primaryContainer, BorderLayout.NORTH);
+
 			secondaryColorBtn = new JButton();
 			secondaryColorBtn.setBackground(secondaryColor);
+
 			secondaryColorBtn.setBorderPainted(false);
 			secondaryColorBtn.setOpaque(true);
-
-			colors.add(secondaryColorBtn);
 
 			secondaryColorBtn.addActionListener(new ActionListener() {
 
@@ -254,36 +357,69 @@ public class SpritePart extends JPanel {
 
 						showSecondarySliders = false;
 
-						screenRef.removeRGBPanel();
-						screenRef.validate();
-						screenRef.repaint();
+						optionPanel.removeRGBSliders();
+						optionPanel.validate();
+						optionPanel.repaint();
 
 					} else {
 
 						showSecondarySliders = true;
 						showPrimarySliders = false;
-						screenRef.removeRGBPanel();
-						screenRef.getRGBPanel().add(secondarySliders);
-						screenRef.validate();
-						screenRef.repaint();
+						optionPanel.removeRGBSliders();
+						optionPanel.getRGBPanel().add(secondarySliders);
+						optionPanel.validate();
+						optionPanel.repaint();
 					}
 
 				}
 
 			});
-		}
 
-		add(selector, BorderLayout.WEST);
-		add(colors, BorderLayout.EAST);
+			secondaryContainer.add(secondaryColorBtn);
+
+			colors.add(secondaryContainer, BorderLayout.SOUTH);
+
+		}
 
 	}
 
-	public void updateColor(Color c) {
-		primaryColorBtn.setBackground(c);
-		primaryColorBtn.validate();
-		primaryColorBtn.repaint();
+	public void updateColor(Color c, int colorCode) {
 
-		main.updateEyes(c.getRed(), c.getGreen(), c.getBlue());
+		if (descriptor.toLowerCase().equals("eyes")) {
+
+			if (colorCode == 1) {
+				primaryColorBtn.setBackground(c);
+				primaryColorBtn.validate();
+				primaryColorBtn.repaint();
+
+				main.updateEyes(c.getRed(), c.getGreen(), c.getBlue(), 1);
+
+			} else if (colorCode == 2) {
+
+				secondaryColorBtn.setBackground(c);
+				secondaryColorBtn.validate();
+				secondaryColorBtn.repaint();
+
+				main.updateEyes(c.getRed(), c.getGreen(), c.getBlue(), 2);
+			}
+
+		} else if (descriptor.toLowerCase().equals("hair")) {
+			if (colorCode == 1) {
+				primaryColorBtn.setBackground(c);
+				primaryColorBtn.validate();
+				primaryColorBtn.repaint();
+
+				main.updateHair(c.getRed(), c.getGreen(), c.getBlue(), 1);
+
+			} else if (colorCode == 2) {
+
+				secondaryColorBtn.setBackground(c);
+				secondaryColorBtn.validate();
+				secondaryColorBtn.repaint();
+
+				main.updateHair(c.getRed(), c.getGreen(), c.getBlue(), 2);
+			}
+		}
 
 	}
 }

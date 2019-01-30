@@ -14,7 +14,7 @@ public class LoginPanel extends JPanel{
 	Image image;
 
 	
-	
+
 	public LoginPanel() {
 		
 		try {

@@ -14,11 +14,11 @@ public class Options {
 		eyeOptions.add(new Option(0, "Rounded", Color.BLUE));
 		eyeOptions.add(new Option(1, "HardStare", Color.RED));
 		eyeOptions.add(new Option(2, "CuteEyes", Color.GREEN));
-
+		
 		hairOptions = new ArrayList<Option>();
 
-		hairOptions.add(new Option(0, "Styled", Color.BLACK));
-		hairOptions.add(new Option(1, "Long", Color.GREEN));
+		hairOptions.add(new Option(0, "Styled", Color.BLACK, Color.GREEN));
+		hairOptions.add(new Option(1, "Long", Color.GREEN, Color.BLUE));
 	}
 
 }

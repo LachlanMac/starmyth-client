@@ -19,7 +19,7 @@ public class CharacterScreen extends JFrame {
 
 	JPanel currentScreen;
 
-	public static int screenWidth = 960;
+	public static int screenWidth = 1200;
 	public static int screenHeight = 720;
 
 	ArrayList<LocalPlayerData> data;

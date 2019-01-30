@@ -26,16 +26,17 @@ public class RGBSlider extends JPanel {
 
 	SpritePart part;
 
-	private int red, green, blue;
+	private int red, green, blue, type;
 
-	public RGBSlider(int red, int green, int blue) {
+	public RGBSlider(int red, int green, int blue, int type) {
 
 		this.red = red;
 		this.green = green;
 		this.blue = blue;
+		this.type = type;
 
 		buildUI();
-
+		
 		title = new JPanel();
 		// title.setLayout(new GridLayout(1, 1));
 		titleLabel = new JLabel("Primary Color");
@@ -153,7 +154,7 @@ public class RGBSlider extends JPanel {
 			return;
 		}
 
-		part.updateColor(new Color(red, green, blue));
+		part.updateColor(new Color(red, green, blue), type);
 
 		colorPreview.setBackground(new Color(red, green, blue));
 

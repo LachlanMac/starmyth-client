@@ -26,6 +26,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.google.gson.*;
 import com.pineconeindustries.client.Client;
 import com.pineconeindustries.client.data.LocalPlayerData;
+import com.pineconeindustries.client.desktop.CharacterList;
 import com.pineconeindustries.client.desktop.character.CharacterScreen;
 import com.pineconeindustries.client.desktop.debug.Debug;
 import com.pineconeindustries.client.desktop.ecryption.LCrypto;
@@ -38,7 +39,10 @@ public class LoginClient extends JFrame {
 	JLabel userLabel, passwordLabel;
 	JFrame frameReference;
 
-	
+	public static int ACCOUNT_ID = 0;
+
+	public static String encryptedUser, encryptedPass;
+
 	public LoginClient() {
 
 		this.setSize(700, 360);
@@ -49,7 +53,7 @@ public class LoginClient extends JFrame {
 
 		this.frameReference = this;
 	}
-	
+
 	public void buildGUI() {
 
 		Font font = new Font("Verdana", Font.BOLD, 16);
@@ -125,8 +129,12 @@ public class LoginClient extends JFrame {
 				} else {
 
 					try {
-						url = new URL("http://" + Client.LOGIN_SERVER_IP + "/authserver/auth/" + LCrypto.encrypt(user)
-								+ "/" + LCrypto.encrypt(password));
+
+						encryptedUser = LCrypto.encrypt(user);
+						encryptedPass = LCrypto.encrypt(password);
+
+						url = new URL("http://" + Client.LOGIN_SERVER_IP + "/authserver/auth/" + encryptedUser + "/"
+								+ encryptedPass);
 
 						HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
@@ -153,34 +161,34 @@ public class LoginClient extends JFrame {
 
 					Gson g = new Gson();
 
-					ArrayList<LocalPlayerData> dataList = new ArrayList<LocalPlayerData>();
+					CharacterList list = g.fromJson(sb.toString(), CharacterList.class);
 
-					LocalPlayerData temp = g.fromJson(sb.toString(), LocalPlayerData.class);
-					LocalPlayerData data = temp;
+					System.out.println(list.getName1());
 
-					if (temp.getStatus().equals("ok")) {
+					ArrayList<LocalPlayerData> dataList = list.getLocalPlayerData();
 
-						dataList.add(data);
+					if (dataList.size() != 0) {
 
+						ACCOUNT_ID = dataList.get(0).getId();
+
+						System.out.println(ACCOUNT_ID + "    ID???");
 						new CharacterScreen(dataList);
-
 						frameReference.dispose();
-
 					} else {
 
-						if (temp.getStatus().equals("nocharacter")) {
-
+						if (list.getAccountID() != 0) {
+							ACCOUNT_ID = list.getAccountID();
 							new CharacterScreen(dataList);
+							frameReference.dispose();
 
 						} else {
-							System.out.println("Login failed: " + temp.getStatus());
 
+							System.exit(0);
 						}
 
 					}
 
 				}
-
 			}
 
 		});

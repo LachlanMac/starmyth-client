@@ -18,14 +18,14 @@ public class Option {
 		colors = 2;
 
 	}
-
+	
 	public Option(int optionID, String optionDisplay, Color primaryColor) {
 		this.optionID = optionID;
 		this.optionDisplay = optionDisplay;
 		this.primaryColor = primaryColor;
 		colors = 1;
 	}
-
+	
 	public int getOptionID() {
 		return optionID;
 	}

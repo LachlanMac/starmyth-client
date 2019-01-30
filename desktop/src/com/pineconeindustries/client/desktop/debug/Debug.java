@@ -22,7 +22,7 @@ public class Debug {
 		case 1:
 			data.setCharID(998);
 			data.setId(1001);
-			data.setModel(1);
+			data.setModel("1");
 			data.setSector(27422);
 			data.setStatus("ok");
 			data.setUser("testclient1");
@@ -33,7 +33,7 @@ public class Debug {
 		case 2:
 			data.setCharID(999);
 			data.setId(1002);
-			data.setModel(1);
+			data.setModel("1");
 			data.setSector(27422);
 			data.setStatus("ok");
 			data.setUser("testclient2");

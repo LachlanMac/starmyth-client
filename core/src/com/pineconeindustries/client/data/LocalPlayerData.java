@@ -1,13 +1,13 @@
 package com.pineconeindustries.client.data;
 
 public class LocalPlayerData {
-	private String name, user;
+	private String name, user, model;
 	private String status;
-	private int charID, id, model, sector;
+	private int charID, id, sector;
 	private float x, y;
 
-	public LocalPlayerData(int charID, int id, int model, String name, int sector, String status, String user, float x,
-			float y) {
+	public LocalPlayerData(int charID, int id, String model, String name, int sector, String status, String user,
+			float x, float y) {
 		this.charID = charID;
 		this.id = id;
 		this.model = model;
@@ -64,11 +64,11 @@ public class LocalPlayerData {
 		this.id = id;
 	}
 
-	public int getModel() {
+	public String getModel() {
 		return model;
 	}
 
-	public void setModel(int model) {
+	public void setModel(String model) {
 		this.model = model;
 	}
 

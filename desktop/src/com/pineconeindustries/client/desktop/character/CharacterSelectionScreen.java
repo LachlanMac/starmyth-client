@@ -46,7 +46,7 @@ public class CharacterSelectionScreen extends JPanel {
 		bufferW = new JPanel();
 		bufferE = new JPanel();
 		bottomPanel = new JPanel();
-
+		
 		try {
 			image = ImageIO.read(new File("textures/lachlangalaxydark.png"));
 		} catch (IOException e) {

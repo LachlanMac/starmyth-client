@@ -6,18 +6,36 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
 
-import com.pineconeindustries.client.desktop.character.ColorSlider.sprite_part;
+import com.google.gson.Gson;
+import com.pineconeindustries.client.Client;
+import com.pineconeindustries.client.data.LocalPlayerData;
+import com.pineconeindustries.client.desktop.CharacterList;
 import com.pineconeindustries.client.desktop.character.options.Options;
+import com.pineconeindustries.client.desktop.ecryption.LCrypto;
+import com.pineconeindustries.client.desktop.login.LoginClient;
+import com.pineconeindustries.client.models.CharacterModel;
+import com.pineconeindustries.client.utils.HexConversions;
 
 public class CharacterCreationScreen extends JPanel {
 
@@ -25,23 +43,31 @@ public class CharacterCreationScreen extends JPanel {
 	CharacterScreen screen;
 	BufferedImage image;
 
-	CharacterSprite sprite;
+	CharacterSpritePanel sprite;
+	CharacterOptionsPanel options;
 
-	JPanel eyesPanel, sliderPanel, rgbPanel;
+	JPanel eyesPanel, sliderPanel, rgbPanel, leftPanel, rightPanel, namePanel;
 
 	JButton eyesNext, eyesPrevious, hairNext, hairPrevious;
-
+	JTextField characterName;
 	JSlider eyesRed, eyesBlue, eyesGreen;
 
-	ColorSlider eyeSlider, hairSlider, shirtSlider, pantsSlider;
-
 	RGBSlider test;
+
+	int eyePart, hairPart, racePart;
 
 	public static Font font = new Font("Verdana", Font.BOLD, 16);
 
 	public static final int COLUMNS = 8;
 
 	public CharacterCreationScreen(CharacterScreen screen) {
+
+		this.racePart = 1;
+		this.eyePart = 0;
+		this.hairPart = 0;
+
+		CharacterSpritePanel.debug = true;
+		CharacterOptionsPanel.debug = true;
 
 		Options.generateOptions();
 
@@ -58,45 +84,122 @@ public class CharacterCreationScreen extends JPanel {
 
 		this.setLayout(new BorderLayout());
 
-		sliderPanel = new JPanel();
-		sliderPanel.setLayout(new GridLayout(COLUMNS, 1, 0, 0));
+		rightPanel = new JPanel();
+		rightPanel.setPreferredSize(new Dimension(CharacterScreen.screenWidth / 2, CharacterScreen.screenHeight));
+		rightPanel.setOpaque(false);
 
-		sliderPanel.setPreferredSize(new Dimension(CharacterScreen.screenWidth / 2, CharacterScreen.screenHeight));
+		leftPanel = new JPanel();
+		leftPanel.setPreferredSize(new Dimension(CharacterScreen.screenWidth / 2, CharacterScreen.screenHeight));
+		leftPanel.setLayout(new BorderLayout());
+		leftPanel.setOpaque(false);
 
 		createSpriteDisplayPanel();
-		createEyeSelectorPanel();
-		createRGBPanel();
+		createCharacterOptionsPanel();
 
-		// debug
+		leftPanel.add(sprite, BorderLayout.NORTH);
 
-		sliderPanel.setBorder(BorderFactory.createLineBorder(Color.PINK));
-		sprite.setBorder(BorderFactory.createLineBorder(Color.PINK));
-		rgbPanel.setBorder(BorderFactory.createLineBorder(Color.PINK));
+		namePanel = new JPanel();
+		namePanel.setOpaque(false);
+		namePanel.setPreferredSize(
+				new Dimension(CharacterScreen.screenWidth / 2, (int) (CharacterScreen.screenHeight * .15f)));
 
-		sliderPanel.setOpaque(false);
-		rgbPanel.setOpaque(false);
-		sprite.setOpaque(false);
+		namePanel.add(new JLabel("Name"));
 
-		this.add(sliderPanel, BorderLayout.EAST);
-		this.add(sprite, BorderLayout.WEST);
-		this.add(rgbPanel, BorderLayout.SOUTH);
-	}
+		characterName = new JTextField("Enter Name");
+		namePanel.add(characterName);
+		JButton submit = new JButton("Submit");
+		StringBuilder response = new StringBuilder();
+		submit.addActionListener(new ActionListener() {
 
-	public void createRGBPanel() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
 
-		rgbPanel = new JPanel();
-		rgbPanel.setPreferredSize(new Dimension(CharacterScreen.screenWidth, 200));
-		test = new RGBSlider(100, 31, 200);
+				StringBuilder sb = new StringBuilder();
+				sb.append(Integer.toString(racePart) + "x" + HexConversions.hexFromColor(sprite.getRacePrimary()) + "x"
+						+ HexConversions.hexFromColor(sprite.getRaceSecondary()) + "-");
+				sb.append(Integer.toString(hairPart) + "x" + HexConversions.hexFromColor(sprite.getHairPrimary()) + "x"
+						+ HexConversions.hexFromColor(sprite.getHairSecondary()) + "-");
+				sb.append(Integer.toString(eyePart) + "x" + HexConversions.hexFromColor(sprite.getEyePrimary()) + "x"
+						+ HexConversions.hexFromColor(sprite.getEyeSecondary()));
 
-		SpritePart eyes = new SpritePart(this, sprite, Color.blue, Options.eyeOptions);
-		SpritePart hair = new SpritePart(this, sprite, Color.DARK_GRAY, Color.YELLOW, Options.hairOptions);
+				try {
+					URL url = new URL("http://" + Client.LOGIN_SERVER_IP + "/create-character/" + LoginClient.ACCOUNT_ID
+							+ "/" + characterName.getText() + "/" + sb.toString());
 
-		sliderPanel.add(eyes);
-		sliderPanel.add(hair);
+					HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
-		test.setSpritePart(eyes);
+					con.setRequestMethod("GET");
 
-		// rgbPanel.add(test);
+					BufferedReader in = null;
+					try {
+						in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+					} catch (FileNotFoundException fnf) {
+						System.out.println("No data found");
+					}
+					String line;
+					while ((line = in.readLine()) != null) {
+						response.append(line);
+					}
+					in.close();
+				} catch (MalformedURLException murl) {
+					murl.printStackTrace();
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
+
+				StringBuilder response2 = new StringBuilder();
+
+				try {
+
+					URL url = new URL("http://" + Client.LOGIN_SERVER_IP + "/authserver/auth/"
+							+ LoginClient.encryptedUser + "/" + LoginClient.encryptedPass);
+
+					HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+					con.setRequestMethod("GET");
+
+					BufferedReader in = null;
+					try {
+						in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+					} catch (FileNotFoundException fnf) {
+						System.out.println("No data found");
+					}
+					String line;
+					while ((line = in.readLine()) != null) {
+						response2.append(line);
+					}
+					in.close();
+				} catch (MalformedURLException murl) {
+					murl.printStackTrace();
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
+
+				System.out.println(response2.toString());
+
+				Gson g = new Gson();
+
+				CharacterList list = g.fromJson(response2.toString(), CharacterList.class);
+
+				System.out.println(list.getName1());
+
+				ArrayList<LocalPlayerData> dataList = list.getLocalPlayerData();
+
+				new CharacterScreen(dataList);
+				screen.dispose();
+
+			}
+
+		});
+
+		namePanel.add(submit);
+
+		leftPanel.add(namePanel, BorderLayout.SOUTH);
+
+		rightPanel.add(options);
+
+		this.add(leftPanel, BorderLayout.WEST);
+		this.add(rightPanel, BorderLayout.EAST);
 
 	}
 
@@ -108,20 +211,18 @@ public class CharacterCreationScreen extends JPanel {
 		rgbPanel.removeAll();
 	}
 
-	public void createEyeSelectorPanel() {
-
-		eyeSlider = new ColorSlider(sprite, sprite_part.eyeColor);
-		hairSlider = new ColorSlider(sprite, sprite_part.eyeColor);
-		shirtSlider = new ColorSlider(sprite, sprite_part.eyeColor);
-		pantsSlider = new ColorSlider(sprite, sprite_part.eyeColor);
+	public void createSpriteDisplayPanel() {
+		sprite = new CharacterSpritePanel();
+		sprite.setPreferredSize(new Dimension(CharacterScreen.screenWidth / 2, CharacterScreen.screenHeight));
+		sprite.buildUI();
 
 	}
 
-	public void createSpriteDisplayPanel() {
-		sprite = new CharacterSprite();
-		sliderPanel.add(sprite, BorderLayout.WEST);
-		sprite.setPreferredSize(new Dimension(CharacterScreen.screenWidth / 2, CharacterScreen.screenHeight));
+	public void createCharacterOptionsPanel() {
 
+		options = new CharacterOptionsPanel(this);
+		options.setPreferredSize(new Dimension(CharacterScreen.screenWidth / 2, CharacterScreen.screenHeight));
+		options.buildUI();
 	}
 
 	public void setShowSlider(boolean showSlider) {
@@ -137,6 +238,22 @@ public class CharacterCreationScreen extends JPanel {
 
 		super.paintComponent(g);
 		g.drawImage(image, 0, 0, null);
+	}
+
+	public CharacterSpritePanel getSpritePanel() {
+		return sprite;
+	}
+
+	public void setEyePart(int id) {
+		this.eyePart = id;
+	}
+
+	public void setRacePart(int id) {
+		this.racePart = id;
+	}
+
+	public void setHairPart(int id) {
+		this.hairPart = id;
 	}
 
 }
