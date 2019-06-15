@@ -284,7 +284,6 @@ public class NetworkLayer {
 					@Override
 					public void run() {
 						zone.addShip(ship);
-
 					}
 				});
 

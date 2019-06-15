@@ -50,7 +50,9 @@ project(":desktop") {
         compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
         compile "com.badlogicgames.gdx:gdx-controllers-desktop:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers-platform:$gdxVersion:natives-desktop"
+        compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
         implementation 'com.google.code.gson:gson:2.8.5'
+        
     }
 }
 
@@ -65,6 +67,7 @@ project(":core") {
         compile "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
+        compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
         implementation 'com.google.code.gson:gson:2.8.5'
         
     }
