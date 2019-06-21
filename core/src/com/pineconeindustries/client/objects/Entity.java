@@ -11,8 +11,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.AnimationSet;
 import com.pineconeindustries.client.log.Log;
-import com.pineconeindustries.client.manager.Game;
+import com.pineconeindustries.client.manager.GameController;
 import com.pineconeindustries.client.manager.InputManager;
+import com.pineconeindustries.shared.data.GameData;
 
 public class Entity extends GameObject {
 
@@ -26,7 +27,7 @@ public class Entity extends GameObject {
 	Animation<TextureRegion> currentFrame;
 	Vector2 renderLoc, lastDirectionFaced;
 
-	public Entity(String name, Vector2 loc, Game game, int factionID, int structureID) {
+	public Entity(String name, Vector2 loc, GameData game, int factionID, int structureID) {
 		super(name, loc, game);
 
 		interval = 0;
@@ -65,9 +66,7 @@ public class Entity extends GameObject {
 
 	}
 
-	public void netMove() {
 
-	}
 
 	public void updateLocalLoc() {
 		sectorX = (int) this.loc.x / 8192;

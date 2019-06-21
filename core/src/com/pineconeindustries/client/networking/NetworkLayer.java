@@ -11,7 +11,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.pineconeindustries.client.data.ShipData;
 import com.pineconeindustries.client.data.StationData;
 import com.pineconeindustries.client.log.Log;
-import com.pineconeindustries.client.manager.Game;
+import com.pineconeindustries.client.manager.GameController;
 import com.pineconeindustries.client.objects.NPC;
 import com.pineconeindustries.client.objects.Player;
 import com.pineconeindustries.client.objects.PlayerMP;
@@ -19,10 +19,11 @@ import com.pineconeindustries.client.objects.PlayerMPLight;
 import com.pineconeindustries.client.objects.Ship;
 import com.pineconeindustries.client.objects.Station;
 import com.pineconeindustries.client.ui.UserInterface;
-import com.pineconeindustries.client.zones.Zone;
 
 public class NetworkLayer {
 
+	
+	/*
 	static int ROOM_INFO_ATTEMPTS = 0;
 
 	DecimalFormat df = new DecimalFormat("#.00");
@@ -30,12 +31,13 @@ public class NetworkLayer {
 	Player player;
 	Zone zone;
 	Connection conn;
-	Game game;
+	GameController game;
 	UserInterface ui;
 
 	Executor executor;
 
-	public NetworkLayer(Player player, Zone zone, Connection conn, Game game, UserInterface ui) {
+	
+	public NetworkLayer(Player player, Zone zone, Connection conn, GameController game, UserInterface ui) {
 		this.player = player;
 		this.zone = zone;
 		this.conn = conn;
@@ -492,7 +494,7 @@ public class NetworkLayer {
 
 	}
 
-	public Game getGame() {
+	public GameController getGame() {
 		return game;
 	}
 
@@ -627,10 +629,10 @@ class AddPlayerThread implements Runnable {
 
 	String playerName;
 	Vector2 loc;
-	Game game;
+	GameController game;
 	int playerID;
 
-	public AddPlayerThread(String playerName, Vector2 loc, Game game, int playerID) {
+	public AddPlayerThread(String playerName, Vector2 loc, GameController game, int playerID) {
 
 		this.playerName = playerName;
 		this.loc = loc;
@@ -643,5 +645,5 @@ class AddPlayerThread implements Runnable {
 		// TODO Auto-generated method stub
 
 	}
-
+*/
 }

@@ -3,7 +3,7 @@ package com.pineconeindustries.client;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.pineconeindustries.client.log.Log;
-import com.pineconeindustries.client.manager.Game;
+import com.pineconeindustries.client.manager.GameController;
 
 public class GameInput implements InputProcessor {
 
@@ -16,9 +16,9 @@ public class GameInput implements InputProcessor {
 	public static int CENTER_CAMERA = Input.Keys.Y;
 	public static int MOUSE_DOWN = Input.Buttons.LEFT;
 
-	Game game;
+	GameController game;
 
-	public GameInput(Game game) {
+	public GameInput(GameController game) {
 		this.game = game;
 	}
 

@@ -26,8 +26,11 @@ import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.pineconeindustries.client.config.NetworkConfiguration;
 import com.pineconeindustries.client.data.LocalPlayerData;
+import com.pineconeindustries.client.galaxy.Sector;
 import com.pineconeindustries.client.log.Log;
-import com.pineconeindustries.client.manager.Game;
+import com.pineconeindustries.client.manager.GameController;
+import com.pineconeindustries.client.manager.LAssetManager;
+import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.Connection;
 import com.pineconeindustries.client.networking.NetworkLayer;
 import com.pineconeindustries.client.objects.NPC;
@@ -36,7 +39,8 @@ import com.pineconeindustries.client.objects.PlayerMP;
 import com.pineconeindustries.client.objects.Ship;
 import com.pineconeindustries.client.objects.Station;
 import com.pineconeindustries.client.ui.UserInterface;
-import com.pineconeindustries.client.zones.Zone;
+
+import com.pineconeindustries.shared.data.GameData;
 
 import box2dLight.DirectionalLight;
 import box2dLight.Light;
@@ -64,8 +68,10 @@ public class Client extends ApplicationAdapter {
 	Viewport viewport;
 	private boolean loading = true;
 
-	Game game;
-	Zone zone;
+	GameController game;
+
+	GameData gameData;
+
 	Sprite bg;
 	Sprite testShip;
 
@@ -84,15 +90,19 @@ public class Client extends ApplicationAdapter {
 	RayHandler rh;
 	World world;
 
+	// NEW
+
+	LogicController controller = LogicController.getInstance();
+
 	public Client(LocalPlayerData data) {
 
 		this.data = data;
 
-		System.out.println(this.data.toString());
+		game = new GameController();
 
-		game = new Game();
+		gameData = GameData.getInstance();
 
-		loadSettings();
+		// loadSettings();
 
 		startNetwork();
 
@@ -147,27 +157,14 @@ public class Client extends ApplicationAdapter {
 
 		ui = new UserInterface(stage);
 
-		game.Assets().loadTextures();
-		game.Assets().finishLoading();
-		game.Assets().loadAnimations();
+		gameData.registerAssetManager(new LAssetManager());
+		gameData.loadAssets();
 
-		game.Assets().finishLoading();
-		game.Assets().update();
-		game.Assets().loadShipTiles();
-
-		System.out.println(data.getX() + "   " + data.getY());
-
-		player = new Player(data.getName(), new Vector2(data.getX(), data.getY()), game, 1, 0, data.getCharID(),
+		player = new Player(data.getName(), new Vector2(data.getX(), data.getY()), gameData, 1, 0, data.getCharID(),
 				camera);
 
 		player.setSectorID(data.getSector());
 
-		zone = new Zone("TESTZONE", data.getSector(), game);
-
-		lnet = new NetworkLayer(player, zone, conn, game, ui);
-		conn.setNetworkLayer(lnet);
-
-		game.setZone(zone);
 		game.setUI(ui);
 		game.setCamera(camera);
 		player.setLnet(lnet);
@@ -177,6 +174,11 @@ public class Client extends ApplicationAdapter {
 		game.setStage(stage);
 
 		player.enableTickRender();
+
+		Sector s = new Sector(player.getSectorID());
+		s.registerPlayer(player);
+		LogicController.getInstance().registerSector(s);
+		LogicController.getInstance().registerConnection(conn);
 
 		rh = new RayHandler(world);
 
@@ -190,6 +192,8 @@ public class Client extends ApplicationAdapter {
 	}
 
 	public void update() {
+
+		LogicController.getInstance().getSector().update();
 
 		if (Gdx.input.isKeyPressed(Input.Keys.NUM_9)) {
 			camera.zoom += 0.02;
@@ -205,23 +209,22 @@ public class Client extends ApplicationAdapter {
 
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+		update();
 		batch.setProjectionMatrix(fixedCamera.combined);
 
 		batch.begin();
 
 		batch.draw(bg, -(WORLD_WIDTH / 2), -(WORLD_HEIGHT / 2), WORLD_WIDTH, WORLD_HEIGHT);
-
+		LogicController.getInstance().getSector().render(batch);
 		batch.end();
 
-		game.render(batch, shapeBatch);
+		// game.render(batch, shapeBatch);
 
 		rh.setCombinedMatrix(camera);
 		rh.updateAndRender();
 		world.step(1 / 60f, 6, 2);
 	}
 
-	@Override
 	public void dispose() {
 		batch.dispose();
 		stage.dispose();

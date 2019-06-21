@@ -6,7 +6,7 @@ import java.io.File;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.pineconeindustries.server.Server;
+import com.pineconeindustries.server.ServerApp;
 
 public class ServerLauncher {
 
@@ -26,7 +26,7 @@ public class ServerLauncher {
 		config.foregroundFPS = 60;
 		config.samples = 4;
 		// config.fullscreen = true;
-		new LwjglApplication(new Server(), config);
+		new LwjglApplication(new ServerApp(), config);
 
 	}
 }

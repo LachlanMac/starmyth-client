@@ -8,7 +8,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.data.ShipData;
 import com.pineconeindustries.client.data.StationData;
 import com.pineconeindustries.client.data.StructureTileData;
-import com.pineconeindustries.client.manager.Game;
+import com.pineconeindustries.client.manager.GameController;
+import com.pineconeindustries.shared.data.GameData;
 
 public class Station extends GameObject {
 
@@ -20,7 +21,7 @@ public class Station extends GameObject {
 
 	Vector2 interiorLoc;
 
-	public Station(String name, Vector2 loc, Game game, StationData data) {
+	public Station(String name, Vector2 loc, GameData game, StationData data) {
 		super(name, loc, game);
 		this.data = data;
 
@@ -46,15 +47,14 @@ public class Station extends GameObject {
 				tileLoc = new Vector2(interiorLoc.x + (x * StructureTileData.SHIP_TILE_SIZE),
 						interiorLoc.y + (y * StructureTileData.SHIP_TILE_SIZE));
 
-				if (tileLoc.dst(game.getPlayer().getLoc()) < 750) {
-					TextureRegion tr = game.Assets().getStructureTileByID(layout[x][y].getTileID());
-					if (tr != null) {
-
-						b.draw(tr, tileLoc.x, tileLoc.y);
-
-					}
+				// if (tileLoc.dst(game.getPlayer().getLoc()) < 750) {
+				TextureRegion tr = game.Assets().getStructureTileByID(layout[x][y].getTileID());
+				if (tr != null) {
+					b.draw(tr, tileLoc.x, tileLoc.y);
 
 				}
+
+				// }
 
 			}
 		}

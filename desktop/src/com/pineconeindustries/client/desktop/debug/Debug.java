@@ -40,6 +40,17 @@ public class Debug {
 			data.setX(0);
 			data.setY(0);
 			break;
+			
+		case 3:
+			data.setCharID(55);
+			data.setId(1002);
+			data.setModel("1");
+			data.setSector(8888);
+			data.setStatus("ok");
+			data.setUser("testclient2");
+			data.setX(100);
+			data.setY(100);
+			break;
 		default:
 			Log.print("Error loading test client data");
 			System.exit(0);

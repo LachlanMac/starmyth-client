@@ -11,9 +11,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.pineconeindustries.client.chat.Chatbox;
 import com.pineconeindustries.client.data.RoomData;
-import com.pineconeindustries.client.manager.Game;
+import com.pineconeindustries.client.manager.GameController;
 import com.pineconeindustries.client.manager.InputManager;
+import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.NetworkLayer;
+import com.pineconeindustries.client.networking.packets.PacketFactory;
+import com.pineconeindustries.shared.data.GameData;
 
 public class Player extends Entity {
 
@@ -37,7 +40,8 @@ public class Player extends Entity {
 
 	private float state = 0f;
 
-	public Player(String name, Vector2 loc, Game game, int factionID, int structureID, int playerID, Camera camera) {
+	public Player(String name, Vector2 loc, GameData game, int factionID, int structureID, int playerID,
+			Camera camera) {
 		super(name, loc, game, factionID, structureID);
 		this.camera = camera;
 		this.playerID = playerID;
@@ -102,9 +106,6 @@ public class Player extends Entity {
 			project.update();
 
 		}
-		if (chatbox == null || lnet == null) {
-			return;
-		}
 
 		if (!chatbox.isTyping())
 			move();
@@ -152,9 +153,6 @@ public class Player extends Entity {
 		if ((click = InputManager.mouseDown(InputManager.MOUSE_DOWN)) != null) {
 			Vector3 worldCoordinates = camera.unproject(new Vector3(click.x, click.y, 0));
 
-			projectiles.add(new Projectile("pew!", new Vector2(this.loc), game,
-					new Vector2(worldCoordinates.x, worldCoordinates.y)));
-
 		}
 
 		Vector2 movVector = new Vector2(x, y).nor();
@@ -165,19 +163,21 @@ public class Player extends Entity {
 			// do nothing
 		} else {
 
-			lnet.sendMove(playerID, convertedVector);
+			LogicController.getInstance()
+					.sendUDP(PacketFactory.makeMoveRequestPacket(convertedVector.x, convertedVector.y));
+			// lnet.sendMove(playerID, convertedVector);
 		}
 	}
 
 	public void transport(Vector2 destination) {
 
-		lnet.sendTransport(destination);
+		// lnet.sendTransport(destination);
 
 	}
 
 	public void sectorTransport(int sector, Vector2 destination) {
 
-		lnet.sendSectorTransport(sector, destination);
+		// lnet.sendSectorTransport(sector, destination);
 
 	}
 

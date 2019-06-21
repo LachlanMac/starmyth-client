@@ -5,13 +5,14 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.pineconeindustries.client.manager.Game;
+import com.pineconeindustries.client.manager.GameController;
 import com.pineconeindustries.client.manager.InputManager;
+import com.pineconeindustries.shared.data.GameData;
 
 public abstract class GameObject {
 
 	Vector2 loc;
-	Game game;
+	GameData game;
 
 	protected boolean debugMode = false;
 
@@ -24,7 +25,7 @@ public abstract class GameObject {
 
 	private String name;
 
-	public GameObject(String name, Vector2 loc, Game game) {
+	public GameObject(String name, Vector2 loc, GameData game) {
 		this.name = name;
 		this.loc = loc;
 		this.game = game;
@@ -47,14 +48,6 @@ public abstract class GameObject {
 	public void setLoc(Vector2 loc) {
 		this.loc = loc;
 		updateBounds();
-	}
-
-	public Game getGame() {
-		return game;
-	}
-
-	public void setGame(Game game) {
-		this.game = game;
 	}
 
 	public String getName() {

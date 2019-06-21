@@ -6,7 +6,8 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.pineconeindustries.client.manager.Game;
+import com.pineconeindustries.client.manager.GameController;
+import com.pineconeindustries.shared.data.GameData;
 
 public class Projectile extends GameObject {
 
@@ -16,7 +17,7 @@ public class Projectile extends GameObject {
 	Texture plasma;
 	Sprite pSprite;
 
-	public Projectile(String name, Vector2 loc, Game game, Vector2 direction) {
+	public Projectile(String name, Vector2 loc, GameData game, Vector2 direction) {
 		super(name, loc, game);
 		this.direction = direction;
 		this.start = loc;

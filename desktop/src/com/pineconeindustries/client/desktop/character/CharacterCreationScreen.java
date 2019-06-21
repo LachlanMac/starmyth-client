@@ -35,7 +35,7 @@ import com.pineconeindustries.client.desktop.character.options.Options;
 import com.pineconeindustries.client.desktop.ecryption.LCrypto;
 import com.pineconeindustries.client.desktop.login.LoginClient;
 import com.pineconeindustries.client.models.CharacterModel;
-import com.pineconeindustries.client.utils.HexConversions;
+import com.pineconeindustries.shared.utils.HexConversions;
 
 public class CharacterCreationScreen extends JPanel {
 

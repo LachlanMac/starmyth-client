@@ -39,7 +39,6 @@ public class Chatbox extends Table {
 
 	NetworkLayer lnet;
 
-	
 	public Chatbox(float widthPercent, float heightPercent, Skin skin, Stage stage) {
 		super(skin);
 
@@ -104,13 +103,13 @@ public class Chatbox extends Table {
 
 	public void sendAdminCmd(String msg) {
 
-		lnet.sendAdminCmd(msg);
+		// lnet.sendAdminCmd(msg);
 
 	}
 
 	public void sendMessage(String msg) {
 
-		lnet.sendLocalChat(msg);
+		// lnet.sendLocalChat(msg);
 
 	}
 

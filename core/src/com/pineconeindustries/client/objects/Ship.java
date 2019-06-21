@@ -11,7 +11,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.data.ShipData;
 import com.pineconeindustries.client.data.StructureTileData;
 import com.pineconeindustries.client.log.Log;
-import com.pineconeindustries.client.manager.Game;
+import com.pineconeindustries.client.manager.GameController;
+import com.pineconeindustries.shared.data.GameData;
 
 public class Ship extends GameObject {
 
@@ -25,7 +26,7 @@ public class Ship extends GameObject {
 
 	ArrayList<ZoneBox> zones;
 
-	public Ship(String name, Vector2 loc, Game game, ShipData data) {
+	public Ship(String name, Vector2 loc, GameData game, ShipData data) {
 		super(name, loc, game);
 		this.data = data;
 
@@ -64,15 +65,15 @@ public class Ship extends GameObject {
 				tileLoc = new Vector2(interiorLoc.x + (x * StructureTileData.SHIP_TILE_SIZE),
 						interiorLoc.y + (y * StructureTileData.SHIP_TILE_SIZE));
 
-				if (tileLoc.dst(game.getPlayer().getLoc()) < 750) {
-					TextureRegion tr = game.Assets().getStructureTileByID(layout[x][y].getTileID());
-					if (tr != null) {
+				// if (tileLoc.dst(game.getPlayer().getLoc()) < 750) {
+				TextureRegion tr = game.Assets().getStructureTileByID(layout[x][y].getTileID());
+				if (tr != null) {
 
-						b.draw(tr, tileLoc.x, tileLoc.y);
-
-					}
+					b.draw(tr, tileLoc.x, tileLoc.y);
 
 				}
+
+				// }
 
 			}
 		}
@@ -90,9 +91,6 @@ public class Ship extends GameObject {
 
 	@Override
 	public void update() {
-		for (ZoneBox b : zones) {
-			b.update(game.getPlayer());
-		}
 
 	}
 
@@ -104,9 +102,7 @@ public class Ship extends GameObject {
 
 	@Override
 	public void renderDebug(ShapeRenderer b) {
-		for (ZoneBox zone : zones) {
-			zone.renderDebug(b);
-		}
+
 	}
 
 }

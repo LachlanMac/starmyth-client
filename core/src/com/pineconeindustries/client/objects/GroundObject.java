@@ -3,11 +3,12 @@ package com.pineconeindustries.client.objects;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.pineconeindustries.client.manager.Game;
+import com.pineconeindustries.client.manager.GameController;
+import com.pineconeindustries.shared.data.GameData;
 
 public class GroundObject extends GameObject {
 
-	public GroundObject(String name, Vector2 loc, Game game) {
+	public GroundObject(String name, Vector2 loc, GameData game) {
 		super(name, loc, game);
 		// TODO Auto-generated constructor stub
 	}
