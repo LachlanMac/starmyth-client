@@ -52,26 +52,23 @@ public class Player extends Entity {
 
 	@Override
 	public void render(Batch b) {
+
 		state += Gdx.graphics.getDeltaTime();
-		
+
 		currentFrame = animSet.getAnimation(lastDirectionFaced, velocity);
-		
-		
+
 		if (velocity == 999) {
 
 			TextureRegion t = currentFrame.getKeyFrame(state, true);
 
 			b.draw(currentFrame.getKeyFrame(state, true), renderLoc.x, renderLoc.y, 32, 32, t.getRegionWidth(),
 					t.getRegionHeight(), 1, 1, 3f + (state * 100), false);
-			// b.draw(currentFrame.getKeyFrame(state, true), renderLoc.x, renderLoc.y);
+		
 		} else {
 			b.draw(currentFrame.getKeyFrame(state, true), renderLoc.x, renderLoc.y);
 		}
-
-		// b.draw(currentFrame.getKeyFrame(state, true), renderLoc.x, renderLoc.y);
-
 		font.draw(b, printVector(), loc.x, loc.y - 15);
-
+		
 		if (renderLoc.dst(loc) > 500) {
 			renderLoc = loc;
 		} else {
@@ -83,7 +80,7 @@ public class Player extends Entity {
 			framesSinceLastMove++;
 		}
 
-		if (getFramesSinceLastMove() > 6) {
+		if (getFramesSinceLastMove() > 20) {
 			if (velocity != 999)
 				velocity = 0;
 		}
@@ -165,8 +162,8 @@ public class Player extends Entity {
 			// do nothing
 		} else {
 
-			LogicController.getInstance()
-					.sendUDP(PacketFactory.makeMoveRequestPacket(convertedVector.x * Gdx.graphics.getDeltaTime(), convertedVector.y * Gdx.graphics.getDeltaTime()));
+			LogicController.getInstance().sendUDP(PacketFactory.makeMoveRequestPacket(
+					convertedVector.x * Gdx.graphics.getDeltaTime(), convertedVector.y * Gdx.graphics.getDeltaTime()));
 			// lnet.sendMove(playerID, convertedVector);
 		}
 	}

@@ -91,6 +91,7 @@ public class LogicController {
 					Net.getLocalPlayer().setVelocity(velocity);
 					Net.getLocalPlayer().setLastDirectionFaced(new Vector2(dirX, dirY));
 					Net.getLocalPlayer().setLoc(new Vector2(x, y));
+					Net.getLocalPlayer().setFramesSinceLastMove(0);
 
 				} else {
 
@@ -99,6 +100,7 @@ public class LogicController {
 						pmp.setVelocity(velocity);
 						pmp.setLastDirectionFaced(new Vector2(dirX, dirY));
 						pmp.setLoc(new Vector2(x, y));
+						pmp.setFramesSinceLastMove(0);
 					}
 				}
 
@@ -128,9 +130,7 @@ public class LogicController {
 						sector.addPlayer(new PlayerMP(name, new Vector2(0, 0), GameData.getInstance(), 0, 0, id));
 
 					}
-
 				}
-
 			}
 
 			sector.cleanPlayerList(ids);

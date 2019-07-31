@@ -116,11 +116,22 @@ public class LAssetManager extends AssetManager {
 	}
 
 	public AnimationSet getDefaultAnimations() {
-		return playerAnimations;
+		Texture t = get("textures/playerSS.png");
+
+		AnimationSet p = new AnimationSet(t);
+		p.loadAnimations();
+
+		return p;
+
 	}
 
 	public AnimationSet getPlayerAnimations() {
-		return playerAnimations;
+		Texture t = get("textures/playerSS.png");
+
+		AnimationSet p = new AnimationSet(t);
+		p.loadAnimations();
+
+		return p;
 	}
 
 }

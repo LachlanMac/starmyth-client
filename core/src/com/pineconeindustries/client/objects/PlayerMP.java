@@ -18,6 +18,7 @@ public class PlayerMP extends Entity {
 	private int playerID;
 	
 	private float lerp = 7f;
+	private float state = 0f;
 
 	public PlayerMP(String name, Vector2 loc, GameData game, int factionID, int structureID, int playerID) {
 		super(name, loc, game, factionID, structureID);
@@ -27,7 +28,6 @@ public class PlayerMP extends Entity {
 
 	}
 	
-
 
 	public void setAnimations() {
 		animSet = GameData.getInstance().Assets().getPlayerAnimations();
@@ -41,20 +41,33 @@ public class PlayerMP extends Entity {
 	@Override
 	public void render(Batch b) {
 
-		interval += Gdx.graphics.getDeltaTime();
+		state += Gdx.graphics.getDeltaTime();
+		
 		currentFrame = animSet.getAnimation(lastDirectionFaced, velocity);
+		
 		if (velocity == 999) {
 
-			TextureRegion t = currentFrame.getKeyFrame(interval, true);
+			TextureRegion t = currentFrame.getKeyFrame(state, true);
 
 			b.draw(currentFrame.getKeyFrame(interval, true), renderLoc.x, renderLoc.y, 32, 32, t.getRegionWidth(),
-					t.getRegionHeight(), 1, 1, 3f + (interval * 100), false);
+					t.getRegionHeight(), 1, 1, 3f + (state * 100), false);
 			// b.draw(currentFrame.getKeyFrame(state, true), renderLoc.x, renderLoc.y);
 		} else {
-			b.draw(currentFrame.getKeyFrame(interval, true), renderLoc.x, renderLoc.y);
+			b.draw(currentFrame.getKeyFrame(state, true), renderLoc.x, renderLoc.y);
 		}
 
-		if (getFramesSinceLastMove() > 6) {
+		if (renderLoc.dst(loc) > 500) {
+			renderLoc = loc;
+		} else {
+
+			float lerp = 15f;
+			Vector2 position = renderLoc;
+			renderLoc.x += (getLoc().x - position.x) * lerp * Gdx.graphics.getDeltaTime();
+			renderLoc.y += (getLoc().y - position.y) * lerp * Gdx.graphics.getDeltaTime();
+			framesSinceLastMove++;
+		}
+		
+		if (getFramesSinceLastMove() > 20) {
 			if (velocity != 999)
 
 				velocity = 0;
@@ -70,12 +83,6 @@ public class PlayerMP extends Entity {
 			setToDisconnect = true;
 		}
 
-		if (renderLoc.dst(loc) > 500) {
-			renderLoc = loc;
-		} else {
-			lerp();
-		}
-		framesSinceLastMove++;
 
 	}
 

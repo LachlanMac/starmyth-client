@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class AnimationSet {
 
-	public static final float CHARACTER_ANIMATION_SPEED = 0.2f;
+	public static final float CHARACTER_ANIMATION_SPEED = 0.15f;
 
 	Texture spriteSheet;
 	Animation<TextureRegion> idle_up, idle_down, idle_left, idle_right, mov_up, mov_down, mov_left, mov_right, dead;
@@ -50,7 +50,6 @@ public class AnimationSet {
 
 		// character is not moving
 		if (velocity == 0) {
-
 			if (direction.x > 0)
 				return idle_left;
 			if (direction.x < 0)
