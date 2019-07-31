@@ -1,11 +1,16 @@
 package com.pineconeindustries.client.manager;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.galaxy.Sector;
 import com.pineconeindustries.client.networking.Connection;
+import com.pineconeindustries.client.networking.Net;
 import com.pineconeindustries.client.networking.packets.Packets;
 import com.pineconeindustries.client.networking.packets.UDPPacket;
 import com.pineconeindustries.client.objects.Player;
+import com.pineconeindustries.client.objects.PlayerMP;
+import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.log.Log;
 
 public class LogicController {
@@ -44,7 +49,10 @@ public class LogicController {
 			String packetData = split[1];
 			parsePacket(packetID, packetData);
 		} catch (NumberFormatException e) {
-			Log.print("Invalid TCP Packet");
+			Log.print("Invalid TCP Packet " + data);
+			e.printStackTrace();
+		} catch (ArrayIndexOutOfBoundsException e) {
+			Log.print("Invalid TCP Pacekt :" + data);
 		}
 
 	}
@@ -64,28 +72,68 @@ public class LogicController {
 
 	public void parsePacket(int packetID, String packetData) {
 
+		String split[] = packetData.split("=");
+
 		switch (packetID) {
 
 		case Packets.MOVE_PACKET:
 
-			// TEMP
-			String split[] = packetData.split("=");
 			try {
 				int playerID = Integer.parseInt(split[0]);
 				float x = Float.parseFloat(split[1]);
 				float y = Float.parseFloat(split[2]);
-
 				float dirX = Float.parseFloat(split[3]);
 				float dirY = Float.parseFloat(split[4]);
 				float velocity = Float.parseFloat(split[5]);
 
-				sector.getPlayer().setVelocity(velocity);
-				sector.getPlayer().setLastDirectionFaced(new Vector2(dirX, dirY));
-				sector.getPlayer().setLoc(new Vector2(x, y));
+				if (Net.isLocalPlayer(playerID)) {
+
+					Net.getLocalPlayer().setVelocity(velocity);
+					Net.getLocalPlayer().setLastDirectionFaced(new Vector2(dirX, dirY));
+					Net.getLocalPlayer().setLoc(new Vector2(x, y));
+
+				} else {
+
+					PlayerMP pmp = Net.getPlayerMP(playerID);
+					if (pmp != null) {
+						pmp.setVelocity(velocity);
+						pmp.setLastDirectionFaced(new Vector2(dirX, dirY));
+						pmp.setLoc(new Vector2(x, y));
+					}
+				}
 
 			} catch (NumberFormatException e) {
 
 			}
+
+			break;
+
+		case Packets.PLAYER_LIST_PACKET:
+
+			ArrayList<Integer> ids = new ArrayList<Integer>();
+
+			for (String data : split) {
+
+				String[] playerData = data.split("#");
+
+				int id = Integer.parseInt(playerData[0]);
+				String name = playerData[1];
+
+				if (Net.isLocalPlayer(id)) {
+					// player is still part of sector list
+				} else {
+					ids.add(id);
+					if (sector.getPlayerByID(id) == null) {
+
+						sector.addPlayer(new PlayerMP(name, new Vector2(0, 0), GameData.getInstance(), 0, 0, id));
+
+					}
+
+				}
+
+			}
+
+			sector.cleanPlayerList(ids);
 
 			break;
 		default:
@@ -99,6 +147,7 @@ public class LogicController {
 
 	public void registerConnection(Connection conn) {
 		this.conn = conn;
+		conn.sendVerificationPacket();
 	}
 
 	public Player getPlayer() {

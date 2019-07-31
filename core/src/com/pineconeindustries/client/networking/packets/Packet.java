@@ -32,11 +32,6 @@ public abstract class Packet {
 
 	public abstract String getRaw();
 
-	// return new String(Integer.toString(packetID) + ":" +
-	// Long.toString(packetNumber) + ":" + data);
-
-	// return new String(Integer.toString(packetID) + ":" + data);
-
 	public PACKET_TYPE getType() {
 		return type;
 	}

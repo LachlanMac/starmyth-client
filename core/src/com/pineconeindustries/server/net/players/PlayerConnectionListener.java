@@ -32,7 +32,7 @@ public class PlayerConnectionListener extends Thread {
 
 					Socket playerSocket = socket.accept();
 					PlayerConnection pc = new PlayerConnection(playerSocket, sector);
-					sector.addPlayer(pc);
+					sector.connectPlayer(pc);
 
 				} catch (IOException e) {
 

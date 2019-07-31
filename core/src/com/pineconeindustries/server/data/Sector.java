@@ -2,6 +2,8 @@ package com.pineconeindustries.server.data;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.pineconeindustries.client.networking.packets.Packets;
+import com.pineconeindustries.client.networking.packets.custom.CustomTCPPacket;
 import com.pineconeindustries.client.objects.PlayerMP;
 import com.pineconeindustries.server.net.players.PacketListener;
 import com.pineconeindustries.server.net.players.PacketParser;
@@ -22,6 +24,8 @@ public class Sector {
 	PacketWriter packetWriter;
 	PacketParser packetParser;
 
+	DataScheduler scheduler;
+
 	// Class to send all players UDP packets and TCP packets
 
 	public Sector(int port) {
@@ -32,7 +36,40 @@ public class Sector {
 		packetWriter = new PacketWriter(this);
 		packetParser = new PacketParser(this);
 
+		scheduler = new DataScheduler(200, this);
+		registerScheduledFunctions();
+		scheduler.start();
+
 		Log.serverLog("Sector configured on port " + port);
+
+	}
+
+	public void registerScheduledFunctions() {
+
+		CustomTCPPacket playerList = new CustomTCPPacket(Packets.PLAYER_LIST_PACKET, "TEST DATA") {
+			@Override
+			public void update(Sector sector) {
+
+				StringBuilder sb = new StringBuilder();
+
+				for (PlayerConnection conn : players) {
+					sb.append(conn.getPlayerID() + "#" + conn.getPlayerMP().getName() + "#"
+							+ conn.getPlayerMP().getFactionID() + "=");
+				}
+
+				String data = sb.toString();
+
+				if (data.length() > 2) {
+
+					this.data = data.substring(0, data.length() - 1);
+				} else {
+					this.data = "";
+				}
+
+			}
+		};
+
+		scheduler.registerPacket(playerList);
 
 	}
 
@@ -48,7 +85,9 @@ public class Sector {
 		}
 
 		for (PlayerConnection conn : players) {
+
 			conn.getPlayerMP().render(b);
+
 		}
 	}
 
@@ -57,9 +96,9 @@ public class Sector {
 			return;
 		}
 		for (PlayerConnection conn : players) {
-
-			conn.getPlayerMP().update();
-
+			if (conn.isVerified()) {
+				conn.getPlayerMP().update();
+			}
 		}
 
 	}
@@ -84,19 +123,20 @@ public class Sector {
 
 	}
 
+	public void connectPlayer(PlayerConnection player) {
+		Log.serverLog("Player ID[" + player.getPlayerID() + "] connecting to Sector " + port);
+		player.connect();
+	}
+
 	public void addPlayer(PlayerConnection player) {
-		Log.serverLog("Player added to Sector " + port);
+		Log.serverLog("Player ID[" + player.getPlayerID() + "] added to Sector " + port);
 		players.add(player);
 		Galaxy.getInstance().addPlayerToGlobal(player);
-		player.connect();
-
-		// test
-		TestSender sender = new TestSender(player);
-		sender.start();
 
 	}
 
 	public void removePlayer(PlayerConnection player) {
+		Log.serverLog("Player ID[" + player.getPlayerID() + "] removed from Sector " + port);
 		players.remove(player);
 		Galaxy.getInstance().removePlayerFromGlobal(player);
 	}
@@ -127,7 +167,6 @@ public class Sector {
 		}
 
 		return player;
-
 	}
 
 	public PacketParser getPacketParser() {

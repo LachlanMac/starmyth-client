@@ -1,5 +1,7 @@
 package com.pineconeindustries.client.desktop.debug;
 
+import java.util.Random;
+
 import com.pineconeindustries.client.data.LocalPlayerData;
 import com.pineconeindustries.client.log.Log;
 
@@ -42,7 +44,8 @@ public class Debug {
 			break;
 			
 		case 3:
-			data.setCharID(55);
+			Random rn = new Random();
+			data.setCharID(rn.nextInt(32) + 1);
 			data.setId(1002);
 			data.setModel("1");
 			data.setSector(8888);

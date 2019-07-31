@@ -13,6 +13,7 @@ import com.pineconeindustries.client.networking.packets.UDPPacket;
 import com.pineconeindustries.client.objects.PlayerMP;
 import com.pineconeindustries.server.data.Sector;
 import com.pineconeindustries.shared.data.GameData;
+import com.pineconeindustries.shared.log.Log;
 
 public class PlayerConnection extends Thread {
 
@@ -28,6 +29,9 @@ public class PlayerConnection extends Thread {
 
 	private int socketPort = 0;
 
+	private int failures = 0;
+	private final int MAX_FAILURES = 20;
+
 	private int playerID;
 
 	private boolean isConnected = false;
@@ -41,9 +45,11 @@ public class PlayerConnection extends Thread {
 		this.sector = sector;
 		this.tcpSock = tcpSock;
 		this.ip = tcpSock.getInetAddress();
-		this.playerID = 55;
+
+		this.playerID = 0;
+
 		isRunning = true;
-		loadPlayerMP();
+
 		start();
 	}
 
@@ -59,11 +65,12 @@ public class PlayerConnection extends Thread {
 					while ((incoming = in.readLine()) != null) {
 
 						receiveTCP(incoming);
+						failures = 0;
 					}
 
 				} catch (IOException e) {
-
-					e.printStackTrace();
+					failures++;
+					checkForDisconnect(failures, e.getMessage());
 				}
 
 			} else {
@@ -72,11 +79,20 @@ public class PlayerConnection extends Thread {
 					Thread.sleep(1000);
 
 				} catch (InterruptedException e) {
-
-					e.printStackTrace();
+					failures++;
+					checkForDisconnect(failures, e.getMessage());
 				}
 			}
 
+		}
+
+	}
+
+	public void checkForDisconnect(int failures, String msg) {
+
+		if (failures >= MAX_FAILURES) {
+			Log.serverLog("Player Disconnected " + msg);
+			disconnect();
 		}
 
 	}
@@ -86,15 +102,13 @@ public class PlayerConnection extends Thread {
 			return;
 		}
 
-		out.println(packet.getData());
+		out.println(packet.getRaw());
 		out.flush();
 	}
 
 	public void loadPlayerMP() {
 
-		// String name, Vector2 loc, Game game, int factionID, int structureID, int
-		// playerID
-		playerMP = new PlayerMP("TESTHARD", new Vector2(100, 100), GameData.getInstance(), 0, 0, 55);
+		playerMP = new PlayerMP("TESTHARD", new Vector2(100, 100), GameData.getInstance(), 0, 0, playerID);
 
 	}
 
@@ -141,13 +155,17 @@ public class PlayerConnection extends Thread {
 	public void disconnect() {
 
 		try {
+
 			isConnected = false;
 			in.close();
 			out.close();
 			tcpSock.close();
 			tcpSock = null;
+			isRunning = false;
+			Thread.sleep(10000);
+			sector.removePlayer(this);
 
-		} catch (IOException e) {
+		} catch (IOException | InterruptedException e) {
 
 			e.printStackTrace();
 		}
@@ -159,15 +177,15 @@ public class PlayerConnection extends Thread {
 
 		String[] split = inMsg.split(":");
 
-		System.out.println(split.length);
-
 		if (split[0].equals("V")) {
-			System.out.println(split[3]);
-			socketPort = Integer.parseInt(split[3]);
-			System.out.println("Setting socket port to : " + socketPort);
-		}
 
-		verified = true;
+			playerID = Integer.parseInt(split[2]);
+			socketPort = Integer.parseInt(split[3]);
+			loadPlayerMP();
+			verified = true;
+			sector.addPlayer(this);
+
+		}
 
 	}
 
@@ -200,6 +218,10 @@ public class PlayerConnection extends Thread {
 
 	public PlayerMP getPlayerMP() {
 		return playerMP;
+	}
+
+	public boolean isVerified() {
+		return verified;
 	}
 
 }

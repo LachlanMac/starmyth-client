@@ -74,7 +74,6 @@ public class Connection implements Runnable {
 
 			isConnected = true;
 
-			sendVerificationPacket();
 
 		} catch (Exception e) {
 
@@ -90,7 +89,7 @@ public class Connection implements Runnable {
 
 		System.out.println("Sending Verification Packet");
 
-		String tempPacket = new String("V:" + 0 + ":55:" + udpPort);
+		String tempPacket = new String("V:" + 0 + ":"+ Net.getLocalPlayer().getPlayerID() +":" + udpPort);
 
 		sendTCP(tempPacket);
 
