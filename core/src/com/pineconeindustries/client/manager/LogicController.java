@@ -75,9 +75,16 @@ public class LogicController {
 				float x = Float.parseFloat(split[1]);
 				float y = Float.parseFloat(split[2]);
 
+				float dirX = Float.parseFloat(split[3]);
+				float dirY = Float.parseFloat(split[4]);
+				float velocity = Float.parseFloat(split[5]);
+
+				sector.getPlayer().setVelocity(velocity);
+				sector.getPlayer().setLastDirectionFaced(new Vector2(dirX, dirY));
 				sector.getPlayer().setLoc(new Vector2(x, y));
+
 			} catch (NumberFormatException e) {
-				
+
 			}
 
 			break;

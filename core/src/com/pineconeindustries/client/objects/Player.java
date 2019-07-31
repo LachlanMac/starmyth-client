@@ -53,8 +53,10 @@ public class Player extends Entity {
 	@Override
 	public void render(Batch b) {
 		state += Gdx.graphics.getDeltaTime();
-
+		
 		currentFrame = animSet.getAnimation(lastDirectionFaced, velocity);
+		
+		
 		if (velocity == 999) {
 
 			TextureRegion t = currentFrame.getKeyFrame(state, true);
@@ -164,7 +166,7 @@ public class Player extends Entity {
 		} else {
 
 			LogicController.getInstance()
-					.sendUDP(PacketFactory.makeMoveRequestPacket(convertedVector.x, convertedVector.y));
+					.sendUDP(PacketFactory.makeMoveRequestPacket(convertedVector.x * Gdx.graphics.getDeltaTime(), convertedVector.y * Gdx.graphics.getDeltaTime()));
 			// lnet.sendMove(playerID, convertedVector);
 		}
 	}

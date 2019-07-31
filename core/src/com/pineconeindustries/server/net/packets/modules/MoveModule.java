@@ -5,6 +5,7 @@ import com.pineconeindustries.client.networking.packets.Packets;
 import com.pineconeindustries.client.networking.packets.UDPPacket;
 import com.pineconeindustries.client.objects.PlayerMP;
 import com.pineconeindustries.server.data.Sector;
+import com.pineconeindustries.shared.gameunits.Units;
 import com.pineconeindustries.shared.log.Log;
 
 public class MoveModule {
@@ -23,12 +24,22 @@ public class MoveModule {
 			}
 			// check for collision
 
-			Vector2 loc = new Vector2(player.getLoc().x + x, player.getLoc().y + y);
-			player.setLoc(loc);
-			String packetData = new String(player.getPlayerID() + "=" + player.getLoc().x + "=" + player.getLoc().y);
+			Vector2 adjustedMov = new Vector2(x * Units.PLAYER_MOVE_SPEED, y * Units.PLAYER_MOVE_SPEED);
+			float velocity = (Math.abs(adjustedMov.x) + Math.abs(adjustedMov.y)) / 2;
 
-			sector.getPacketWriter().queueToAll(new UDPPacket(Packets.MOVE_PACKET, packetData, UDPPacket.packetCounter()));
+			Vector2 loc = player.getLoc().add(adjustedMov);
+
+			player.setLoc(loc);
+			player.setLastDirectionFaced(new Vector2(adjustedMov.x, adjustedMov.y));
+			player.setVelocity(velocity);
 			
+			
+			String packetData = new String(player.getPlayerID() + "=" + player.getLoc().x + "=" + player.getLoc().y
+					+ "=" + adjustedMov.x + "=" + adjustedMov.y + "=" + velocity);
+
+			sector.getPacketWriter()
+					.queueToAll(new UDPPacket(Packets.MOVE_PACKET, packetData, UDPPacket.packetCounter()));
+
 		} catch (NumberFormatException e) {
 			Log.print("INVALID PACKET : " + e.getMessage());
 			return;
