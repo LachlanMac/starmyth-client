@@ -11,7 +11,7 @@ import com.pineconeindustries.client.AnimationSet;
 import com.pineconeindustries.client.manager.GameController;
 import com.pineconeindustries.shared.data.GameData;
 
-public class PlayerMP extends Entity {
+public class PlayerMP extends Entity{
 
 	int dcCount = 0;
 	boolean setToDisconnect = false;

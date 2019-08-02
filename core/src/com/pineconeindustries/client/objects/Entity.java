@@ -15,7 +15,7 @@ import com.pineconeindustries.client.manager.GameController;
 import com.pineconeindustries.client.manager.InputManager;
 import com.pineconeindustries.shared.data.GameData;
 
-public class Entity extends GameObject {
+public class Entity extends GameObject implements Comparable<Entity> {
 
 	private final float DEFAULT_SPEED = 2;
 
@@ -65,8 +65,6 @@ public class Entity extends GameObject {
 	public void dispose() {
 
 	}
-
-
 
 	public void updateLocalLoc() {
 		sectorX = (int) this.loc.x / 8192;
@@ -173,6 +171,18 @@ public class Entity extends GameObject {
 	public void renderDebug(ShapeRenderer b) {
 		b.rect(bounds.x, bounds.y, bounds.width, bounds.height);
 
+	}
+
+	public Float getRenderOrder() {
+		return loc.y;
+		
+	}
+
+	@Override
+	public int compareTo(Entity o) {
+
+		return getRenderOrder().compareTo(o.getRenderOrder());
+		
 	}
 
 }

@@ -1,9 +1,11 @@
 package com.pineconeindustries.client.galaxy;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.pineconeindustries.client.objects.Entity;
 import com.pineconeindustries.client.objects.Player;
 import com.pineconeindustries.client.objects.PlayerMP;
 
@@ -14,17 +16,20 @@ public class Sector {
 	private ArrayBlockingQueue<PlayerMP> players;
 	private Player player;
 
+	private ArrayList<Entity> renderList;
+
 	public Sector(int port) {
 		this.port = port;
 		players = new ArrayBlockingQueue<PlayerMP>(64);
+		renderList = new ArrayList<Entity>();
 
 	}
 
 	public void render(Batch b) {
-
-		player.render(b);
-		for (PlayerMP p : players) {
-			p.render(b);
+		Collections.sort(renderList);
+		Collections.reverse(renderList);
+		for (Entity e : renderList) {
+			e.render(b);
 		}
 
 	}
@@ -40,6 +45,8 @@ public class Sector {
 
 	public void registerPlayer(Player player) {
 		this.player = player;
+		renderList.add(player);
+
 	}
 
 	public Player getPlayer() {
@@ -64,14 +71,11 @@ public class Sector {
 	public void cleanPlayerList(ArrayList<Integer> ids) {
 
 		for (PlayerMP p : players) {
-
 			boolean playerExists = false;
 			for (Integer i : ids) {
-
 				if (p.getPlayerID() == i) {
 					playerExists = true;
 				}
-
 			}
 
 			if (!playerExists) {
@@ -84,10 +88,14 @@ public class Sector {
 
 	public void addPlayer(PlayerMP player) {
 		players.add(player);
+		renderList.add(player);
+
 	}
 
 	public void removePlayer(PlayerMP player) {
 		players.remove(player);
+		renderList.remove(player);
+
 	}
 
 	public PlayerMP getPlayerMPByID(int id) {
