@@ -39,7 +39,7 @@ public class Connection implements Runnable {
 	TCPListener tcpListener;
 
 	Thread thread;
-	NetworkLayer lnet;
+
 	ArrayBlockingQueue<Packet> inPackets;
 
 	public Connection(int port) {
@@ -150,6 +150,19 @@ public class Connection implements Runnable {
 			}
 
 		}
+	}
+	
+	public static Connection startConnection(int sector) {
+		Connection conn = new Connection(sector);
+		
+		conn.connect();
+
+		if (conn.isConnected() == false) {
+			Log.debug("No Connection");
+			return null;
+		}
+		
+		return conn;
 	}
 
 }

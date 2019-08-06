@@ -1,9 +1,6 @@
 package com.pineconeindustries.client.chat;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -12,12 +9,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Queue;
 import com.pineconeindustries.client.manager.InputManager;
-import com.pineconeindustries.client.networking.Connection;
-import com.pineconeindustries.client.networking.NetworkLayer;
+
 
 public class Chatbox extends Table {
 
@@ -37,7 +32,6 @@ public class Chatbox extends Table {
 	Stage stage;
 	Queue<Label> chatQueue;
 
-	NetworkLayer lnet;
 
 	public Chatbox(float widthPercent, float heightPercent, Skin skin, Stage stage) {
 		super(skin);
@@ -140,10 +134,7 @@ public class Chatbox extends Table {
 		return chatBoxWidth;
 	}
 
-	public void setLnet(NetworkLayer lnet) {
-		this.lnet = lnet;
-
-	}
+	
 
 	public boolean isTyping() {
 

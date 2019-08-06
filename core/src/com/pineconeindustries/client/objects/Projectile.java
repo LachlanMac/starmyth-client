@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.pineconeindustries.client.manager.GameController;
 import com.pineconeindustries.shared.data.GameData;
 
 public class Projectile extends GameObject {

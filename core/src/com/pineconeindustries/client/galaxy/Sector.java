@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.ArrayBlockingQueue;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.pineconeindustries.client.objects.Entity;
 import com.pineconeindustries.client.objects.Player;
 import com.pineconeindustries.client.objects.PlayerMP;
@@ -21,13 +24,13 @@ public class Sector {
 
 	private ArrayList<Entity> renderList;
 
-	public Sector(int port) {
+	public Sector(int port, Player player) {
 		this.port = port;
 		players = new ArrayBlockingQueue<PlayerMP>(64);
 		renderList = new ArrayList<Entity>();
+		registerPlayer(port, player);
 		
-		
-		
+
 		
 		//TEST
 		t = new TileMap();
@@ -46,7 +49,6 @@ public class Sector {
 
 	public void update() {
 		
-	
 		
 		player.update();
 
@@ -55,8 +57,9 @@ public class Sector {
 		}
 	}
 
-	public void registerPlayer(Player player) {
+	public void registerPlayer(int port, Player player) {
 		this.player = player;
+		player.setSectorID(port);
 		renderList.add(player);
 
 	}

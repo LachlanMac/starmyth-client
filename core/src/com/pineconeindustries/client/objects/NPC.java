@@ -1,7 +1,6 @@
 package com.pineconeindustries.client.objects;
 
 import com.badlogic.gdx.math.Vector2;
-import com.pineconeindustries.client.manager.GameController;
 import com.pineconeindustries.shared.data.GameData;
 
 public class NPC extends Entity {

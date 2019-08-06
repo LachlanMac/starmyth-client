@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.data.ShipData;
 import com.pineconeindustries.client.data.StationData;
 import com.pineconeindustries.client.data.StructureTileData;
-import com.pineconeindustries.client.manager.GameController;
 import com.pineconeindustries.shared.data.GameData;
 
 public class Station extends GameObject {

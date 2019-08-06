@@ -11,10 +11,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.pineconeindustries.client.chat.Chatbox;
 import com.pineconeindustries.client.data.RoomData;
-import com.pineconeindustries.client.manager.GameController;
 import com.pineconeindustries.client.manager.InputManager;
 import com.pineconeindustries.client.manager.LogicController;
-import com.pineconeindustries.client.networking.NetworkLayer;
 import com.pineconeindustries.client.networking.packets.PacketFactory;
 import com.pineconeindustries.shared.data.GameData;
 
@@ -32,7 +30,6 @@ public class Player extends Entity {
 
 	private int sectorID = 0;
 
-	NetworkLayer lnet;
 	Chatbox chatbox;
 	Camera camera;
 
@@ -178,10 +175,6 @@ public class Player extends Entity {
 
 		// lnet.sendSectorTransport(sector, destination);
 
-	}
-
-	public void setLnet(NetworkLayer lnet) {
-		this.lnet = lnet;
 	}
 
 	public int getPlayerID() {

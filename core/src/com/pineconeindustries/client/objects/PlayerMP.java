@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.pineconeindustries.client.AnimationSet;
-import com.pineconeindustries.client.manager.GameController;
 import com.pineconeindustries.shared.data.GameData;
 
 public class PlayerMP extends Entity{

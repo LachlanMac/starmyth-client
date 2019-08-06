@@ -1,18 +1,12 @@
 package com.pineconeindustries.client.objects;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.AnimationSet;
-import com.pineconeindustries.client.log.Log;
-import com.pineconeindustries.client.manager.GameController;
-import com.pineconeindustries.client.manager.InputManager;
 import com.pineconeindustries.shared.data.GameData;
 
 public class Entity extends GameObject implements Comparable<Entity> {
