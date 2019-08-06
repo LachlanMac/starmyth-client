@@ -2,6 +2,7 @@ package com.pineconeindustries.client.manager;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.galaxy.Sector;
 import com.pineconeindustries.client.networking.Connection;
@@ -19,7 +20,8 @@ public class LogicController {
 
 	private Sector sector;
 	private Connection conn;
-
+	OrthographicCamera camera;
+	
 	private LogicController() {
 
 	}
@@ -148,6 +150,14 @@ public class LogicController {
 	public void registerConnection(Connection conn) {
 		this.conn = conn;
 		conn.sendVerificationPacket();
+	}
+	
+	public void registerCamera(OrthographicCamera camera) {
+		this.camera = camera;
+	}
+	
+	public OrthographicCamera getCamera() {
+		return camera;
 	}
 
 	public Player getPlayer() {

@@ -179,6 +179,7 @@ public class Client extends ApplicationAdapter {
 		s.registerPlayer(player);
 		LogicController.getInstance().registerSector(s);
 		LogicController.getInstance().registerConnection(conn);
+		//LogicController.getInstance().registerCamera(camera);
 
 		rh = new RayHandler(world);
 
@@ -212,6 +213,16 @@ public class Client extends ApplicationAdapter {
 		update();
 		batch.setProjectionMatrix(fixedCamera.combined);
 
+		float lerp = 0.9f;
+		Vector3 position = camera.position;
+
+		if (new Vector2(position.x, position.y).dst(player.getLoc()) > 100) {
+			position.x += (player.getLoc().x - position.x) * lerp * Gdx.graphics.getDeltaTime();
+			position.y += (player.getLoc().y - position.y) * lerp * Gdx.graphics.getDeltaTime();
+		}
+
+		camera.update();
+		
 		batch.begin();
 
 		batch.draw(bg, -(WORLD_WIDTH / 2), -(WORLD_HEIGHT / 2), WORLD_WIDTH, WORLD_HEIGHT);

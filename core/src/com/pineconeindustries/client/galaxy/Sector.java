@@ -11,6 +11,9 @@ import com.pineconeindustries.client.objects.PlayerMP;
 
 public class Sector {
 
+	
+	TileMap t;
+	
 	private int port;
 
 	private ArrayBlockingQueue<PlayerMP> players;
@@ -22,10 +25,17 @@ public class Sector {
 		this.port = port;
 		players = new ArrayBlockingQueue<PlayerMP>(64);
 		renderList = new ArrayList<Entity>();
-
+		
+		
+		
+		
+		//TEST
+		t = new TileMap();
+		t.loadTestTileMap();
 	}
 
 	public void render(Batch b) {
+		t.render(b);
 		Collections.sort(renderList);
 		Collections.reverse(renderList);
 		for (Entity e : renderList) {
@@ -35,7 +45,9 @@ public class Sector {
 	}
 
 	public void update() {
-
+		
+	
+		
 		player.update();
 
 		for (PlayerMP p : players) {
@@ -96,6 +108,13 @@ public class Sector {
 		players.remove(player);
 		renderList.remove(player);
 
+	}
+	
+	public void loadSector() {
+		
+		
+		
+		
 	}
 
 	public PlayerMP getPlayerMPByID(int id) {
