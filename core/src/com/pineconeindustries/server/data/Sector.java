@@ -10,7 +10,6 @@ import com.pineconeindustries.server.net.players.PacketParser;
 import com.pineconeindustries.server.net.players.PacketWriter;
 import com.pineconeindustries.server.net.players.PlayerConnection;
 import com.pineconeindustries.server.net.players.PlayerConnectionListener;
-import com.pineconeindustries.server.tests.TestSender;
 import com.pineconeindustries.shared.log.Log;
 
 public class Sector {

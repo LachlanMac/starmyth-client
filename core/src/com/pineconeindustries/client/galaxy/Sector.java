@@ -2,12 +2,14 @@ package com.pineconeindustries.client.galaxy;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Vector;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.PriorityBlockingQueue;
 
-import com.badlogic.gdx.Gdx;
+
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.pineconeindustries.client.objects.Entity;
 import com.pineconeindustries.client.objects.Player;
 import com.pineconeindustries.client.objects.PlayerMP;
@@ -22,12 +24,12 @@ public class Sector {
 	private ArrayBlockingQueue<PlayerMP> players;
 	private Player player;
 
-	private ArrayList<Entity> renderList;
+	private CopyOnWriteArrayList<Entity> renderList;
 
 	public Sector(int port, Player player) {
 		this.port = port;
 		players = new ArrayBlockingQueue<PlayerMP>(64);
-		renderList = new ArrayList<Entity>();
+		renderList = new CopyOnWriteArrayList<Entity>();
 		registerPlayer(port, player);
 		
 
@@ -40,7 +42,6 @@ public class Sector {
 	public void render(Batch b) {
 		t.render(b);
 		Collections.sort(renderList);
-		Collections.reverse(renderList);
 		for (Entity e : renderList) {
 			e.render(b);
 		}

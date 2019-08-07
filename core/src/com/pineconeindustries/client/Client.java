@@ -19,6 +19,7 @@ import com.pineconeindustries.client.manager.LAssetManager;
 import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.Connection;
 import com.pineconeindustries.client.objects.Player;
+import com.pineconeindustries.client.tests.Test;
 import com.pineconeindustries.client.ui.UserInterface;
 import com.pineconeindustries.shared.data.GameData;
 import box2dLight.RayHandler;
@@ -55,6 +56,8 @@ public class Client extends ApplicationAdapter {
 
 		this.data = data;
 
+		Test.testFileLoader();
+		
 		//game = new GameController();
 		
 
@@ -127,11 +130,18 @@ public class Client extends ApplicationAdapter {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		update();
+		batch.setProjectionMatrix(LogicController.getInstance().getFixedCamera().combined);
+		batch.begin();
+		batch.draw(bg, -(WORLD_WIDTH / 2), -(WORLD_HEIGHT / 2), WORLD_WIDTH, WORLD_HEIGHT);
+		
+		batch.end();
+		
 		batch.setProjectionMatrix(LogicController.getInstance().getPlayerCamera().combined);
 		LogicController.getInstance().getCameraController().update();
+		
 		batch.begin();
 
-		batch.draw(bg, -(WORLD_WIDTH / 2), -(WORLD_HEIGHT / 2), WORLD_WIDTH, WORLD_HEIGHT);
+		
 		LogicController.getInstance().getSector().render(batch);
 		batch.end();
 

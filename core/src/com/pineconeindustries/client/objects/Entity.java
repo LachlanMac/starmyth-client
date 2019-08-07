@@ -168,7 +168,7 @@ public class Entity extends GameObject implements Comparable<Entity> {
 	}
 
 	public Float getRenderOrder() {
-		return loc.y;
+		return -loc.y;
 		
 	}
 
