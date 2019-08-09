@@ -2,7 +2,6 @@ package com.pineconeindustries.client;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
-import com.pineconeindustries.client.log.Log;
 
 public class GameInput implements InputProcessor {
 
@@ -39,7 +38,7 @@ public class GameInput implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		Log.print("Click at " + screenX + " , " + screenY);
+		//Log.print("Click at " + screenX + " , " + screenY);
 		return false;
 	}
 

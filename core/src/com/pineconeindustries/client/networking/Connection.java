@@ -16,11 +16,11 @@ import java.util.concurrent.ArrayBlockingQueue;
 import javax.swing.JOptionPane;
 
 import com.pineconeindustries.client.Client;
-import com.pineconeindustries.client.log.Log;
 import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.listeners.TCPListener;
 import com.pineconeindustries.client.networking.listeners.UDPListener;
 import com.pineconeindustries.client.networking.packets.Packet;
+import com.pineconeindustries.shared.log.Log;
 
 public class Connection implements Runnable {
 

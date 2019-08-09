@@ -12,6 +12,7 @@ import com.pineconeindustries.client.networking.packets.TCPPacket;
 import com.pineconeindustries.client.networking.packets.UDPPacket;
 import com.pineconeindustries.client.objects.PlayerMP;
 import com.pineconeindustries.server.data.Sector;
+import com.pineconeindustries.server.database.Database;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.log.Log;
 
@@ -107,9 +108,11 @@ public class PlayerConnection extends Thread {
 	}
 
 	public void loadPlayerMP() {
-
-		playerMP = new PlayerMP("TESTHARD", new Vector2(100, 100), GameData.getInstance(), 0, 0, playerID);
-
+		
+		playerMP = Database.getInstance().getPlayerDAO().loadPlayerByID(playerID);
+		if(playerMP == null) {
+			Log.print("ERROR LOADING PLAYER - NO ID!");
+		}
 	}
 
 	public void sendUDP(UDPPacket packet) {

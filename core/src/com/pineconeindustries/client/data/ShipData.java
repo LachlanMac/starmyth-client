@@ -8,8 +8,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import com.pineconeindustries.client.log.Log;
 import com.pineconeindustries.client.objects.Ship;
 
 public class ShipData {

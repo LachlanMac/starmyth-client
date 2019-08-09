@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.pineconeindustries.client.networking.packets.Packets;
 import com.pineconeindustries.client.networking.packets.custom.CustomTCPPacket;
 import com.pineconeindustries.client.objects.PlayerMP;
+import com.pineconeindustries.server.database.Database;
 import com.pineconeindustries.server.net.players.PacketListener;
 import com.pineconeindustries.server.net.players.PacketParser;
 import com.pineconeindustries.server.net.players.PacketWriter;
@@ -50,16 +51,18 @@ public class Sector {
 			public void update(Sector sector) {
 
 				StringBuilder sb = new StringBuilder();
-
+				
 				for (PlayerConnection conn : players) {
+					String xLoc = Integer.toString((int)conn.getPlayerMP().getLoc().x);
+					String yLoc = Integer.toString((int)conn.getPlayerMP().getLoc().y);
 					sb.append(conn.getPlayerID() + "#" + conn.getPlayerMP().getName() + "#"
-							+ conn.getPlayerMP().getFactionID() + "=");
+							+ conn.getPlayerMP().getFactionID() + "#" + conn.getPlayerMP().getSectorID() + "#"
+							+ conn.getPlayerMP().getStructureID() +"#"+xLoc+"#"+yLoc+ "=");
 				}
 
 				String data = sb.toString();
 
 				if (data.length() > 2) {
-
 					this.data = data.substring(0, data.length() - 1);
 				} else {
 					this.data = "";
@@ -136,6 +139,8 @@ public class Sector {
 
 	public void removePlayer(PlayerConnection player) {
 		Log.serverLog("Player ID[" + player.getPlayerID() + "] removed from Sector " + port);
+	
+		Database.getInstance().getPlayerDAO().savePlayer(player.getPlayerMP());
 		players.remove(player);
 		Galaxy.getInstance().removePlayerFromGlobal(player);
 	}

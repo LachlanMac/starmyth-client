@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import com.pineconeindustries.client.desktop.character.options.Option;
-import com.pineconeindustries.client.log.Log;
+import com.pineconeindustries.shared.log.Log;
 
 public class SpritePart extends JPanel {
 

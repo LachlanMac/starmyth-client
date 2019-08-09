@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.pineconeindustries.client.manager.LAssetManager;
 import com.pineconeindustries.server.data.Galaxy;
+import com.pineconeindustries.server.database.Database;
 import com.pineconeindustries.shared.data.GameData;
 
 public class ServerApp extends ApplicationAdapter {
@@ -41,6 +42,9 @@ public class ServerApp extends ApplicationAdapter {
 
 	@Override
 	public void create() {
+		
+		
+		Database.getInstance();
 
 		gameData = GameData.getInstance();
 

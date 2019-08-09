@@ -8,11 +8,17 @@ public class Database {
 
 	private static Database instance = null;
 	private Connection conn;
+	private PlayerDAO playerDAO;
 
 	private Database() {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://localhost/feedback?" + "user=root&password=Movingon1");
+			conn = DriverManager.getConnection("jdbc:mysql://localhost/starmyth?" + "user=root&password=Movingon1");
+			
+			playerDAO = new PlayerDAO(conn);
+			
+			
+			
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -28,12 +34,17 @@ public class Database {
 
 		if (instance == null) {
 			instance = new Database();
+			
 		}
 		return instance;
 
 	}
 	
 	
+	
+	public PlayerDAO getPlayerDAO() {
+		return playerDAO;
+	}
 	
 	
 

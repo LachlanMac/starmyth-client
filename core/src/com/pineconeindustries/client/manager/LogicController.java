@@ -120,19 +120,29 @@ public class LogicController {
 
 			for (String data : split) {
 
+				
+				
+				//sb.append(conn.getPlayerID() + "#" + conn.getPlayerMP().getName() + "#"
+				//		+ conn.getPlayerMP().getFactionID() + "#" + conn.getPlayerMP().getSectorID() + "#"
+				//		+ conn.getPlayerMP().getStructureID() +"#"+xLoc+"#"+yLoc+ "=");
 				String[] playerData = data.split("#");
 
-				int id = Integer.parseInt(playerData[0]);
+				int playerID = Integer.parseInt(playerData[0]);
 				String name = playerData[1];
-
-				if (Net.isLocalPlayer(id)) {
+				int factionID = Integer.parseInt(playerData[2]);
+				int sectorID = Integer.parseInt(playerData[3]);
+				int structureID = Integer.parseInt(playerData[4]);
+				float xLoc = Float.parseFloat(playerData[5]);
+				float yLoc = Float.parseFloat(playerData[6]);
+				
+				if (Net.isLocalPlayer(playerID)) {
 					// player is still part of sector list
 				} else {
-					ids.add(id);
-					if (sector.getPlayerByID(id) == null) {
+					ids.add(playerID);
+					if (sector.getPlayerByID(playerID) == null) {
 
-						sector.addPlayer(new PlayerMP(name, new Vector2(0, 0), GameData.getInstance(), 0, 0, id));
-
+						sector.addPlayer(new PlayerMP(name, new Vector2(xLoc, yLoc), GameData.getInstance(), factionID, structureID, playerID, sectorID));
+							
 					}
 				}
 			}

@@ -10,23 +10,24 @@ import com.badlogic.gdx.math.Vector3;
 import com.pineconeindustries.client.AnimationSet;
 import com.pineconeindustries.shared.data.GameData;
 
-public class PlayerMP extends Entity{
+public class PlayerMP extends Entity {
 
 	int dcCount = 0;
 	boolean setToDisconnect = false;
 	private int playerID;
-	
+	private int sectorID;
+
 	private float lerp = 7f;
 	private float state = 0f;
 
-	public PlayerMP(String name, Vector2 loc, GameData game, int factionID, int structureID, int playerID) {
+	public PlayerMP(String name, Vector2 loc, GameData game, int factionID, int structureID, int playerID,
+			int sectorID) {
 		super(name, loc, game, factionID, structureID);
 		this.playerID = playerID;
-
+		this.sectorID = sectorID;
 		setAnimations();
 
 	}
-	
 
 	public void setAnimations() {
 		animSet = GameData.getInstance().Assets().getPlayerAnimations();
@@ -41,9 +42,9 @@ public class PlayerMP extends Entity{
 	public void render(Batch b) {
 
 		state += Gdx.graphics.getDeltaTime();
-		
+
 		currentFrame = animSet.getAnimation(lastDirectionFaced, velocity);
-		
+
 		if (velocity == 999) {
 
 			TextureRegion t = currentFrame.getKeyFrame(state, true);
@@ -65,7 +66,7 @@ public class PlayerMP extends Entity{
 			renderLoc.y += (getLoc().y - position.y) * lerp * Gdx.graphics.getDeltaTime();
 			framesSinceLastMove++;
 		}
-		
+
 		if (getFramesSinceLastMove() > 20) {
 			if (velocity != 999)
 
@@ -81,7 +82,6 @@ public class PlayerMP extends Entity{
 		if (dcCount > 600) {
 			setToDisconnect = true;
 		}
-
 
 	}
 
@@ -103,6 +103,13 @@ public class PlayerMP extends Entity{
 
 	public void setPlayerID(int playerID) {
 		this.playerID = playerID;
+	}
+	
+	public int getSectorID() {
+		return sectorID;
+	}
+	public void setSectorID(int sectorID) {
+		this.sectorID = sectorID;
 	}
 
 }

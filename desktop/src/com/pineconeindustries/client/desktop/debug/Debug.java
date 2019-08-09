@@ -3,7 +3,7 @@ package com.pineconeindustries.client.desktop.debug;
 import java.util.Random;
 
 import com.pineconeindustries.client.data.LocalPlayerData;
-import com.pineconeindustries.client.log.Log;
+import com.pineconeindustries.shared.log.Log;
 
 public class Debug {
 
@@ -44,15 +44,15 @@ public class Debug {
 			break;
 			
 		case 3:
-			Random rn = new Random();
-			data.setCharID(rn.nextInt(32) + 1);
+	
+			data.setCharID(22);
 			data.setId(1002);
 			data.setModel("1");
 			data.setSector(8888);
 			data.setStatus("ok");
 			data.setUser("testclient2");
-			data.setX(100);
-			data.setY(100);
+			data.setX(9999);
+			data.setY(9999);
 			break;
 		default:
 			Log.print("Error loading test client data");

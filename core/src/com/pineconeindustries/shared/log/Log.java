@@ -4,6 +4,7 @@ public class Log {
 
 	public static boolean MONITOR_NET_TRAFFIC = false;
 	public static boolean DEBUG_MODE = true;
+	public static boolean DATABASE_LOG = true;
 
 	public static void print(String out) {
 		System.out.println("Console: [" + out + "]");
@@ -23,6 +24,12 @@ public class Log {
 	public static void serverLog(String out) {
 		if (DEBUG_MODE) {
 			System.out.println("Server : [" + out + "]");
+		}
+	}
+	
+	public static void dbLog(String out) {
+		if (DATABASE_LOG) {
+			System.out.println("Database : [" + out + "]");
 		}
 	}
 

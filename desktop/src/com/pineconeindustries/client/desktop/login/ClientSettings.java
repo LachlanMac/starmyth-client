@@ -7,7 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.pineconeindustries.client.log.Log;
+import com.pineconeindustries.shared.log.Log;
 
 public class ClientSettings {
 

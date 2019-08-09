@@ -133,5 +133,9 @@ public class Sector {
 		return pmp;
 
 	}
+	
+	public int getPort() {
+		return port;
+	}
 
 }

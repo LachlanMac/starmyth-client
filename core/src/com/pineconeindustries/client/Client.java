@@ -56,7 +56,7 @@ public class Client extends ApplicationAdapter {
 
 		this.data = data;
 
-		Test.testFileLoader();
+		//Test.testFileLoader();
 		
 		//game = new GameController();
 		
