@@ -1,9 +1,11 @@
 apply plugin: "java"
+apply plugin: 'eclipse'
 
 sourceCompatibility = 1.8
 sourceSets.main.java.srcDirs = [ "src/" ]
+version = '1.0'
 
-project.ext.mainClassName = "com.pineconeindustries.client.desktop.DesktopLauncher"
+project.ext.mainClassName = "com.pineconeindustries.client.desktop.ServerLauncher"
 project.ext.assetsDir = new File("../core/assets");
 
 task run(dependsOn: classes, type: JavaExec) {
@@ -32,6 +34,19 @@ task dist(type: Jar) {
     manifest {
         attributes 'Main-Class': project.mainClassName
     }
+}
+
+task fatJar(type : Jar){
+
+	manifest {
+        attributes 'Implementation-Title': 'Starmyth Server',  
+        	'Implementation-Version': version,
+        	'Main-Class': 'com.pineconeindustries.client.desktop.ServerLauncher'
+    }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+
 }
 
 dist.dependsOn classes

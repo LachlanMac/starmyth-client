@@ -12,12 +12,8 @@ public class ServerLauncher {
 
 	public static void main(String[] arg) {
 
-		try {
-			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Sansation-Bold.ttf")));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		ServerLauncher launcher = new ServerLauncher();
+		launcher.registerFonts();
 
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.vSyncEnabled = true;
@@ -28,5 +24,16 @@ public class ServerLauncher {
 		// config.fullscreen = true;
 		new LwjglApplication(new ServerApp(), config);
 
+	}
+	
+	
+	public void registerFonts() {
+		try {
+			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		
+			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getClassLoader().getResourceAsStream("fonts/Sansation-Bold.ttf")));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

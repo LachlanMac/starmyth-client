@@ -1,0 +1,7 @@
+#! /bin/bash
+
+./gradlew clean
+./gradlew dist
+rm -rf serverJar
+mkdir serverJar
+cp ~/Documents/Starmyth/starmyth-client/desktop/build/libs/* serverJar/
