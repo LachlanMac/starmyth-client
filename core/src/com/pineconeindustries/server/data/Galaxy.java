@@ -51,7 +51,7 @@ public class Galaxy {
 
 	public void loadSectors() {
 
-		Sector testSector = new Sector(8888);
+		Sector testSector = new Sector(7780);
 		addSector(testSector);
 		testSector.startSector();
 		testSector.updateAndRender(true);

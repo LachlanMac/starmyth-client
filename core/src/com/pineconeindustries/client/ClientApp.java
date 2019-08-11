@@ -24,11 +24,17 @@ import com.pineconeindustries.client.ui.UserInterface;
 import com.pineconeindustries.shared.data.GameData;
 import box2dLight.RayHandler;
 
-public class Client extends ApplicationAdapter {
+public class ClientApp extends ApplicationAdapter {
 
+	
+	public static final String localHost = "127.0.0.1";
+	public static final String remoteHost = "73.230.126.75";
+	
 	public static String TEST_IP = "127.0.0.1";
-	public static String LOGIN_SERVER_IP = "142.93.48.155";
-	public static String GAME_SERVER_IP = "127.0.0.1";// "142.93.48.155";
+	
+	
+	public static String LOGIN_SERVER_IP = remoteHost;
+	public static String GAME_SERVER_IP = remoteHost;
 
 	SpriteBatch batch;
 	ShapeRenderer shapeBatch;
@@ -52,7 +58,7 @@ public class Client extends ApplicationAdapter {
 
 	// NEW
 
-	public Client(LocalPlayerData data) {
+	public ClientApp(LocalPlayerData data) {
 
 		this.data = data;
 

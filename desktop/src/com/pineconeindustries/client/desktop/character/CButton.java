@@ -16,7 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.pineconeindustries.client.Client;
+import com.pineconeindustries.client.ClientApp;
 import com.pineconeindustries.client.data.LocalPlayerData;
 import com.pineconeindustries.client.desktop.login.ClientSettings;
 
@@ -92,7 +92,7 @@ public class CButton extends JButton {
 
 				if (data != null) {
 
-					new LwjglApplication(new Client(data), ClientSettings.loadSettings());
+					new LwjglApplication(new ClientApp(data), ClientSettings.loadSettings());
 
 				} else {
 

@@ -24,7 +24,7 @@ import javax.swing.JTextField;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.google.gson.*;
-import com.pineconeindustries.client.Client;
+import com.pineconeindustries.client.ClientApp;
 import com.pineconeindustries.client.data.LocalPlayerData;
 import com.pineconeindustries.client.desktop.CharacterList;
 import com.pineconeindustries.client.desktop.character.CharacterScreen;
@@ -112,7 +112,7 @@ public class LoginClient extends JFrame {
 					config.foregroundFPS = 60;
 					config.samples = 4;
 					// config.fullscreen = true;
-					new LwjglApplication(new Client(data), config);
+					new LwjglApplication(new ClientApp(data), config);
 
 				} else if (user.equals(Debug.DEBUG_USER_2)) {
 					LocalPlayerData data = Debug.getTestClient(2);
@@ -124,7 +124,7 @@ public class LoginClient extends JFrame {
 					config.foregroundFPS = 60;
 					config.samples = 4;
 					// config.fullscreen = true;
-					new LwjglApplication(new Client(data), config);
+					new LwjglApplication(new ClientApp(data), config);
 
 				} else {
 
@@ -133,7 +133,7 @@ public class LoginClient extends JFrame {
 						encryptedUser = LCrypto.encrypt(user);
 						encryptedPass = LCrypto.encrypt(password);
 
-						url = new URL("http://" + Client.LOGIN_SERVER_IP + "/authserver/auth/" + encryptedUser + "/"
+						url = new URL("http://" + ClientApp.LOGIN_SERVER_IP + "/authserver/auth/" + encryptedUser + "/"
 								+ encryptedPass);
 
 						HttpURLConnection con = (HttpURLConnection) url.openConnection();

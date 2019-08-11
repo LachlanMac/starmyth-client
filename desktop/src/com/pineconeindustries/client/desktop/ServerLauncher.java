@@ -3,6 +3,7 @@ package com.pineconeindustries.client.desktop;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
+import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
@@ -16,19 +17,17 @@ public class ServerLauncher {
 
 	
 	
-	public static boolean HEADLESS = true;
+	public static boolean HEADLESS = false;
 	public static void main(String[] args) {
 
 	
-		if(args.length >= 1) {
-			if(args[0].equals("headless")) {
-				 LwjglNativesLoader.load();
-			     Gdx.files = new LwjglFiles();
-			     HEADLESS = true;
+		for(String arg : args) {
+			
+			if(arg.equals("headless")) {
+				HEADLESS = true;
 			}
+			
 		}
-		
-		
 		
 		ServerLauncher launcher = new ServerLauncher();
 		launcher.registerFonts();

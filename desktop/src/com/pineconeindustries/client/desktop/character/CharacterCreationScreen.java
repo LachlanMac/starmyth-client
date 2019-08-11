@@ -28,7 +28,7 @@ import javax.swing.JSlider;
 import javax.swing.JTextField;
 
 import com.google.gson.Gson;
-import com.pineconeindustries.client.Client;
+import com.pineconeindustries.client.ClientApp;
 import com.pineconeindustries.client.data.LocalPlayerData;
 import com.pineconeindustries.client.desktop.CharacterList;
 import com.pineconeindustries.client.desktop.character.options.Options;
@@ -123,7 +123,7 @@ public class CharacterCreationScreen extends JPanel {
 						+ HexConversions.hexFromColor(sprite.getEyeSecondary()));
 
 				try {
-					URL url = new URL("http://" + Client.LOGIN_SERVER_IP + "/create-character/" + LoginClient.ACCOUNT_ID
+					URL url = new URL("http://" + ClientApp.LOGIN_SERVER_IP + "/create-character/" + LoginClient.ACCOUNT_ID
 							+ "/" + characterName.getText() + "/" + sb.toString());
 
 					HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -151,7 +151,7 @@ public class CharacterCreationScreen extends JPanel {
 
 				try {
 
-					URL url = new URL("http://" + Client.LOGIN_SERVER_IP + "/authserver/auth/"
+					URL url = new URL("http://" + ClientApp.LOGIN_SERVER_IP + "/authserver/auth/"
 							+ LoginClient.encryptedUser + "/" + LoginClient.encryptedPass);
 
 					HttpURLConnection con = (HttpURLConnection) url.openConnection();

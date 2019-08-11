@@ -12,7 +12,7 @@ import org.omg.CORBA.portable.InputStream;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.pineconeindustries.client.Client;
+import com.pineconeindustries.client.ClientApp;
 import com.pineconeindustries.client.data.LocalPlayerData;
 import com.pineconeindustries.client.desktop.character.CharacterScreen;
 import com.pineconeindustries.client.desktop.debug.Debug;
@@ -56,6 +56,6 @@ public class ClientLauncher {
 		
 		LocalPlayerData data = Debug.getTestClient(3);
 		
-		new LwjglApplication(new Client(data), config);
+		new LwjglApplication(new ClientApp(data), config);
 	}
 }

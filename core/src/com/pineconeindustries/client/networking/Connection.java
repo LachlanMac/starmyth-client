@@ -15,7 +15,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 import javax.swing.JOptionPane;
 
-import com.pineconeindustries.client.Client;
+import com.pineconeindustries.client.ClientApp;
 import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.listeners.TCPListener;
 import com.pineconeindustries.client.networking.listeners.UDPListener;
@@ -56,7 +56,7 @@ public class Connection implements Runnable {
 	public void connect() {
 
 		try {
-			tcpSocket = new Socket(Client.GAME_SERVER_IP, port);
+			tcpSocket = new Socket(ClientApp.GAME_SERVER_IP, port);
 			udpSocket = new DatagramSocket();
 
 			udpPort = udpSocket.getLocalPort();
@@ -114,7 +114,7 @@ public class Connection implements Runnable {
 
 		byte[] out = outMsg.getBytes();
 		try {
-			DatagramPacket dp = new DatagramPacket(out, out.length, InetAddress.getByName(Client.GAME_SERVER_IP), port);
+			DatagramPacket dp = new DatagramPacket(out, out.length, InetAddress.getByName(ClientApp.GAME_SERVER_IP), port);
 			udpSocket.send(dp);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
