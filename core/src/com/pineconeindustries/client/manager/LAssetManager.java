@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.pineconeindustries.client.AnimationSet;
+import com.pineconeindustries.shared.data.GameData;
 
 public class LAssetManager extends AssetManager {
 
@@ -107,7 +108,9 @@ public class LAssetManager extends AssetManager {
 	}
 
 	public void loadAnimations() {
-
+		if (GameData.getInstance().isHeadless()) {
+			return;
+		}
 		Texture t = get("textures/playerSS.png");
 
 		playerAnimations = new AnimationSet(t);
@@ -116,8 +119,11 @@ public class LAssetManager extends AssetManager {
 	}
 
 	public AnimationSet getDefaultAnimations() {
-		Texture t = get("textures/playerSS.png");
+		if (GameData.getInstance().isHeadless()) {
+			return null;
+		}
 
+		Texture t = get("textures/playerSS.png");
 		AnimationSet p = new AnimationSet(t);
 		p.loadAnimations();
 
@@ -126,6 +132,10 @@ public class LAssetManager extends AssetManager {
 	}
 
 	public AnimationSet getPlayerAnimations() {
+		if (GameData.getInstance().isHeadless()) {
+			return null;
+		}
+
 		Texture t = get("textures/playerSS.png");
 
 		AnimationSet p = new AnimationSet(t);

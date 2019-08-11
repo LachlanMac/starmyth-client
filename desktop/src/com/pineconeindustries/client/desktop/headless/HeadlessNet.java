@@ -14,12 +14,11 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.badlogic.gdx.backends.headless;
+package com.pineconeindustries.client.desktop.headless;
 
 import java.awt.Desktop;
 import java.awt.Desktop.Action;
 import java.awt.GraphicsEnvironment;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.net.NetJavaImpl;
@@ -38,7 +37,7 @@ public class HeadlessNet implements Net {
 	NetJavaImpl netJavaImpl;
 
 	public HeadlessNet(HeadlessApplicationConfiguration configuration) {
-		netJavaImpl = new NetJavaImpl(configuration.maxNetThreads);
+		netJavaImpl = new NetJavaImpl();
 	}
 
 	@Override

@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.badlogic.gdx.backends.headless;
+package com.pineconeindustries.client.desktop.headless;
 
 import java.io.File;
 

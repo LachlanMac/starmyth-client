@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.badlogic.gdx.backends.headless;
+package com.pineconeindustries.client.desktop.headless;
 
 public class HeadlessApplicationConfiguration {
 	/** The minimum time (in seconds) between each call to the render method or negative to not call the render method at all. */

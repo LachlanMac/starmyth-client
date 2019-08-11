@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.badlogic.gdx.backends.headless.mock.input;
+package com.pineconeindustries.client.desktop.headless.mock.input;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
@@ -55,7 +55,6 @@ public class MockInput implements Input {
 		return 0;
 	}
 
-	@Override
 	public int getMaxPointers () {
 		return 0;
 	}
@@ -130,7 +129,6 @@ public class MockInput implements Input {
 		return false;
 	}
 
-	@Override
 	public boolean isButtonJustPressed(int button) {
 		return false;
 	}
@@ -215,12 +213,11 @@ public class MockInput implements Input {
 		return false;
 	}
 
-	@Override
+
 	public void setCatchKey (int keycode, boolean catchKey) {
 
 	}
 
-	@Override
 	public boolean isCatchKey (int keycode) {
 		return false;
 	}

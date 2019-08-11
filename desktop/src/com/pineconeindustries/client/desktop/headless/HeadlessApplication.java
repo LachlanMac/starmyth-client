@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package com.pineconeindustries.client.desktop.headless;
 
-package com.badlogic.gdx.backends.headless;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationListener;
@@ -27,14 +27,14 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.LifecycleListener;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.backends.headless.mock.audio.MockAudio;
-import com.badlogic.gdx.backends.headless.mock.graphics.MockGraphics;
-import com.badlogic.gdx.backends.headless.mock.input.MockInput;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Clipboard;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.pineconeindustries.client.desktop.headless.mock.audio.MockAudio;
+import com.pineconeindustries.client.desktop.headless.mock.graphics.MockGraphics;
+import com.pineconeindustries.client.desktop.headless.mock.input.MockInput;
 
 /** a headless implementation of a GDX Application primarily intended to be used in servers
  *  @author Jon Renner */

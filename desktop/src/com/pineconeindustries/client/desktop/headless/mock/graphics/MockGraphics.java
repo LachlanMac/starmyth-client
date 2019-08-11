@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.badlogic.gdx.backends.headless.mock.graphics;
+package com.pineconeindustries.client.desktop.headless.mock.graphics;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Graphics;

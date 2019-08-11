@@ -1,12 +1,15 @@
 package com.pineconeindustries.shared.data;
 
 import com.pineconeindustries.client.manager.LAssetManager;
+import com.pineconeindustries.server.ServerApp;
 
 public class GameData {
 
 	private static GameData instance;
 
 	private LAssetManager assetManager;
+
+	private boolean headless;
 
 	private GameData() {
 
@@ -25,6 +28,10 @@ public class GameData {
 
 	public void loadAssets() {
 
+		if (headless) {
+			return;
+		}
+
 		Assets().loadTextures();
 		Assets().finishLoading();
 		Assets().loadAnimations();
@@ -36,6 +43,14 @@ public class GameData {
 
 	public LAssetManager Assets() {
 		return assetManager;
+	}
+
+	public boolean isHeadless() {
+		return headless;
+	}
+
+	public void setHeadless(boolean val) {
+		this.headless = val;
 	}
 
 }

@@ -22,6 +22,7 @@ import com.pineconeindustries.shared.data.GameData;
 
 public class ServerApp extends ApplicationAdapter {
 
+	public boolean headless = false;
 	private OrthographicCamera camera, fixedCamera;
 	private GameData gameData;
 	private Viewport viewport;
@@ -36,29 +37,29 @@ public class ServerApp extends ApplicationAdapter {
 
 	Sprite bg;
 
-	public ServerApp() {
-
+	public ServerApp(boolean headless) {
+		this.headless = headless;
 	}
 
 	@Override
 	public void create() {
-		
-		
+
 		Database.getInstance();
 
 		gameData = GameData.getInstance();
-
+		gameData.setHeadless(headless);
 		gameData.registerAssetManager(new LAssetManager());
 		gameData.loadAssets();
-		
-		Box2D.init();
-		world = new World(new Vector2(0, 0), true);
-		stage = new Stage();
+		if (!headless) {
 
-		createCamera();
+			Box2D.init();
+			world = new World(new Vector2(0, 0), true);
+			stage = new Stage();
+			createCamera();
 
-		Gdx.input.setInputProcessor(stage);
+			Gdx.input.setInputProcessor(stage);
 
+		}
 		galaxy = Galaxy.getInstance();
 		galaxy.loadSectors();
 
@@ -66,6 +67,10 @@ public class ServerApp extends ApplicationAdapter {
 
 	@Override
 	public void render() {
+
+		if (headless) {
+			return;
+		}
 
 		Gdx.gl.glClearColor(0, 0.5f, 0.3f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -102,11 +107,19 @@ public class ServerApp extends ApplicationAdapter {
 	@Override
 	public void resize(int width, int height) {
 
+		if (headless) {
+			return;
+		}
+
 		viewport.update(width, height);
 
 	}
 
 	public void createCamera() {
+
+		if (headless) {
+			return;
+		}
 
 		float aspectRatio = (float) Gdx.graphics.getHeight() / (float) Gdx.graphics.getWidth();
 		batch = new SpriteBatch();
@@ -117,5 +130,9 @@ public class ServerApp extends ApplicationAdapter {
 		ScalingViewport scalingViewport = new ScalingViewport(Scaling.fit, 1080, 1080 * aspectRatio, fixedCamera);
 		scalingViewport.apply();
 		viewport.apply();
+	}
+
+	public boolean isHeadless() {
+		return headless;
 	}
 }

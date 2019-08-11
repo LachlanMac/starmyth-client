@@ -25,7 +25,10 @@ public class PlayerMP extends Entity {
 		super(name, loc, game, factionID, structureID);
 		this.playerID = playerID;
 		this.sectorID = sectorID;
-		setAnimations();
+
+		if (!game.isHeadless()) {
+			setAnimations();
+		}
 
 	}
 
@@ -104,10 +107,11 @@ public class PlayerMP extends Entity {
 	public void setPlayerID(int playerID) {
 		this.playerID = playerID;
 	}
-	
+
 	public int getSectorID() {
 		return sectorID;
 	}
+
 	public void setSectorID(int sectorID) {
 		this.sectorID = sectorID;
 	}

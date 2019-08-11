@@ -33,8 +33,14 @@ public class Entity extends GameObject implements Comparable<Entity> {
 		this.factionID = factionID;
 		this.structureID = structureID;
 
-		animSet = game.Assets().getDefaultAnimations();
-		currentFrame = animSet.getAnimation(lastDirectionFaced, 0);
+		if (!game.isHeadless()) {
+			animSet = game.Assets().getDefaultAnimations();
+			currentFrame = animSet.getAnimation(lastDirectionFaced, 0);
+		} else {
+			animSet = null;
+		}
+
+		
 
 		sectorX = (int) this.loc.x / 8192;
 		sectorY = (int) this.loc.y / 8192;
@@ -169,14 +175,14 @@ public class Entity extends GameObject implements Comparable<Entity> {
 
 	public Float getRenderOrder() {
 		return -loc.y;
-		
+
 	}
 
 	@Override
 	public int compareTo(Entity o) {
 
 		return getRenderOrder().compareTo(o.getRenderOrder());
-		
+
 	}
 
 }

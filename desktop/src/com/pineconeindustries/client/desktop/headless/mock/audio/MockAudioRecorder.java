@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.badlogic.gdx.backends.headless.mock.audio;
+package com.pineconeindustries.client.desktop.headless.mock.audio;
 
 import com.badlogic.gdx.audio.AudioRecorder;
 
