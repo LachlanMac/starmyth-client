@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2D;
@@ -26,24 +27,20 @@ import box2dLight.RayHandler;
 
 public class ClientApp extends ApplicationAdapter {
 
-	
 	public static final String localHost = "127.0.0.1";
 	public static final String remoteHost = "73.230.126.75";
-	
+	private float state;
 	public static String TEST_IP = "127.0.0.1";
-	
-	
-	public static String LOGIN_SERVER_IP = remoteHost;
-	public static String GAME_SERVER_IP = remoteHost;
+
+	public static String LOGIN_SERVER_IP = localHost;
+	public static String GAME_SERVER_IP = localHost;
 
 	SpriteBatch batch;
 	ShapeRenderer shapeBatch;
 	Texture img, loadingScreen;
 	LocalPlayerData data;
 
-
-
-	Sprite bg;
+	TextureRegion bg;
 
 	Stage stage, loadingStage;
 
@@ -62,17 +59,11 @@ public class ClientApp extends ApplicationAdapter {
 
 		this.data = data;
 
-		//Test.testFileLoader();
-		
-		//game = new GameController();
-		
-
 	}
 
 	public void loadSettings() {
 		NetworkConfiguration.loadConfiguration();
 	}
-
 
 	@Override
 	public void create() {
@@ -85,37 +76,29 @@ public class ClientApp extends ApplicationAdapter {
 		shapeBatch = new ShapeRenderer();
 
 		loadingScreen = new Texture("textures/loadingscreen.png");
-
-		bg = new Sprite(new Texture("textures/lachlangalaxy.jpg"));
-	
-		
-	
 		CameraController cam = new CameraController();
-		
-	
+
 		stage = new Stage();
 		Gdx.input.setInputProcessor(stage);
 		UserInterface ui = new UserInterface(stage);
-		
-		
+
 		GameData.getInstance().registerAssetManager(new LAssetManager());
 		GameData.getInstance().loadAssets();
+		Texture temp = GameData.getInstance().Assets().get("textures/galaxybg1.png");
+		bg = new TextureRegion(temp);
+		Player player = new Player(data.getName(), new Vector2(data.getX(), data.getY()), GameData.getInstance(), 1, 0,
+				data.getCharID(), data.getSector(), cam.getPlayerCamera());
 
-		Player player = new Player(data.getName(), new Vector2(data.getX(), data.getY()), GameData.getInstance(), 1, 0, data.getCharID(),
-				cam.getPlayerCamera());
-		
 		player.connectToChat(ui.getChat());
-	
-		Sector s = new Sector(player.getSectorID(), player);
+
+		Sector s = new Sector(player);
 		LogicController.getInstance().registerSector(s);
 		LogicController.getInstance().registerConnection(Connection.startConnection(data.getSector()));
 		LogicController.getInstance().registerCamera(cam);
-		
-		
+
 		player.enableTickRender();
-	
-		
-		//TESTLIGHTING
+
+		// TESTLIGHTING
 		rh = new RayHandler(world);
 		rh.setAmbientLight(0.01f, 0.01f, 0.01f, 0.6f);
 		// PointLight p1 = new PointLight(rh, 10, new Color(0.1f, 0, 0, 1), 2000, 4000,
@@ -125,7 +108,7 @@ public class ClientApp extends ApplicationAdapter {
 	}
 
 	public void update() {
-
+		state += Gdx.graphics.getDeltaTime();
 		LogicController.getInstance().getSector().update();
 
 	}
@@ -138,16 +121,22 @@ public class ClientApp extends ApplicationAdapter {
 		update();
 		batch.setProjectionMatrix(LogicController.getInstance().getFixedCamera().combined);
 		batch.begin();
-		batch.draw(bg, -(WORLD_WIDTH / 2), -(WORLD_HEIGHT / 2), WORLD_WIDTH, WORLD_HEIGHT);
-		
+
+		// draw(Texture texture, float x, float y, float originX, float originY, float
+		// width, float height, float scaleX, float scaleY, float rotation, int srcX,
+		// int srcY, int srcWidth, int srcHeight, boolean flipX, boolean flipY)
+
+		batch.draw(bg, -(bg.getRegionWidth() / 2), -(bg.getRegionHeight() / 2), bg.getRegionWidth() / 2,
+				bg.getRegionHeight() / 2, bg.getRegionWidth(), bg.getRegionHeight(), 1, 1, state * 1, false);
+
+		//
 		batch.end();
-		
+
 		batch.setProjectionMatrix(LogicController.getInstance().getPlayerCamera().combined);
 		LogicController.getInstance().getCameraController().update();
-		
+
 		batch.begin();
 
-		
 		LogicController.getInstance().getSector().render(batch);
 		batch.end();
 

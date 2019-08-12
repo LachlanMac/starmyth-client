@@ -7,34 +7,20 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.pineconeindustries.client.AnimationSet;
+import com.pineconeindustries.client.models.AnimationSet;
 import com.pineconeindustries.shared.data.GameData;
 
-public class PlayerMP extends Entity {
+public class PlayerMP extends Person {
 
 	int dcCount = 0;
 	boolean setToDisconnect = false;
-	private int playerID;
 	private int sectorID;
-
-	private float lerp = 7f;
-	private float state = 0f;
 
 	public PlayerMP(String name, Vector2 loc, GameData game, int factionID, int structureID, int playerID,
 			int sectorID) {
-		super(name, loc, game, factionID, structureID);
-		this.playerID = playerID;
+		super(name, loc, game, factionID, structureID, playerID, sectorID);
 		this.sectorID = sectorID;
 
-		if (!game.isHeadless()) {
-			setAnimations();
-		}
-
-	}
-
-	public void setAnimations() {
-		animSet = GameData.getInstance().Assets().getPlayerAnimations();
-		currentFrame = animSet.getAnimation(new Vector2(0, 1), 0);
 	}
 
 	public boolean isSetToDisconnect() {
@@ -88,32 +74,8 @@ public class PlayerMP extends Entity {
 
 	}
 
-	public void lerp() {
-
-		Vector2 position = renderLoc;
-		renderLoc.x += (loc.x - position.x) * lerp * Gdx.graphics.getDeltaTime();
-		renderLoc.y += (loc.y - position.y) * lerp * Gdx.graphics.getDeltaTime();
-
-	}
-
 	public void refresh() {
 		dcCount = 0;
-	}
-
-	public int getPlayerID() {
-		return playerID;
-	}
-
-	public void setPlayerID(int playerID) {
-		this.playerID = playerID;
-	}
-
-	public int getSectorID() {
-		return sectorID;
-	}
-
-	public void setSectorID(int sectorID) {
-		this.sectorID = sectorID;
 	}
 
 }

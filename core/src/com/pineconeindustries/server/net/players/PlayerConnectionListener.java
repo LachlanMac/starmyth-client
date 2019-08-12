@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import com.pineconeindustries.server.data.Sector;
+import com.pineconeindustries.shared.log.Log;
 
 public class PlayerConnectionListener extends Thread {
 
@@ -31,6 +32,7 @@ public class PlayerConnectionListener extends Thread {
 				try {
 
 					Socket playerSocket = socket.accept();
+					playerSocket.setSoTimeout(5000);
 					PlayerConnection pc = new PlayerConnection(playerSocket, sector);
 					sector.connectPlayer(pc);
 
@@ -54,6 +56,8 @@ public class PlayerConnectionListener extends Thread {
 
 	public void startListener() {
 
+		Log.connection("Listening for Player Connections on port " + sector.getPort());
+
 		stopListener();
 
 		try {
@@ -75,7 +79,7 @@ public class PlayerConnectionListener extends Thread {
 				isRunning = false;
 			} catch (IOException e) {
 
-				e.printStackTrace();
+				Log.connection("Player Connection Listener stopped " + e.getMessage());
 			}
 
 		}

@@ -20,6 +20,8 @@ import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.listeners.TCPListener;
 import com.pineconeindustries.client.networking.listeners.UDPListener;
 import com.pineconeindustries.client.networking.packets.Packet;
+import com.pineconeindustries.client.networking.packets.PacketFactory;
+import com.pineconeindustries.client.networking.packets.TCPPacket;
 import com.pineconeindustries.shared.log.Log;
 
 public class Connection implements Runnable {
@@ -32,7 +34,7 @@ public class Connection implements Runnable {
 	private int udpPort;
 	ArrayBlockingQueue<String> inUDPQueue, inTCPQueue;
 
-	private boolean isConnected, isVerified = false;
+	private boolean connected, running = true;
 	private int port;
 
 	UDPListener udpListener;
@@ -50,12 +52,16 @@ public class Connection implements Runnable {
 	}
 
 	public void switchSector(int newPort) {
+		this.port = newPort;
+		disconnect("Changing port to " + newPort);
+		reconnect();
 
 	}
 
 	public void connect() {
 
 		try {
+
 			tcpSocket = new Socket(ClientApp.GAME_SERVER_IP, port);
 			udpSocket = new DatagramSocket();
 
@@ -71,10 +77,8 @@ public class Connection implements Runnable {
 			tcpListener.startListener(inTCPQueue);
 
 			thread.start();
-
-			isConnected = true;
-
-
+			connected = true;
+			sendVerificationPacket();
 		} catch (Exception e) {
 
 			Log.print("Could not connect to server " + e.getMessage());
@@ -85,28 +89,72 @@ public class Connection implements Runnable {
 
 	}
 
+	public void reconnect() {
+
+		try {
+
+			tcpSocket = new Socket(ClientApp.GAME_SERVER_IP, port);
+			udpSocket = new DatagramSocket();
+
+			udpPort = udpSocket.getLocalPort();
+
+			out = new PrintWriter(tcpSocket.getOutputStream());
+			in = new BufferedReader(new InputStreamReader(tcpSocket.getInputStream()));
+
+			udpListener = new UDPListener(udpSocket);
+			tcpListener = new TCPListener(in);
+
+			tcpListener.setErrorCode(123);
+			udpListener.startListener(inUDPQueue);
+			tcpListener.startListener(inTCPQueue);
+			connected = true;
+
+			sendVerificationPacket();
+		} catch (Exception e) {
+			Log.connection("Error Reconnecting " + e.getMessage());
+		}
+	}
+
 	public void sendVerificationPacket() {
 
-		System.out.println("Sending Verification Packet");
-
-		String tempPacket = new String("V:" + 0 + ":"+ Net.getLocalPlayer().getPlayerID() +":" + udpPort);
-
-		sendTCP(tempPacket);
+		sendTCP(PacketFactory.makeVerifyRequestPacket(udpPort));
 
 	}
 
 	public void disconnect(String reason) {
 
-		Log.print("Connection to Server Lost " + reason);
+		Log.connection("Player Disconnected    Reason : " + reason);
 
-		isConnected = false;
+		connected = false;
+
+		udpListener.stopListener();
+		tcpListener.stopListener();
+
+		try {
+			Thread.sleep(1000);
+			tcpSocket.close();
+			udpSocket.close();
+			out.close();
+			in.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		out = null;
+		in = null;
+		udpListener.interrupt();
+		tcpListener.interrupt();
 		tcpSocket = null;
-		thread.interrupt();
+		udpSocket = null;
+		udpListener = null;
+		tcpListener = null;
 
 	}
 
-	public void sendTCP(String outMsg) {
-		out.println(outMsg);
+	public void sendTCP(TCPPacket outPacket) {
+		out.println(outPacket.getRaw());
 		out.flush();
 	}
 
@@ -114,7 +162,8 @@ public class Connection implements Runnable {
 
 		byte[] out = outMsg.getBytes();
 		try {
-			DatagramPacket dp = new DatagramPacket(out, out.length, InetAddress.getByName(ClientApp.GAME_SERVER_IP), port);
+			DatagramPacket dp = new DatagramPacket(out, out.length, InetAddress.getByName(ClientApp.GAME_SERVER_IP),
+					port);
 			udpSocket.send(dp);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
@@ -125,43 +174,63 @@ public class Connection implements Runnable {
 	}
 
 	public boolean isConnected() {
-		return isConnected;
+		return connected;
 	}
 
 	@Override
 	public void run() {
 
-		while (isConnected) {
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			while (!inUDPQueue.isEmpty()) {
+		int heartbeatCounter = 0;
 
-				LogicController.getInstance().receiveUDP(inUDPQueue.poll());
+		while (running) {
 
-			}
-			while (!inTCPQueue.isEmpty()) {
+			if (connected) {
 
-				LogicController.getInstance().receiveTCP(inTCPQueue.poll());
+				try {
+					Thread.sleep(10);
+					heartbeatCounter += 10;
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					break;
+				}
+				while (!inUDPQueue.isEmpty()) {
 
+					LogicController.getInstance().receiveUDP(inUDPQueue.poll());
+
+				}
+				while (!inTCPQueue.isEmpty()) {
+
+					LogicController.getInstance().receiveTCP(inTCPQueue.poll());
+
+				}
+
+				if (heartbeatCounter >= 600) {
+					heartbeatCounter = 0;
+					sendTCP(PacketFactory.makeHeartbeatPacket());
+				}
+			} else {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 
 		}
 	}
-	
+
 	public static Connection startConnection(int sector) {
 		Connection conn = new Connection(sector);
-		
+
 		conn.connect();
 
 		if (conn.isConnected() == false) {
 			Log.debug("No Connection");
 			return null;
 		}
-		
+
 		return conn;
 	}
 

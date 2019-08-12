@@ -1,9 +1,11 @@
 package com.pineconeindustries.server.data;
 
+import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.pineconeindustries.client.networking.packets.Packets;
 import com.pineconeindustries.client.networking.packets.custom.CustomTCPPacket;
+import com.pineconeindustries.client.objects.NPC;
 import com.pineconeindustries.client.objects.PlayerMP;
 import com.pineconeindustries.server.database.Database;
 import com.pineconeindustries.server.net.players.PacketListener;
@@ -16,6 +18,8 @@ import com.pineconeindustries.shared.log.Log;
 public class Sector {
 
 	ArrayBlockingQueue<PlayerConnection> players;
+	ArrayBlockingQueue<NPC> npcs;
+
 	private int port;
 	private boolean update = false, render = false;
 
@@ -31,10 +35,13 @@ public class Sector {
 	public Sector(int port) {
 		this.port = port;
 		players = new ArrayBlockingQueue<PlayerConnection>(64);
+		npcs = new ArrayBlockingQueue<NPC>(128);
 		connListener = new PlayerConnectionListener(this);
 		packetListener = new PacketListener(this);
 		packetWriter = new PacketWriter(this);
 		packetParser = new PacketParser(this);
+
+		addNPCs();
 
 		scheduler = new DataScheduler(200, this);
 		registerScheduledFunctions();
@@ -51,13 +58,37 @@ public class Sector {
 			public void update(Sector sector) {
 
 				StringBuilder sb = new StringBuilder();
-				
+
 				for (PlayerConnection conn : players) {
-					String xLoc = Integer.toString((int)conn.getPlayerMP().getLoc().x);
-					String yLoc = Integer.toString((int)conn.getPlayerMP().getLoc().y);
+					String xLoc = Integer.toString((int) conn.getPlayerMP().getLoc().x);
+					String yLoc = Integer.toString((int) conn.getPlayerMP().getLoc().y);
 					sb.append(conn.getPlayerID() + "#" + conn.getPlayerMP().getName() + "#"
 							+ conn.getPlayerMP().getFactionID() + "#" + conn.getPlayerMP().getSectorID() + "#"
-							+ conn.getPlayerMP().getStructureID() +"#"+xLoc+"#"+yLoc+ "=");
+							+ conn.getPlayerMP().getStructureID() + "#" + xLoc + "#" + yLoc + "=");
+				}
+
+				String data = sb.toString();
+
+				if (data.length() > 2) {
+					this.data = data.substring(0, data.length() - 1);
+				} else {
+					this.data = "";
+				}
+
+			}
+		};
+
+		CustomTCPPacket npcList = new CustomTCPPacket(Packets.NPC_LIST_PACKET, "TEST DATA") {
+			@Override
+			public void update(Sector sector) {
+
+				StringBuilder sb = new StringBuilder();
+
+				for (NPC npc : npcs) {
+					String xLoc = Integer.toString((int) npc.getLoc().x);
+					String yLoc = Integer.toString((int) npc.getLoc().y);
+					sb.append(npc.getID() + "#" + npc.getName() + "#" + npc.getFactionID() + "#" + npc.getSectorID()
+							+ "#" + npc.getStructureID() + "#" + xLoc + "#" + yLoc + "=");
 				}
 
 				String data = sb.toString();
@@ -72,6 +103,7 @@ public class Sector {
 		};
 
 		scheduler.registerPacket(playerList);
+		scheduler.registerPacket(npcList);
 
 	}
 
@@ -126,7 +158,6 @@ public class Sector {
 	}
 
 	public void connectPlayer(PlayerConnection player) {
-		Log.serverLog("Player ID[" + player.getPlayerID() + "] connecting to Sector " + port);
 		player.connect();
 	}
 
@@ -137,9 +168,20 @@ public class Sector {
 
 	}
 
+	public void addNPCs() {
+
+		ArrayList<NPC> tempList = Database.getInstance().getNPCDAO().getDefaultNPCs(port);
+
+		for (NPC npc : tempList) {
+
+			npcs.add(npc);
+
+		}
+
+	}
+
 	public void removePlayer(PlayerConnection player) {
 		Log.serverLog("Player ID[" + player.getPlayerID() + "] removed from Sector " + port);
-	
 		Database.getInstance().getPlayerDAO().savePlayer(player.getPlayerMP());
 		players.remove(player);
 		Galaxy.getInstance().removePlayerFromGlobal(player);
@@ -157,8 +199,24 @@ public class Sector {
 		return packetWriter;
 	}
 
+	public ArrayBlockingQueue<NPC> getNPCs() {
+		return npcs;
+	}
+
 	public ArrayBlockingQueue<PlayerConnection> getPlayers() {
 		return players;
+	}
+
+	public PlayerConnection getPlayerConnectionByID(int id) {
+
+		PlayerConnection playerConnection = null;
+
+		for (PlayerConnection c : players) {
+			if (c.getPlayerMP().getID() == id)
+				playerConnection = c;
+		}
+
+		return playerConnection;
 	}
 
 	public PlayerMP getPlayerByID(int id) {
@@ -166,7 +224,7 @@ public class Sector {
 		PlayerMP player = null;
 
 		for (PlayerConnection c : players) {
-			if (c.getPlayerMP().getPlayerID() == id)
+			if (c.getPlayerMP().getID() == id)
 				player = c.getPlayerMP();
 		}
 

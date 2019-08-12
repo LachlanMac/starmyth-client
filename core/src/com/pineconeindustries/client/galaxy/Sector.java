@@ -8,33 +8,34 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.PriorityBlockingQueue;
 
-
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.pineconeindustries.client.objects.Entity;
+import com.pineconeindustries.client.objects.NPC;
+import com.pineconeindustries.client.objects.Person;
 import com.pineconeindustries.client.objects.Player;
 import com.pineconeindustries.client.objects.PlayerMP;
 
 public class Sector {
 
-	
 	TileMap t;
-	
+
 	private int port;
 
+	private ArrayBlockingQueue<NPC> npcs;
 	private ArrayBlockingQueue<PlayerMP> players;
 	private Player player;
 
-	private CopyOnWriteArrayList<Entity> renderList;
-
-	public Sector(int port, Player player) {
-		this.port = port;
+	private CopyOnWriteArrayList<Person> renderList;
+	
+	public Sector(Player player) {
+		this.port = player.getSectorID();
 		players = new ArrayBlockingQueue<PlayerMP>(64);
-		renderList = new CopyOnWriteArrayList<Entity>();
-		registerPlayer(port, player);
-		
+		npcs = new ArrayBlockingQueue<NPC>(128);
+		renderList = new CopyOnWriteArrayList<Person>();
+		this.player = player;
+		renderList.add(player);
 
-		
-		//TEST
+		// TEST
 		t = new TileMap();
 		t.loadTestTileMap();
 	}
@@ -49,6 +50,7 @@ public class Sector {
 	}
 
 	public void update() {
+
 		
 		
 		player.update();
@@ -56,13 +58,6 @@ public class Sector {
 		for (PlayerMP p : players) {
 			p.update();
 		}
-	}
-
-	public void registerPlayer(int port, Player player) {
-		this.player = player;
-		player.setSectorID(port);
-		renderList.add(player);
-
 	}
 
 	public Player getPlayer() {
@@ -77,11 +72,22 @@ public class Sector {
 		PlayerMP player = null;
 
 		for (PlayerMP p : players) {
-			if (p.getPlayerID() == id)
+			if (p.getID() == id)
 				player = p;
 		}
 
 		return player;
+	}
+
+	public NPC getNPCByID(int id) {
+		NPC npc = null;
+
+		for (NPC n : npcs) {
+			if (n.getID() == id)
+				npc = n;
+		}
+
+		return npc;
 	}
 
 	public void cleanPlayerList(ArrayList<Integer> ids) {
@@ -89,16 +95,45 @@ public class Sector {
 		for (PlayerMP p : players) {
 			boolean playerExists = false;
 			for (Integer i : ids) {
-				if (p.getPlayerID() == i) {
+				if (p.getID() == i) {
 					playerExists = true;
 				}
 			}
 
 			if (!playerExists) {
 				System.out.println("REMOPVING!");
-				removePlayer(getPlayerByID(p.getPlayerID()));
+				removePlayer(getPlayerByID(p.getID()));
 			}
 		}
+
+	}
+
+	public void cleanNPCList(ArrayList<Integer> ids) {
+
+		for (NPC npc : npcs) {
+			boolean npcExists = false;
+			for (Integer i : ids) {
+				if (npc.getID() == i) {
+					npcExists = true;
+				}
+			}
+
+			if (!npcExists) {
+				System.out.println("REMOPVING!");
+				removeNPC(getNPCByID(npc.getID()));
+			}
+		}
+
+	}
+
+	public void addNPC(NPC npc) {
+		npcs.add(npc);
+		renderList.add(npc);
+	}
+
+	public void removeNPC(NPC npc) {
+		npcs.remove(npc);
+		renderList.remove(npc);
 
 	}
 
@@ -113,12 +148,9 @@ public class Sector {
 		renderList.remove(player);
 
 	}
-	
+
 	public void loadSector() {
-		
-		
-		
-		
+
 	}
 
 	public PlayerMP getPlayerMPByID(int id) {
@@ -126,14 +158,14 @@ public class Sector {
 		PlayerMP pmp = null;
 
 		for (PlayerMP p : players) {
-			if (p.getPlayerID() == id) {
+			if (p.getID() == id) {
 				pmp = p;
 			}
 		}
 		return pmp;
 
 	}
-	
+
 	public int getPort() {
 		return port;
 	}

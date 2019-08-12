@@ -32,7 +32,8 @@ public class ServerApp extends ApplicationAdapter {
 	public int WORLD_WIDTH = 1920;
 	public int WORLD_HEIGHT = 1080;
 	public float aspectRatio = 1;
-
+	
+	
 	private Galaxy galaxy;
 
 	Sprite bg;

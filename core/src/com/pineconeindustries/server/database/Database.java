@@ -9,23 +9,28 @@ public class Database {
 	private static Database instance = null;
 	private Connection conn;
 	private PlayerDAO playerDAO;
+	private NPCDAO npcDAO;
+
+	public static boolean useDatabase = false;
 
 	private Database() {
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://localhost/starmyth?" + "user=root&password=Movingon1");
-			
+			if (useDatabase) {
+				Class.forName("com.mysql.jdbc.Driver");
+				conn = DriverManager.getConnection("jdbc:mysql://localhost/starmyth?" + "user=root&password=Movingon1");
+
+			}
 			playerDAO = new PlayerDAO(conn);
-			
-			
-			
+			npcDAO = new NPCDAO(conn);
+
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		catch (SQLException e) {
+			useDatabase = false;
+		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			useDatabase = false;
 		}
 
 	}
@@ -34,18 +39,18 @@ public class Database {
 
 		if (instance == null) {
 			instance = new Database();
-			
+
 		}
 		return instance;
 
 	}
-	
-	
-	
+
 	public PlayerDAO getPlayerDAO() {
 		return playerDAO;
 	}
-	
-	
+
+	public NPCDAO getNPCDAO() {
+		return npcDAO;
+	}
 
 }

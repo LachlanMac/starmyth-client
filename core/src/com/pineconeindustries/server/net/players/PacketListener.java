@@ -38,8 +38,6 @@ public class PacketListener extends Thread {
 
 					UDPPacket p = new UDPPacket(new String(inPacket.getData()));
 
-					// PARSE THE PACKET
-
 					sector.getPacketParser().parsePacket(p);
 
 				} catch (IOException e) {

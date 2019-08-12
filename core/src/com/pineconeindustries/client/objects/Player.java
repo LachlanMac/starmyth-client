@@ -10,13 +10,13 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.pineconeindustries.client.chat.Chatbox;
-import com.pineconeindustries.client.data.RoomData;
 import com.pineconeindustries.client.manager.InputManager;
 import com.pineconeindustries.client.manager.LogicController;
+import com.pineconeindustries.client.networking.Net;
 import com.pineconeindustries.client.networking.packets.PacketFactory;
 import com.pineconeindustries.shared.data.GameData;
 
-public class Player extends Entity {
+public class Player extends Person {
 
 	// TEST
 
@@ -24,25 +24,16 @@ public class Player extends Entity {
 
 	final float camspeed = 0.1f, icamspeed = 1.0f - camspeed;
 	BitmapFont font = new BitmapFont();
-	private boolean tickrender = false;
-	private int playerID;
-	private boolean moveDisabled = false;
 
-	private int sectorID = 0;
+	private boolean moveDisabled = false;
 
 	Chatbox chatbox;
 	Camera camera;
 
-	RoomData currentRoom;
-
-	private float state = 0f;
-
-	public Player(String name, Vector2 loc, GameData game, int factionID, int structureID, int playerID,
+	public Player(String name, Vector2 loc, GameData game, int factionID, int structureID, int id, int sectorID,
 			Camera camera) {
-		super(name, loc, game, factionID, structureID);
+		super(name, loc, game, factionID, structureID, id, sectorID);
 		this.camera = camera;
-		this.playerID = playerID;
-
 		projectiles = new ArrayList<Projectile>();
 
 	}
@@ -60,12 +51,12 @@ public class Player extends Entity {
 
 			b.draw(currentFrame.getKeyFrame(state, true), renderLoc.x, renderLoc.y, 32, 32, t.getRegionWidth(),
 					t.getRegionHeight(), 1, 1, 3f + (state * 100), false);
-		
+
 		} else {
 			b.draw(currentFrame.getKeyFrame(state, true), renderLoc.x, renderLoc.y);
 		}
 		font.draw(b, printVector(), loc.x, loc.y - 15);
-		
+
 		if (renderLoc.dst(loc) > 500) {
 			renderLoc = loc;
 		} else {
@@ -146,6 +137,12 @@ public class Player extends Entity {
 
 		}
 
+		if (InputManager.isPressed(InputManager.TEST_BUTTON)) {
+
+			Net.getConnection().switchSector(7781);
+
+		}
+
 		if ((click = InputManager.mouseDown(InputManager.MOUSE_DOWN)) != null) {
 			Vector3 worldCoordinates = camera.unproject(new Vector3(click.x, click.y, 0));
 
@@ -165,22 +162,6 @@ public class Player extends Entity {
 		}
 	}
 
-	public void transport(Vector2 destination) {
-
-		// lnet.sendTransport(destination);
-
-	}
-
-	public void sectorTransport(int sector, Vector2 destination) {
-
-		// lnet.sendSectorTransport(sector, destination);
-
-	}
-
-	public int getPlayerID() {
-		return playerID;
-	}
-
 	public void disableInput() {
 		moveDisabled = true;
 	}
@@ -193,29 +174,8 @@ public class Player extends Entity {
 		this.chatbox = chatbox;
 	}
 
-	public boolean shouldTickRender() {
-		return tickrender;
-	}
-
-	public void disableTickRender() {
-		tickrender = false;
-	}
-
-	public void enableTickRender() {
-
-		tickrender = true;
-	}
-
 	public Camera getCamera() {
 		return camera;
-	}
-
-	public int getSectorID() {
-		return sectorID;
-	}
-
-	public void setSectorID(int sectorID) {
-		this.sectorID = sectorID;
 	}
 
 	public boolean changedStructure() {

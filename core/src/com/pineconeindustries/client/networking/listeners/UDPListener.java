@@ -3,7 +3,11 @@ package com.pineconeindustries.client.networking.listeners;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.ArrayBlockingQueue;
+
+import com.pineconeindustries.shared.log.Log;
 
 public class UDPListener extends Thread {
 
@@ -33,6 +37,8 @@ public class UDPListener extends Thread {
 
 				udpQueue.add(new String(packet.getData()));
 
+			} catch (SocketTimeoutException e) {
+				continue;
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -43,6 +49,11 @@ public class UDPListener extends Thread {
 	}
 
 	public void startListener(ArrayBlockingQueue<String> udpQueue) {
+		try {
+			socket.setSoTimeout(3000);
+		} catch (SocketException e) {
+			e.printStackTrace();
+		}
 		this.udpQueue = udpQueue;
 		isRunning = true;
 		this.start();

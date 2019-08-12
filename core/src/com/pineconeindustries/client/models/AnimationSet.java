@@ -1,4 +1,4 @@
-package com.pineconeindustries.client;
+package com.pineconeindustries.client.models;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;

@@ -23,7 +23,6 @@ public class UserInterface {
 	
 	public UserInterface(Stage stage) {
 
-		this.player = player;
 		this.stage = stage;
 
 		stage.getRoot().addCaptureListener(new InputListener() {

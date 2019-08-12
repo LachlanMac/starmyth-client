@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.pineconeindustries.client.AnimationSet;
+import com.pineconeindustries.client.models.AnimationSet;
 import com.pineconeindustries.shared.data.GameData;
 
 public class Entity extends GameObject implements Comparable<Entity> {

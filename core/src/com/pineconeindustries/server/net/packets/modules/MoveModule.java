@@ -32,16 +32,15 @@ public class MoveModule {
 			player.setLoc(loc);
 			player.setLastDirectionFaced(new Vector2(adjustedMov.x, adjustedMov.y));
 			player.setVelocity(velocity);
-			
-			
-			String packetData = new String(player.getPlayerID() + "=" + player.getLoc().x + "=" + player.getLoc().y
+
+			String packetData = new String(player.getID() + "=" + player.getLoc().x + "=" + player.getLoc().y
 					+ "=" + adjustedMov.x + "=" + adjustedMov.y + "=" + velocity);
 
 			sector.getPacketWriter()
 					.queueToAll(new UDPPacket(Packets.MOVE_PACKET, packetData, UDPPacket.packetCounter()));
 
 		} catch (NumberFormatException e) {
-			Log.print("INVALID PACKET : " + e.getMessage());
+			Log.netTraffic(e.getMessage(), "Invalid Packet");
 			return;
 		}
 

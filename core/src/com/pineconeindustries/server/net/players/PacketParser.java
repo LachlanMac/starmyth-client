@@ -5,6 +5,7 @@ import com.pineconeindustries.client.networking.packets.Packets;
 import com.pineconeindustries.client.networking.packets.TCPPacket;
 import com.pineconeindustries.client.networking.packets.UDPPacket;
 import com.pineconeindustries.server.data.Sector;
+import com.pineconeindustries.server.net.packets.modules.ConnectionModule;
 import com.pineconeindustries.server.net.packets.modules.MoveModule;
 import com.pineconeindustries.shared.log.Log;
 
@@ -38,14 +39,24 @@ public class PacketParser {
 			MoveModule.rxMoveRequest(packet.getData(), sector);
 			break;
 		default:
-			Log.print("INVALID UDP PACKET " + packet.getPacketID());
+			Log.netTraffic("Packet ID: " + packet.getPacketID(), "Invalid UDP Packet");
 
 		}
 
 	}
 
 	public void parseTCPPacket(TCPPacket packet) {
+		switch (packet.getPacketID()) {
 
+		case Packets.HEART_BEAT_PACKET:
+			ConnectionModule.rxHeartbeat(packet.getData(), sector);
+			break;
+		case Packets.VERIFY_PACKET:
+			break;
+		default:
+			Log.netTraffic("Packet ID: " + packet.getPacketID(), "Invalid TCP Packet");
+
+		}
 	}
 
 }

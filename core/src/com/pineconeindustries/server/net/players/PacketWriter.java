@@ -10,6 +10,7 @@ import com.pineconeindustries.client.networking.packets.Packet.PACKET_TYPE;
 import com.pineconeindustries.client.networking.packets.TCPPacket;
 import com.pineconeindustries.client.networking.packets.UDPPacket;
 import com.pineconeindustries.server.data.Sector;
+import com.pineconeindustries.shared.log.Log;
 
 public class PacketWriter extends Thread {
 
@@ -41,8 +42,7 @@ public class PacketWriter extends Thread {
 					socket.send(toSend);
 
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Log.netTraffic("Error sending UDP Packet", "UDP Packet Error");
 				}
 			}
 

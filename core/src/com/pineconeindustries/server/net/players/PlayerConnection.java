@@ -8,11 +8,13 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.Socket;
 import com.badlogic.gdx.math.Vector2;
+import com.pineconeindustries.client.networking.packets.Packets;
 import com.pineconeindustries.client.networking.packets.TCPPacket;
 import com.pineconeindustries.client.networking.packets.UDPPacket;
 import com.pineconeindustries.client.objects.PlayerMP;
 import com.pineconeindustries.server.data.Sector;
 import com.pineconeindustries.server.database.Database;
+import com.pineconeindustries.server.net.packets.modules.ConnectionModule;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.log.Log;
 
@@ -20,6 +22,9 @@ public class PlayerConnection extends Thread {
 
 	private Socket tcpSock;
 	private Sector sector;
+
+	private final static int MAX_TIMEOUT = 1000;
+	private final static int MAX_FAILURES = 20;
 
 	private long packetCounter = 0;
 
@@ -30,13 +35,13 @@ public class PlayerConnection extends Thread {
 
 	private int socketPort = 0;
 
+	private int timeout = 0;
 	private int failures = 0;
-	private final int MAX_FAILURES = 20;
 
 	private int playerID;
 
-	private boolean isConnected = false;
-	private boolean isRunning = false;
+	private boolean connected = false;
+	private boolean running = false;
 	private boolean verified = false;
 
 	// TEMP
@@ -49,7 +54,7 @@ public class PlayerConnection extends Thread {
 
 		this.playerID = 0;
 
-		isRunning = true;
+		running = true;
 
 		start();
 	}
@@ -57,15 +62,21 @@ public class PlayerConnection extends Thread {
 	@Override
 	public void run() {
 
-		while (isRunning) {
+		while (running) {
 
-			if (isConnected) {
+			if (connected) {
+
+				timeout++;
+				if (timeout >= MAX_TIMEOUT) {
+					failures++;
+					checkForDisconnect(failures, "Timeout");
+				}
 
 				try {
 					String incoming;
 					while ((incoming = in.readLine()) != null) {
 
-						receiveTCP(incoming);
+						receiveTCP(new TCPPacket(incoming));
 						failures = 0;
 					}
 
@@ -76,7 +87,6 @@ public class PlayerConnection extends Thread {
 
 			} else {
 				try {
-
 					Thread.sleep(1000);
 
 				} catch (InterruptedException e) {
@@ -89,11 +99,17 @@ public class PlayerConnection extends Thread {
 
 	}
 
+	public void refresh() {
+		timeout = 0;
+	}
+
 	public void checkForDisconnect(int failures, String msg) {
 
+		if (!connected)
+			return;
 		if (failures >= MAX_FAILURES) {
-			Log.serverLog("Player Disconnected " + msg);
-			disconnect();
+			Log.connection("Player Disconnected (Reason:" + msg + ")");
+			disconnect(true);
 		}
 
 	}
@@ -108,11 +124,15 @@ public class PlayerConnection extends Thread {
 	}
 
 	public void loadPlayerMP() {
-		
+
 		playerMP = Database.getInstance().getPlayerDAO().loadPlayerByID(playerID);
-		if(playerMP == null) {
+		if (playerMP == null) {
 			Log.print("ERROR LOADING PLAYER - NO ID!");
 		}
+	}
+
+	public void rxVerificationPacket(TCPPacket packet) {
+		ConnectionModule.rxVerifyRequest(this, packet.getData(), sector);
 	}
 
 	public void sendUDP(UDPPacket packet) {
@@ -132,11 +152,15 @@ public class PlayerConnection extends Thread {
 		}
 	}
 
-	public void receiveTCP(String inMsg) {
+	public void receiveTCP(TCPPacket packet) {
 
 		if (!verified) {
-			verify(inMsg);
+			if (packet.getPacketID() == Packets.VERIFY_PACKET) {
+				rxVerificationPacket(packet);
+			}
 		} else {
+
+			sector.getPacketParser().parseTCPPacket(packet);
 
 		}
 
@@ -146,50 +170,42 @@ public class PlayerConnection extends Thread {
 		try {
 			in = new BufferedReader(new InputStreamReader(tcpSock.getInputStream()));
 			out = new PrintWriter(tcpSock.getOutputStream());
+			connected = true;
 		} catch (IOException e) {
 
-			e.printStackTrace();
+			Log.connection("Player could not connect (Reason:" + e.getMessage() + ")");
+
 		}
 
-		isConnected = true;
+		connected = true;
 
 	}
 
-	public void disconnect() {
+	public void disconnect(boolean killConnection) {
 
 		try {
 
-			isConnected = false;
+			connected = false;
 			in.close();
 			out.close();
-			tcpSock.close();
+			if (tcpSock != null)
+				tcpSock.close();
 			tcpSock = null;
-			isRunning = false;
-			Thread.sleep(10000);
-			sector.removePlayer(this);
-
+			if (killConnection) {
+				running = false;
+				Thread.sleep(5000);
+				sector.removePlayer(this);
+			}
+			this.interrupt();
 		} catch (IOException | InterruptedException e) {
 
-			e.printStackTrace();
+			e.getMessage();
 		}
 
-		isRunning = false;
 	}
 
-	public void verify(String inMsg) {
-
-		String[] split = inMsg.split(":");
-
-		if (split[0].equals("V")) {
-
-			playerID = Integer.parseInt(split[2]);
-			socketPort = Integer.parseInt(split[3]);
-			loadPlayerMP();
-			verified = true;
-			sector.addPlayer(this);
-
-		}
-
+	public void verify() {
+		verified = true;
 	}
 
 	public InetAddress getIP() {
@@ -202,13 +218,10 @@ public class PlayerConnection extends Thread {
 	}
 
 	public int getConnectedPort() {
-
 		if (socketPort == 0) {
-			System.out.println("Socket port not defined");
 			return 9999;
 		}
 		return socketPort;
-
 	}
 
 	public int getPlayerID() {
@@ -227,4 +240,12 @@ public class PlayerConnection extends Thread {
 		return verified;
 	}
 
+	public void setSocketPort(int socketPort) {
+		this.socketPort = socketPort;
+	}
+
+	public void setPlayerID(int playerID) {
+		this.playerID = playerID;
+		;
+	}
 }

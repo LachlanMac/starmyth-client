@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.pineconeindustries.client.AnimationSet;
+import com.pineconeindustries.client.models.AnimationSet;
 import com.pineconeindustries.shared.data.GameData;
 
 public class LAssetManager extends AssetManager {
@@ -26,7 +26,7 @@ public class LAssetManager extends AssetManager {
 	}
 
 	public void loadTextures() {
-
+		load("textures/galaxybg1.png", Texture.class);
 		load("textures/plasma.png", Texture.class);
 		load("textures/shiptiles/shipSS.png", Texture.class);
 		load("textures/playerfront.png", Texture.class);

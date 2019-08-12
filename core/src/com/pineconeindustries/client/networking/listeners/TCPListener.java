@@ -11,8 +11,14 @@ public class TCPListener extends Thread {
 	private BufferedReader in;
 	private boolean isRunning = false;
 
+	public int ERROR_CODE = 0;
+
 	public TCPListener(BufferedReader in) {
 		this.in = in;
+	}
+
+	public void setErrorCode(int i) {
+		this.ERROR_CODE = i;
 	}
 
 	@Override
@@ -28,7 +34,7 @@ public class TCPListener extends Thread {
 					tcpQueue.add(data);
 				}
 			} catch (Exception e) {
-				Log.serverLog("Error in client TCP Listener " + e.getMessage());
+				Log.serverLog("Error in client TCP Listener " + e.getMessage() + " ERROR FROM " + ERROR_CODE);
 			}
 
 		}

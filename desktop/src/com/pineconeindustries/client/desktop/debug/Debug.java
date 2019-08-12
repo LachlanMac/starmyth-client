@@ -48,7 +48,7 @@ public class Debug {
 			data.setCharID(22);
 			data.setId(1002);
 			data.setModel("1");
-			data.setSector(8888);
+			data.setSector(7780);
 			data.setStatus("ok");
 			data.setUser("testclient2");
 			data.setX(9999);

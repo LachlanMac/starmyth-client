@@ -15,6 +15,7 @@ public class InputManager {
 	public static int LEFT = Input.Keys.A;
 	public static int SPRINT = Input.Keys.SHIFT_LEFT;
 	public static int ENTER = Input.Keys.ENTER;
+	public static int TEST_BUTTON = Input.Keys.U;
 	public static int CENTER_CAMERA = Input.Keys.Y;
 	public static int MOUSE_DOWN = Input.Buttons.LEFT;
 	public static float mouseX = 0f;

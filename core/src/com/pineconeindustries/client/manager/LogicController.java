@@ -10,6 +10,7 @@ import com.pineconeindustries.client.networking.Connection;
 import com.pineconeindustries.client.networking.Net;
 import com.pineconeindustries.client.networking.packets.Packets;
 import com.pineconeindustries.client.networking.packets.UDPPacket;
+import com.pineconeindustries.client.objects.NPC;
 import com.pineconeindustries.client.objects.Player;
 import com.pineconeindustries.client.objects.PlayerMP;
 import com.pineconeindustries.shared.data.GameData;
@@ -23,7 +24,7 @@ public class LogicController {
 	private Connection conn;
 	private CameraController cam;
 	private OrthographicCamera playerCamera, fixedCamera;
-	
+
 	private LogicController() {
 
 	}
@@ -114,17 +115,36 @@ public class LogicController {
 
 			break;
 
+		case Packets.NPC_MOVE_PACKET:
+
+			try {
+				int id = Integer.parseInt(split[0]);
+				float x = Float.parseFloat(split[1]);
+				float y = Float.parseFloat(split[2]);
+				float dirX = Float.parseFloat(split[3]);
+				float dirY = Float.parseFloat(split[4]);
+				float velocity = Float.parseFloat(split[5]);
+
+				NPC n = sector.getNPCByID(id);
+				if (n != null) {
+					n.setVelocity(velocity);
+					n.setLastDirectionFaced(new Vector2(dirX, dirY));
+					n.setLoc(new Vector2(x, y));
+					n.setFramesSinceLastMove(0);
+				}
+
+			} catch (NumberFormatException e) {
+
+			}
+
+			break;
+
 		case Packets.PLAYER_LIST_PACKET:
 
 			ArrayList<Integer> ids = new ArrayList<Integer>();
 
 			for (String data : split) {
 
-				
-				
-				//sb.append(conn.getPlayerID() + "#" + conn.getPlayerMP().getName() + "#"
-				//		+ conn.getPlayerMP().getFactionID() + "#" + conn.getPlayerMP().getSectorID() + "#"
-				//		+ conn.getPlayerMP().getStructureID() +"#"+xLoc+"#"+yLoc+ "=");
 				String[] playerData = data.split("#");
 
 				int playerID = Integer.parseInt(playerData[0]);
@@ -134,15 +154,16 @@ public class LogicController {
 				int structureID = Integer.parseInt(playerData[4]);
 				float xLoc = Float.parseFloat(playerData[5]);
 				float yLoc = Float.parseFloat(playerData[6]);
-				
+
 				if (Net.isLocalPlayer(playerID)) {
 					// player is still part of sector list
 				} else {
 					ids.add(playerID);
 					if (sector.getPlayerByID(playerID) == null) {
 
-						sector.addPlayer(new PlayerMP(name, new Vector2(xLoc, yLoc), GameData.getInstance(), factionID, structureID, playerID, sectorID));
-							
+						sector.addPlayer(new PlayerMP(name, new Vector2(xLoc, yLoc), GameData.getInstance(), factionID,
+								structureID, playerID, sectorID));
+
 					}
 				}
 			}
@@ -150,6 +171,32 @@ public class LogicController {
 			sector.cleanPlayerList(ids);
 
 			break;
+
+		case Packets.NPC_LIST_PACKET:
+
+			ArrayList<Integer> npcIDs = new ArrayList<Integer>();
+
+			for (String data : split) {
+
+				String[] npcData = data.split("#");
+
+				int npcID = Integer.parseInt(npcData[0]);
+				String name = npcData[1];
+				int factionID = Integer.parseInt(npcData[2]);
+				int sectorID = Integer.parseInt(npcData[3]);
+				int structureID = Integer.parseInt(npcData[4]);
+				float xLoc = Float.parseFloat(npcData[5]);
+				float yLoc = Float.parseFloat(npcData[6]);
+
+				npcIDs.add(npcID);
+
+				sector.addNPC(new NPC(name, new Vector2(xLoc, yLoc), GameData.getInstance(), factionID, structureID,
+						npcID, sectorID));
+
+			}
+
+			sector.cleanPlayerList(npcIDs);
+
 		default:
 		}
 
@@ -161,22 +208,27 @@ public class LogicController {
 
 	public void registerConnection(Connection conn) {
 		this.conn = conn;
-		conn.sendVerificationPacket();
+
 	}
-	
+
+	public Connection getConnection() {
+		return conn;
+	}
+
 	public void registerCamera(CameraController cam) {
 		this.cam = cam;
 		this.fixedCamera = cam.getFixedCamera();
 		this.playerCamera = cam.getPlayerCamera();
 	}
-	
+
 	public CameraController getCameraController() {
 		return cam;
 	}
-	
+
 	public OrthographicCamera getPlayerCamera() {
 		return playerCamera;
 	}
+
 	public OrthographicCamera getFixedCamera() {
 		return fixedCamera;
 	}

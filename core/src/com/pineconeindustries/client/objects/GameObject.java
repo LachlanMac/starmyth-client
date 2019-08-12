@@ -17,7 +17,7 @@ public abstract class GameObject {
 
 	protected int DEFAULT_BOUNDS_WIDTH = 64;
 	protected int DEFAULT_BOUNDS_HEIGHT = 64;
-
+	protected float rotation;
 	private int boundsWidth = 64;
 	private int boundsHeight = 64;
 	Rectangle bounds;
@@ -82,6 +82,10 @@ public abstract class GameObject {
 			// intersect logic
 		}
 
+	}
+	
+	public float getRotation() {
+		return rotation;
 	}
 
 }

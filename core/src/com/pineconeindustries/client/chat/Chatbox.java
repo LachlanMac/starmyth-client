@@ -45,8 +45,6 @@ public class Chatbox extends Table {
 		float windowHeight = (float) Gdx.graphics.getHeight();
 
 		chatBoxWidth = windowWidth * widthPercent;
-
-		System.out.println(windowWidth + "  * " + widthPercent + "  =  " + chatBoxWidth);
 		chatBoxHeight = windowHeight * heightPercent;
 		this.setWidth(chatBoxWidth);
 		this.setHeight(chatBoxHeight);
