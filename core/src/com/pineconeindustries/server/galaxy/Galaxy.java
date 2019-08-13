@@ -1,9 +1,11 @@
-package com.pineconeindustries.server.data;
+package com.pineconeindustries.server.galaxy;
 
 import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.pineconeindustries.server.ai.FiniteStateMachine;
+import com.pineconeindustries.server.ai.states.*;
 import com.pineconeindustries.server.clock.Clock;
 import com.pineconeindustries.server.net.players.PlayerConnection;
 
@@ -13,20 +15,18 @@ public class Galaxy {
 	private ArrayList<Sector> sectors;
 
 	private ArrayBlockingQueue<PlayerConnection> globalPlayerList;
-	
-	
-	
+
 	private Galaxy() {
-		
+
 		sectors = new ArrayList<Sector>();
 		globalPlayerList = new ArrayBlockingQueue<PlayerConnection>(1024);
-		
+
 	}
 
 	public void update() {
-		
+
 		Clock.getInstance().tick();
-		
+
 		for (Sector s : sectors) {
 			s.update();
 		}
@@ -57,18 +57,29 @@ public class Galaxy {
 
 	public void loadSectors() {
 
-		Sector testSector = new Sector(7780);
-		Sector testSector2 = new Sector(7781);
-		
-		
+		Sector testSector = null, testSector2 = null;
+
+		testSector = new Sector(7780);
+		testSector2 = new Sector(7781);
 		addSector(testSector);
-		
 		addSector(testSector2);
 		testSector2.startSector();
 		testSector2.updateAndRender(true);
 		testSector.startSector();
 		testSector.updateAndRender(true);
 
+	}
+
+	public Sector getSectorByID(int sectorID) {
+		System.out.println("SECTORS " + sectors.size());
+		Sector s = null;
+		for (Sector sector : sectors) {
+			System.out.println(sector.getPort() + " VS  " + sectorID);
+			if (sector.getPort() == sectorID)
+				s = sector;
+		}
+
+		return s;
 	}
 
 	public void addSector(Sector sector) {

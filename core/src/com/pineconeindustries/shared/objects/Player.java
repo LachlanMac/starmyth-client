@@ -1,4 +1,4 @@
-package com.pineconeindustries.client.objects;
+package com.pineconeindustries.shared.objects;
 
 import java.util.ArrayList;
 

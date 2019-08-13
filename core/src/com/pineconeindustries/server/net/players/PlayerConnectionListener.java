@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import com.pineconeindustries.server.data.Sector;
+import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.shared.log.Log;
 
 public class PlayerConnectionListener extends Thread {

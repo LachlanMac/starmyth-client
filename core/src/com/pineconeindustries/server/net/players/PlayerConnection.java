@@ -11,12 +11,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.networking.packets.Packets;
 import com.pineconeindustries.client.networking.packets.TCPPacket;
 import com.pineconeindustries.client.networking.packets.UDPPacket;
-import com.pineconeindustries.client.objects.PlayerMP;
-import com.pineconeindustries.server.data.Sector;
 import com.pineconeindustries.server.database.Database;
+import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.packets.modules.ConnectionModule;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.log.Log;
+import com.pineconeindustries.shared.objects.PlayerMP;
 
 public class PlayerConnection extends Thread {
 

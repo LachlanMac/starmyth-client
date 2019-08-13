@@ -1,7 +1,7 @@
 package com.pineconeindustries.server.data;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.pineconeindustries.client.files.Files;
+import com.pineconeindustries.shared.files.Files;
 
 public class Station extends Structure{
 

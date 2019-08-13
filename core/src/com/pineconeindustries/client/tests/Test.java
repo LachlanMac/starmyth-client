@@ -1,6 +1,6 @@
 package com.pineconeindustries.client.tests;
 
-import com.pineconeindustries.client.files.Files;
+import com.pineconeindustries.shared.files.Files;
 
 public class Test {
 

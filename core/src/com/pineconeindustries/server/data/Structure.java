@@ -1,7 +1,7 @@
 package com.pineconeindustries.server.data;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.pineconeindustries.client.objects.Tile;
+import com.pineconeindustries.shared.objects.Tile;
 
 public abstract class Structure {
 

@@ -2,14 +2,14 @@ package com.pineconeindustries.server.ai.states;
 
 import com.pineconeindustries.server.ai.FiniteStateMachine;
 
-public class WanderState extends State {
+public class WorkState extends State {
 
-	public WanderState(FiniteStateMachine fsm) {
+	private final String key = "WORK";
+	
+	public WorkState(FiniteStateMachine fsm) {
 		super(fsm);
 		// TODO Auto-generated constructor stub
 	}
-
-	final String key = "WANDER";
 
 	@Override
 	public void leaveState() {

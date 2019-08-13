@@ -6,6 +6,7 @@ import com.pineconeindustries.client.networking.packets.custom.CustomPacket;
 import com.pineconeindustries.client.networking.packets.custom.CustomTCPPacket;
 import com.pineconeindustries.client.networking.packets.custom.CustomUDPPacket;
 import com.pineconeindustries.server.clock.Clock;
+import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.shared.log.Log;
 
 public class DataScheduler extends Thread {
@@ -29,8 +30,7 @@ public class DataScheduler extends Thread {
 			try {
 
 				for (CustomPacket p : packets) {
-					Log.print("TIME: " + Clock.getInstance().getTime());
-							
+
 					Thread.sleep(interval);
 					p.update(sector);
 					sector.getPacketWriter().queueToAll(p.getPacket());

@@ -5,7 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
 import com.pineconeindustries.client.networking.packets.UDPPacket;
-import com.pineconeindustries.server.data.Sector;
+import com.pineconeindustries.server.galaxy.Sector;
 
 public class PacketListener extends Thread {
 

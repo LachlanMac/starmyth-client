@@ -16,9 +16,11 @@ import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.pineconeindustries.client.manager.LAssetManager;
-import com.pineconeindustries.server.data.Galaxy;
 import com.pineconeindustries.server.database.Database;
+import com.pineconeindustries.server.galaxy.Galaxy;
 import com.pineconeindustries.shared.data.GameData;
+import com.pineconeindustries.shared.data.Global;
+import com.pineconeindustries.shared.data.Global.RUN_TYPE;
 
 public class ServerApp extends ApplicationAdapter {
 
@@ -40,6 +42,11 @@ public class ServerApp extends ApplicationAdapter {
 
 	public ServerApp(boolean headless) {
 		this.headless = headless;
+		if(headless) {
+			Global.runType = RUN_TYPE.headless_server;
+		}else {
+			Global.runType = RUN_TYPE.server;
+		}
 	}
 
 	@Override

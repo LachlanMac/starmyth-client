@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.pineconeindustries.client.chat.Chatbox;
-import com.pineconeindustries.client.objects.Player;
+import com.pineconeindustries.shared.objects.Player;
 
 public class UserInterface {
 

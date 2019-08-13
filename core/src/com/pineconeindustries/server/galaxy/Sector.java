@@ -1,12 +1,11 @@
-package com.pineconeindustries.server.data;
+package com.pineconeindustries.server.galaxy;
 
 import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.pineconeindustries.client.networking.packets.Packets;
 import com.pineconeindustries.client.networking.packets.custom.CustomTCPPacket;
-import com.pineconeindustries.client.objects.NPC;
-import com.pineconeindustries.client.objects.PlayerMP;
+import com.pineconeindustries.server.data.DataScheduler;
 import com.pineconeindustries.server.database.Database;
 import com.pineconeindustries.server.net.players.PacketListener;
 import com.pineconeindustries.server.net.players.PacketParser;
@@ -14,6 +13,8 @@ import com.pineconeindustries.server.net.players.PacketWriter;
 import com.pineconeindustries.server.net.players.PlayerConnection;
 import com.pineconeindustries.server.net.players.PlayerConnectionListener;
 import com.pineconeindustries.shared.log.Log;
+import com.pineconeindustries.shared.objects.NPC;
+import com.pineconeindustries.shared.objects.PlayerMP;
 
 public class Sector {
 
@@ -40,8 +41,6 @@ public class Sector {
 		packetListener = new PacketListener(this);
 		packetWriter = new PacketWriter(this);
 		packetParser = new PacketParser(this);
-
-		addNPCs();
 
 		scheduler = new DataScheduler(200, this);
 		registerScheduledFunctions();
@@ -123,12 +122,19 @@ public class Sector {
 			conn.getPlayerMP().render(b);
 
 		}
+		for (NPC npc : npcs) {
+			npc.render(b);
+		}
 	}
 
 	public void update() {
 		if (!update) {
 			return;
 		}
+		for (NPC npc : npcs) {
+			npc.update();
+		}
+
 		for (PlayerConnection conn : players) {
 			if (conn.isVerified()) {
 				conn.getPlayerMP().update();
@@ -148,6 +154,7 @@ public class Sector {
 
 	public void startSector() {
 		Log.serverLog("Starting sector on port " + port);
+		addNPCs();
 		update = true;
 		render = true;
 		connListener.start();

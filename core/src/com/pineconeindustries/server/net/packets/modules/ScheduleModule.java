@@ -1,7 +1,7 @@
 package com.pineconeindustries.server.net.packets.modules;
 
-import com.pineconeindustries.client.objects.NPC;
-import com.pineconeindustries.server.data.Sector;
+import com.pineconeindustries.server.galaxy.Sector;
+import com.pineconeindustries.shared.objects.NPC;
 
 public class ScheduleModule {
 

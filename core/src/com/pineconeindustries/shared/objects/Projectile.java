@@ -1,4 +1,4 @@
-package com.pineconeindustries.client.objects;
+package com.pineconeindustries.shared.objects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;

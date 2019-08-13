@@ -9,11 +9,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.PriorityBlockingQueue;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.pineconeindustries.client.objects.Entity;
-import com.pineconeindustries.client.objects.NPC;
-import com.pineconeindustries.client.objects.Person;
-import com.pineconeindustries.client.objects.Player;
-import com.pineconeindustries.client.objects.PlayerMP;
+import com.pineconeindustries.shared.objects.Entity;
+import com.pineconeindustries.shared.objects.NPC;
+import com.pineconeindustries.shared.objects.Person;
+import com.pineconeindustries.shared.objects.Player;
+import com.pineconeindustries.shared.objects.PlayerMP;
 
 public class Sector {
 
@@ -26,7 +26,7 @@ public class Sector {
 	private Player player;
 
 	private CopyOnWriteArrayList<Person> renderList;
-	
+
 	public Sector(Player player) {
 		this.port = player.getSectorID();
 		players = new ArrayBlockingQueue<PlayerMP>(64);
@@ -51,12 +51,13 @@ public class Sector {
 
 	public void update() {
 
-		
-		
 		player.update();
 
 		for (PlayerMP p : players) {
 			p.update();
+		}
+		for (NPC n : npcs) {
+			n.update();
 		}
 	}
 
@@ -88,6 +89,19 @@ public class Sector {
 		}
 
 		return npc;
+	}
+
+	public boolean npcExists(int id) {
+
+		boolean exists = false;
+
+		for (NPC n : npcs) {
+			if (n.getID() == id)
+				exists = true;
+		}
+
+		return exists;
+
 	}
 
 	public void cleanPlayerList(ArrayList<Integer> ids) {

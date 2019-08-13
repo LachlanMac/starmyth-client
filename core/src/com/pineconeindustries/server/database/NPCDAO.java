@@ -8,10 +8,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.math.Vector2;
-import com.pineconeindustries.client.objects.NPC;
-import com.pineconeindustries.client.objects.PlayerMP;
+import com.pineconeindustries.server.galaxy.Galaxy;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.log.Log;
+import com.pineconeindustries.shared.objects.NPC;
+import com.pineconeindustries.shared.objects.PlayerMP;
 
 public class NPCDAO {
 	Connection conn;
@@ -69,7 +70,7 @@ public class NPCDAO {
 				float localX = rs.getFloat("local_x");
 				float localY = rs.getFloat("local_y");
 				npcs.add(new NPC(name, new Vector2(localX, localY), GameData.getInstance(), factionID, structureID, id,
-						sectorID));
+						Galaxy.getInstance().getSectorByID(sectorID)));
 
 			}
 
@@ -85,8 +86,10 @@ public class NPCDAO {
 
 		ArrayList<NPC> npcs = new ArrayList<NPC>();
 
-		npcs.add(new NPC("NPC1", new Vector2(300, 200), GameData.getInstance(), 0, 0, 444, sectorID));
-		npcs.add(new NPC("NPC2", new Vector2(600, 800), GameData.getInstance(), 0, 0, 455, sectorID));
+		npcs.add(new NPC("NPC1", new Vector2(300, 200), GameData.getInstance(), 0, 0, 444,
+				Galaxy.getInstance().getSectorByID(sectorID)));
+		npcs.add(new NPC("NPC2", new Vector2(600, 800), GameData.getInstance(), 0, 0, 455,
+				Galaxy.getInstance().getSectorByID(sectorID)));
 
 		return npcs;
 

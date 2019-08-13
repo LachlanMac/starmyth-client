@@ -5,7 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.pineconeindustries.client.objects.Projectile;
+import com.pineconeindustries.shared.objects.Projectile;
 
 public class InputManager {
 
@@ -29,6 +29,13 @@ public class InputManager {
 			return false;
 		}
 
+	}
+
+	public static void updateMouse(Camera cam) {
+		Vector3 worldCoordinates = cam.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+
+		mouseX = worldCoordinates.x;
+		mouseY = worldCoordinates.y;
 	}
 
 	public static Vector2 getMouseCoordinates(Camera cam) {

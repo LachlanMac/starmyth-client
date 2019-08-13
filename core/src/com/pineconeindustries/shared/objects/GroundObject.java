@@ -1,4 +1,4 @@
-package com.pineconeindustries.client.objects;
+package com.pineconeindustries.shared.objects;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;

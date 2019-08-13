@@ -3,38 +3,68 @@ package com.pineconeindustries.server.ai;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.pineconeindustries.client.objects.NPC;
 import com.pineconeindustries.server.ai.states.IdleState;
+import com.pineconeindustries.server.ai.states.MoveState;
+import com.pineconeindustries.server.ai.states.SleepState;
 import com.pineconeindustries.server.ai.states.State;
+import com.pineconeindustries.server.ai.states.WanderState;
+import com.pineconeindustries.server.ai.states.WorkState;
+import com.pineconeindustries.server.clock.Clock;
+import com.pineconeindustries.shared.files.Files;
+import com.pineconeindustries.shared.log.Log;
+import com.pineconeindustries.shared.objects.NPC;
 
 public class FiniteStateMachine {
 
 	NPC owner;
 
-	private static HashMap<String, State> states;
+	private HashMap<String, State> states;
+	private String schedule[];
 
 	State currentState;
-	
+	State scheduleState;
+
 	public FiniteStateMachine(NPC owner) {
 		this.owner = owner;
 		currentState = new IdleState(this);
+		schedule = Files.loadAIScript("scripts/ai/default_ai");
+		states = new HashMap<String, State>();
+		registerStates("WANDER", new WanderState(this));
+		registerStates("IDLE", new IdleState(this));
+		registerStates("WORK", new WorkState(this));
+		registerStates("SLEEP", new SleepState(this));
+		registerStates("MOVE", new MoveState(this));
+		Clock.getInstance().setSpeed(0.1f);
 	}
 
 	public void performAction() {
+		checkSchedule();
 
 		currentState.performAction();
 
 	}
 
-	public void changeState(String state) {
+	public void checkSchedule() {
+		int hour = Clock.getInstance().getTime().getHour();
+	
+		scheduleState = states.get(schedule[hour]);
+		
+		if (!scheduleState.getKey().equals(currentState.getKey())) {
+			Log.print("Changing state to " + scheduleState.getKey() + " because its hour " + hour);
+			changeState(scheduleState);
+		}
+
+	}
+
+	public void changeState(State state) {
 
 		currentState.leaveState();
-		currentState = states.get(state);
+		currentState = state;
 		currentState.enterState();
 	}
 
-	public static void registerStates(String name, State state) {
-		states = new HashMap<String, State>();
+	public void registerStates(String name, State state) {
+
 		states.put(name, state);
 	}
 

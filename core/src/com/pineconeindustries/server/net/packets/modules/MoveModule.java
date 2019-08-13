@@ -3,10 +3,10 @@ package com.pineconeindustries.server.net.packets.modules;
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.networking.packets.Packets;
 import com.pineconeindustries.client.networking.packets.UDPPacket;
-import com.pineconeindustries.client.objects.PlayerMP;
-import com.pineconeindustries.server.data.Sector;
+import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.shared.gameunits.Units;
 import com.pineconeindustries.shared.log.Log;
+import com.pineconeindustries.shared.objects.PlayerMP;
 
 public class MoveModule {
 

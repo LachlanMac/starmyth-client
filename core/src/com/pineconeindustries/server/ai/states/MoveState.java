@@ -31,8 +31,7 @@ public class MoveState extends State {
 
 	@Override
 	public String getKey() {
-		// TODO Auto-generated method stub
-		return null;
+		return key;
 	}
 
 }

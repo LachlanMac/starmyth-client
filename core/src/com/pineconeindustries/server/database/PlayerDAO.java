@@ -7,9 +7,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import com.badlogic.gdx.math.Vector2;
-import com.pineconeindustries.client.objects.PlayerMP;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.log.Log;
+import com.pineconeindustries.shared.objects.PlayerMP;
 
 public class PlayerDAO {
 

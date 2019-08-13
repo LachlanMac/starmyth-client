@@ -1,7 +1,7 @@
 package com.pineconeindustries.client.galaxy;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.pineconeindustries.client.objects.Tile;
+import com.pineconeindustries.shared.objects.Tile;
 
 public class TileMap {
 	

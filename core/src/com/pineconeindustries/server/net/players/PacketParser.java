@@ -4,7 +4,7 @@ import com.pineconeindustries.client.networking.packets.Packet;
 import com.pineconeindustries.client.networking.packets.Packets;
 import com.pineconeindustries.client.networking.packets.TCPPacket;
 import com.pineconeindustries.client.networking.packets.UDPPacket;
-import com.pineconeindustries.server.data.Sector;
+import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.packets.modules.ConnectionModule;
 import com.pineconeindustries.server.net.packets.modules.MoveModule;
 import com.pineconeindustries.shared.log.Log;

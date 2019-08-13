@@ -1,4 +1,4 @@
-package com.pineconeindustries.client.objects;
+package com.pineconeindustries.shared.objects;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.manager.InputManager;
 import com.pineconeindustries.shared.data.GameData;
+import com.pineconeindustries.shared.log.Log;
 
 public abstract class GameObject {
 
@@ -14,7 +15,7 @@ public abstract class GameObject {
 	GameData game;
 
 	protected boolean debugMode = false;
-
+	protected int layer;
 	protected int DEFAULT_BOUNDS_WIDTH = 64;
 	protected int DEFAULT_BOUNDS_HEIGHT = 64;
 	protected float rotation;
@@ -79,13 +80,20 @@ public abstract class GameObject {
 	public void hover() {
 
 		if (Intersector.overlaps(new Rectangle(InputManager.mouseX, InputManager.mouseY, 1, 1), this.bounds)) {
-			// intersect logic
+			Log.debug("Object: " + name + "["+loc.x +"," +loc.y + "]");
 		}
 
 	}
-	
+
 	public float getRotation() {
 		return rotation;
 	}
 
+	public int getLayer() {
+		return layer;
+	}
+
+	public void setLayer(int layer) {
+		this.layer = layer;
+	}
 }

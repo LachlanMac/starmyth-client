@@ -16,13 +16,17 @@ import com.pineconeindustries.client.cameras.CameraController;
 import com.pineconeindustries.client.config.NetworkConfiguration;
 import com.pineconeindustries.client.data.LocalPlayerData;
 import com.pineconeindustries.client.galaxy.Sector;
+import com.pineconeindustries.client.manager.InputManager;
 import com.pineconeindustries.client.manager.LAssetManager;
 import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.Connection;
-import com.pineconeindustries.client.objects.Player;
 import com.pineconeindustries.client.tests.Test;
 import com.pineconeindustries.client.ui.UserInterface;
 import com.pineconeindustries.shared.data.GameData;
+import com.pineconeindustries.shared.data.Global;
+import com.pineconeindustries.shared.data.Global.RUN_TYPE;
+import com.pineconeindustries.shared.objects.Player;
+
 import box2dLight.RayHandler;
 
 public class ClientApp extends ApplicationAdapter {
@@ -56,9 +60,8 @@ public class ClientApp extends ApplicationAdapter {
 	// NEW
 
 	public ClientApp(LocalPlayerData data) {
-
+		Global.runType = RUN_TYPE.client;
 		this.data = data;
-
 	}
 
 	public void loadSettings() {
@@ -139,6 +142,8 @@ public class ClientApp extends ApplicationAdapter {
 
 		LogicController.getInstance().getSector().render(batch);
 		batch.end();
+
+		InputManager.updateMouse(LogicController.getInstance().getPlayerCamera());
 
 		// game.render(batch, shapeBatch);
 

@@ -1,6 +1,6 @@
 package com.pineconeindustries.server.net.packets.objects;
 
-import com.pineconeindustries.server.data.Sector;
+import com.pineconeindustries.server.galaxy.Sector;
 
 public class StructureModule {
 	
