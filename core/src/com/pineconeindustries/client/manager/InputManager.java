@@ -33,7 +33,6 @@ public class InputManager {
 
 	public static void updateMouse(Camera cam) {
 		Vector3 worldCoordinates = cam.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
-
 		mouseX = worldCoordinates.x;
 		mouseY = worldCoordinates.y;
 	}

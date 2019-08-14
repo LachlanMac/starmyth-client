@@ -10,6 +10,7 @@ public class Database {
 	private Connection conn;
 	private PlayerDAO playerDAO;
 	private NPCDAO npcDAO;
+	private StructureDAO structureDAO;
 
 	public static boolean useDatabase = false;
 
@@ -22,6 +23,7 @@ public class Database {
 			}
 			playerDAO = new PlayerDAO(conn);
 			npcDAO = new NPCDAO(conn);
+			structureDAO = new StructureDAO(conn);
 
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
