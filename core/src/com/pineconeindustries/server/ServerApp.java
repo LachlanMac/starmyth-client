@@ -34,17 +34,16 @@ public class ServerApp extends ApplicationAdapter {
 	public int WORLD_WIDTH = 1920;
 	public int WORLD_HEIGHT = 1080;
 	public float aspectRatio = 1;
-	
-	
+
 	private Galaxy galaxy;
 
 	Sprite bg;
 
 	public ServerApp(boolean headless) {
 		this.headless = headless;
-		if(headless) {
+		if (headless) {
 			Global.runType = RUN_TYPE.headless_server;
-		}else {
+		} else {
 			Global.runType = RUN_TYPE.server;
 		}
 	}
@@ -85,7 +84,7 @@ public class ServerApp extends ApplicationAdapter {
 
 		update();
 
-		batch.setProjectionMatrix(fixedCamera.combined);
+		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		batch.draw(bg, -(WORLD_WIDTH / 2), -(WORLD_HEIGHT / 2), WORLD_WIDTH, WORLD_HEIGHT);
 
@@ -99,10 +98,13 @@ public class ServerApp extends ApplicationAdapter {
 
 		galaxy.update();
 
-		if (Gdx.input.isKeyPressed(Input.Keys.NUM_9)) {
+		camera.position.set(0, 0, 0);
+		camera.update();
+
+		if (Gdx.input.isKeyPressed(Input.Keys.NUM_8)) {
 			camera.zoom += 0.02;
 		}
-		if (Gdx.input.isKeyPressed(Input.Keys.NUM_0)) {
+		if (Gdx.input.isKeyPressed(Input.Keys.NUM_9)) {
 			camera.zoom -= 0.02;
 		}
 	}

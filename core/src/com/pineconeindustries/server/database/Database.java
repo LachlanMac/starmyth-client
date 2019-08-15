@@ -2,6 +2,9 @@ package com.pineconeindustries.server.database;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import com.pineconeindustries.shared.data.Global;
+
 import java.sql.Connection;
 
 public class Database {
@@ -11,12 +14,11 @@ public class Database {
 	private PlayerDAO playerDAO;
 	private NPCDAO npcDAO;
 	private StructureDAO structureDAO;
-
-	public static boolean useDatabase = false;
+	private SectorDAO sectorDAO;
 
 	private Database() {
 		try {
-			if (useDatabase) {
+			if (Global.useDatabase) {
 				Class.forName("com.mysql.jdbc.Driver");
 				conn = DriverManager.getConnection("jdbc:mysql://localhost/starmyth?" + "user=root&password=Movingon1");
 
@@ -24,15 +26,16 @@ public class Database {
 			playerDAO = new PlayerDAO(conn);
 			npcDAO = new NPCDAO(conn);
 			structureDAO = new StructureDAO(conn);
+			sectorDAO = new SectorDAO(conn);
 
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			useDatabase = false;
+			Global.useDatabase = false;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			useDatabase = false;
+			Global.useDatabase = false;
 		}
 
 	}
@@ -47,12 +50,20 @@ public class Database {
 
 	}
 
+	public StructureDAO getStructureDAO() {
+		return structureDAO;
+	}
+
 	public PlayerDAO getPlayerDAO() {
 		return playerDAO;
 	}
 
 	public NPCDAO getNPCDAO() {
 		return npcDAO;
+	}
+
+	public SectorDAO getSectorDAO() {
+		return sectorDAO;
 	}
 
 }

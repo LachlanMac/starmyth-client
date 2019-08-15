@@ -37,9 +37,26 @@ public class Files {
 
 	}
 
+	public static String loadShipLayout(String path) {
+
+		StringBuilder dataBuilder = new StringBuilder();
+
+		try (BufferedReader br = new BufferedReader(new FileReader("shiplayouts/" + path +".txt"))) {
+
+			String sCurrentLine;
+			while ((sCurrentLine = br.readLine()) != null) {
+				dataBuilder.append(sCurrentLine);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return dataBuilder.toString().trim();
+
+	}
+
 	public static String[] loadAIScript(String path) {
-		
-		
+
 		String[] schedule = new String[24];
 
 		try (BufferedReader br = new BufferedReader(new FileReader(path))) {
@@ -53,7 +70,7 @@ public class Files {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	
+
 		return schedule;
 	}
 

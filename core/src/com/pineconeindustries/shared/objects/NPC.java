@@ -22,6 +22,7 @@ public class NPC extends Person {
 	private Vector2 destination = null;
 	private boolean destinationReached = false;
 	private float moveSpeed = 300;
+	private boolean spin = false;
 
 	public NPC(String name, Vector2 loc, GameData game, int factionID, int structureID, int id, int sectorID) {
 		super(name, loc, game, factionID, structureID, id, sectorID);
@@ -41,6 +42,10 @@ public class NPC extends Person {
 	public void render(Batch b) {
 
 		state += Gdx.graphics.getDeltaTime();
+
+		if (spin == true) {
+			velocity = 999;
+		}
 
 		currentFrame = animSet.getAnimation(lastDirectionFaced, velocity);
 
@@ -113,6 +118,10 @@ public class NPC extends Person {
 			}
 
 		}
+	}
+
+	public void setSpin(boolean spin) {
+		this.spin = spin;
 	}
 
 	@Override

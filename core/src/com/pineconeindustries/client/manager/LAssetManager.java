@@ -20,6 +20,8 @@ public class LAssetManager extends AssetManager {
 
 	TextureRegion wall, wallDiagSW, wallDiagNE, wallDiagNW, wallDiagSE, hall, room, doorClosedEW, doorClosedNS,
 			doorOpenEW, doorOpenNS, zoneClosedE, zoneClosedW, zoneOpenE, zoneOpenW;
+	// unassigned
+	TextureRegion zoneClosedN, zoneClosedS, zoneOpenN, zoneOpenS;
 
 	public LAssetManager() {
 
@@ -62,6 +64,101 @@ public class LAssetManager extends AssetManager {
 		room = shipTiles[0][3];
 	}
 
+	public TextureRegion getTileID(char id) {
+
+		TextureRegion x = null;
+		switch (id) {
+		case 'z':
+			x = room;// bridge
+			break;
+		case '&':
+			System.out.println("DEFAULT DOOR loaded");
+			break;
+		case 'y':
+			x = doorOpenEW;
+			break;
+		case 'm':
+			x = doorClosedEW;
+			break;
+		case 'n':
+			x = doorOpenNS;
+			break;
+		case 'o':
+			x = doorClosedNS;
+			break;
+		case '_':
+			System.out.println("Default zone loaded");
+			break;
+		case 'd':
+			x = zoneClosedE;
+			break;
+		case 'e':
+			x = zoneClosedW;
+			break;
+		case 'f':
+			x = zoneClosedN;
+			break;
+		case 'g':
+			x = zoneClosedS;
+			break;
+		case 'h':
+			x = zoneOpenE;
+			break;
+		case 'i':
+			x = zoneOpenW;
+			break;
+		case 'j':
+			x = zoneOpenN;
+			break;
+		case 'k':
+			x = zoneOpenS;
+			break;
+		case 'c':
+			x = room; // engineering
+			break;
+		case 'b':
+			x = room; // foyer
+			break;
+		case 'a':
+			x = hall;
+			break;
+		case 'x':
+			x = room; // medical
+			break;
+		case 'w':
+			x = room; // room
+			break;
+		case 'v':
+			x = room; // shop
+			break;
+		case 'p':
+			x = null;
+			break;
+		case 'q':
+			x = wall;
+			break;
+		case 'r':
+			x = wallDiagNE;
+			break;
+		case 's':
+			x = wallDiagNW;
+			break;
+		case 't':
+			x = wallDiagSE;
+			break;
+		case 'u':
+			x = wallDiagSW;
+			break;
+		default:
+			System.out.println("UNRECONGIZED PARAM = " + Character.toString(id));
+			break;
+		}
+
+		if (x == null)
+			System.out.println("DLKSFLDF  " + Character.toString(id));
+		return x;
+	}
+
 	public TextureRegion getStructureTileByID(int id) {
 
 		switch (id) {
@@ -86,7 +183,6 @@ public class LAssetManager extends AssetManager {
 			return doorOpenNS;
 		case 34:
 			return doorClosedNS;
-
 		case 40:
 			return zoneClosedE;
 		case 41:
@@ -95,7 +191,6 @@ public class LAssetManager extends AssetManager {
 			return zoneOpenE;
 		case 43:
 			return zoneClosedW;
-
 		case 21:
 			return hall;
 		case 200:

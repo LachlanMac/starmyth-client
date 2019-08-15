@@ -7,7 +7,9 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.pineconeindustries.server.ai.FiniteStateMachine;
 import com.pineconeindustries.server.ai.states.*;
 import com.pineconeindustries.server.clock.Clock;
+import com.pineconeindustries.server.database.Database;
 import com.pineconeindustries.server.net.players.PlayerConnection;
+import com.pineconeindustries.shared.data.Global;
 
 public class Galaxy {
 
@@ -57,24 +59,31 @@ public class Galaxy {
 
 	public void loadSectors() {
 
-		Sector testSector = null, testSector2 = null;
+		if (Global.useDatabase) {
 
-		testSector = new Sector(7780);
-		testSector2 = new Sector(7781);
-		addSector(testSector);
-		addSector(testSector2);
-		testSector2.startSector();
-		testSector2.updateAndRender(true);
-		testSector.startSector();
-		testSector.updateAndRender(true);
+			sectors = Database.getInstance().getSectorDAO().loadSectors();
+			for (Sector s : sectors) {
+				s.startSector();
+				s.updateAndRender(true);
+			}
+
+		} else {
+			Sector testSector = null, testSector2 = null;
+			testSector = new Sector(7780, 1, 1, "Home Sector Test");
+			testSector2 = new Sector(7781, 1, 2, "Secondary Sector Test");
+			addSector(testSector);
+			addSector(testSector2);
+			testSector2.startSector();
+			testSector2.updateAndRender(true);
+			testSector.startSector();
+			testSector.updateAndRender(true);
+		}
 
 	}
 
 	public Sector getSectorByID(int sectorID) {
-		System.out.println("SECTORS " + sectors.size());
 		Sector s = null;
 		for (Sector sector : sectors) {
-			System.out.println(sector.getPort() + " VS  " + sectorID);
 			if (sector.getPort() == sectorID)
 				s = sector;
 		}

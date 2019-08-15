@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.pineconeindustries.client.networking.packets.Packets;
 import com.pineconeindustries.client.networking.packets.custom.CustomTCPPacket;
 import com.pineconeindustries.server.data.DataScheduler;
+import com.pineconeindustries.server.data.Structure;
 import com.pineconeindustries.server.database.Database;
 import com.pineconeindustries.server.net.players.PacketListener;
 import com.pineconeindustries.server.net.players.PacketParser;
@@ -20,8 +21,10 @@ public class Sector {
 
 	ArrayBlockingQueue<PlayerConnection> players;
 	ArrayBlockingQueue<NPC> npcs;
+	ArrayBlockingQueue<Structure> structures;
 
-	private int port;
+	private int port, globalX, globalY;
+	private String name;
 	private boolean update = false, render = false;
 
 	PlayerConnectionListener connListener;
@@ -33,10 +36,14 @@ public class Sector {
 
 	// Class to send all players UDP packets and TCP packets
 
-	public Sector(int port) {
+	public Sector(int port, int globalX, int globalY, String name) {
 		this.port = port;
+		this.globalX = globalX;
+		this.globalY = globalY;
+		this.name = name;
 		players = new ArrayBlockingQueue<PlayerConnection>(64);
 		npcs = new ArrayBlockingQueue<NPC>(128);
+		structures = new ArrayBlockingQueue<Structure>(16);
 		connListener = new PlayerConnectionListener(this);
 		packetListener = new PacketListener(this);
 		packetWriter = new PacketWriter(this);
@@ -117,6 +124,10 @@ public class Sector {
 			return;
 		}
 
+		for (Structure structure : structures) {
+			structure.render(b);
+		}
+
 		for (PlayerConnection conn : players) {
 
 			conn.getPlayerMP().render(b);
@@ -155,6 +166,7 @@ public class Sector {
 	public void startSector() {
 		Log.serverLog("Starting sector on port " + port);
 		addNPCs();
+		addStructures();
 		update = true;
 		render = true;
 		connListener.start();
@@ -175,9 +187,22 @@ public class Sector {
 
 	}
 
+	public void addStructures() {
+		ArrayList<Structure> tempList = Database.getInstance().getStructureDAO().loadStructuressBySectorID(port);
+
+		for (Structure structure : tempList) {
+
+			structures.add(structure);
+			structure.loadStructure();
+
+			if (structure.getStructureID() == 1001)
+				structure.setRender(true);
+		}
+	}
+
 	public void addNPCs() {
 
-		ArrayList<NPC> tempList = Database.getInstance().getNPCDAO().getDefaultNPCs(port);
+		ArrayList<NPC> tempList = Database.getInstance().getNPCDAO().loadNPCsBySectorID(port);
 
 		for (NPC npc : tempList) {
 

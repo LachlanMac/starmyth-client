@@ -15,6 +15,7 @@ public class PlayerMP extends Person {
 	int dcCount = 0;
 	boolean setToDisconnect = false;
 	private int sectorID;
+	private boolean spin = true;
 
 	public PlayerMP(String name, Vector2 loc, GameData game, int factionID, int structureID, int playerID,
 			int sectorID) {
@@ -34,7 +35,7 @@ public class PlayerMP extends Person {
 
 		currentFrame = animSet.getAnimation(lastDirectionFaced, velocity);
 
-		if (velocity == 999) {
+		if (velocity == 999 || spin == true) {
 
 			TextureRegion t = currentFrame.getKeyFrame(state, true);
 
@@ -62,6 +63,10 @@ public class PlayerMP extends Person {
 				velocity = 0;
 		}
 
+	}
+
+	public void setSpin(boolean spin) {
+		this.spin = spin;
 	}
 
 	@Override

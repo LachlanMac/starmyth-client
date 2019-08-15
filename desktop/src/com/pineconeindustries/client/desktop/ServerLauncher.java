@@ -2,14 +2,8 @@ package com.pineconeindustries.client.desktop;
 
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
-import java.io.File;
-import java.util.ArrayList;
-
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
-import com.badlogic.gdx.backends.lwjgl.LwjglNativesLoader;
 import com.pineconeindustries.client.desktop.headless.HeadlessApplication;
 import com.pineconeindustries.server.ServerApp;
 

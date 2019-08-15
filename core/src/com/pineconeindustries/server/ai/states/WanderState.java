@@ -25,8 +25,7 @@ public class WanderState extends State {
 
 	@Override
 	public void performAction() {
-		// TODO Auto-generated method stub
-
+		fsm.getOwner().setSpin(false);
 	}
 
 	@Override

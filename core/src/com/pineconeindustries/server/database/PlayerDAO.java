@@ -8,6 +8,7 @@ import java.sql.Statement;
 
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.shared.data.GameData;
+import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.log.Log;
 import com.pineconeindustries.shared.objects.PlayerMP;
 
@@ -21,7 +22,7 @@ public class PlayerDAO {
 
 	public void savePlayer(PlayerMP player) {
 
-		if (!Database.useDatabase) {
+		if (!Global.useDatabase) {
 			return;
 		}
 
@@ -48,18 +49,20 @@ public class PlayerDAO {
 	}
 
 	public PlayerMP loadPlayerByID(int id) {
-		if (!Database.useDatabase) {
+		if (!Global.useDatabase) {
 			Log.debug("Loading Default Player");
 			return getDefaultPlayer(id);
 		}
 
 		PlayerMP player = null;
 
-		Statement stmt;
+		PreparedStatement stmt;
 		try {
-			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(
-					"SELECT character_name, sector_id, faction_id, local_x, local_y, structure_id FROM PlayerCharacter");
+			stmt = conn.prepareStatement(
+					"SELECT character_name, sector_id, faction_id, local_x, local_y, structure_id, layer FROM PlayerCharacter WHERE character_id=?");
+			stmt.setInt(1, id);
+			ResultSet rs = stmt.executeQuery();
+			
 			while (rs.next()) {
 
 				String name = rs.getString("character_name");
@@ -68,8 +71,10 @@ public class PlayerDAO {
 				int structureID = rs.getInt("structure_id");
 				float localX = rs.getFloat("local_x");
 				float localY = rs.getFloat("local_y");
+				int layer = rs.getInt("layer");
 				player = new PlayerMP(name, new Vector2(localX, localY), GameData.getInstance(), factionID, structureID,
 						id, sectorID);
+				player.setLayer(layer);
 
 			}
 

@@ -3,42 +3,36 @@ package com.pineconeindustries.shared.objects;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.pineconeindustries.client.manager.LAssetManager;
 import com.pineconeindustries.shared.data.GameData;
 
 public class Tile {
 
-	private final static int TILE_SIZE = 64;
-	private int xLoc, yLoc, tileID;
-	
-	private Texture texture;
-	
-	
-	public Tile(int xLoc, int yLoc, int tileID) {
+	public static final int TILE_SIZE = 64;
+
+	private int xLoc, yLoc;
+	private char id;
+
+	public Tile(char id, int xLoc, int yLoc) {
+		this.id = id;
 		this.xLoc = xLoc;
 		this.yLoc = yLoc;
-		this.tileID = tileID;
 	}
 
-	
 	public void update() {
-		// TODO Auto-generated method stub
-		
+
 	}
 
-	
-	public void renderDebug(ShapeRenderer b) {
-		
-	}
-
-	
 	public void render(Batch b) {
-		b.draw(GameData.getInstance().Assets().getStructureTileByID(tileID), xLoc * TILE_SIZE, yLoc * TILE_SIZE);	
+		System.out.print(Character.toString(id));
+
+		LAssetManager ref = GameData.getInstance().Assets();
+		if (id == 'p') {
+
+		} else {
+			b.draw(ref.getTileID(id), xLoc * TILE_SIZE, yLoc * TILE_SIZE);
+		}
+
 	}
 
-	
-	public void dispose() {
-		// TODO Auto-generated method stub
-		
-	}
-	
 }

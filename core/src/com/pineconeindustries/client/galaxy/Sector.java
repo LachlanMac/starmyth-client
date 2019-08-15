@@ -17,8 +17,6 @@ import com.pineconeindustries.shared.objects.PlayerMP;
 
 public class Sector {
 
-	TileMap t;
-
 	private int port;
 
 	private ArrayBlockingQueue<NPC> npcs;
@@ -36,12 +34,11 @@ public class Sector {
 		renderList.add(player);
 
 		// TEST
-		t = new TileMap();
-		t.loadTestTileMap();
+
 	}
 
 	public void render(Batch b) {
-		t.render(b);
+
 		Collections.sort(renderList);
 		for (Entity e : renderList) {
 			e.render(b);

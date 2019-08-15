@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.server.galaxy.Galaxy;
 import com.pineconeindustries.shared.data.GameData;
+import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.log.Log;
 import com.pineconeindustries.shared.objects.NPC;
 import com.pineconeindustries.shared.objects.PlayerMP;
@@ -23,7 +24,7 @@ public class NPCDAO {
 
 	public void savePlayer(PlayerMP player) {
 
-		if (!Database.useDatabase) {
+		if (!Global.useDatabase) {
 			return;
 		}
 
@@ -50,28 +51,29 @@ public class NPCDAO {
 	}
 
 	public ArrayList<NPC> loadNPCsBySectorID(int id) {
-		if (!Database.useDatabase) {
+		if (!Global.useDatabase) {
 			Log.debug("Loading Default Player");
 			return getDefaultNPCs(id);
 		}
 		ArrayList<NPC> npcs = new ArrayList<NPC>();
 
-		Statement stmt;
+		PreparedStatement stmt;
 		try {
-			stmt = conn.createStatement();
-			ResultSet rs = stmt
-					.executeQuery("SELECT npc_name, sector_id, faction_id, local_x, local_y, structure_id FROM NPC");
+			stmt = conn.prepareStatement(
+					"SELECT npc_id, npc_name, faction_id, local_x, local_y, structure_id FROM NPC WHERE sector_id=?");
+			stmt.setInt(1, id);
+			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-
+				int npcID = rs.getInt("npc_id");
 				String name = rs.getString("npc_name");
-				int sectorID = rs.getInt("sector_id");
+
 				int factionID = rs.getInt("faction_id");
 				int structureID = rs.getInt("structure_id");
 				float localX = rs.getFloat("local_x");
 				float localY = rs.getFloat("local_y");
 				npcs.add(new NPC(name, new Vector2(localX, localY), GameData.getInstance(), factionID, structureID, id,
-						Galaxy.getInstance().getSectorByID(sectorID)));
-
+						Galaxy.getInstance().getSectorByID(id)));
+				Log.dbLog("Loaded NPC [" + npcID + ":" + name + "]");
 			}
 
 		} catch (SQLException e) {

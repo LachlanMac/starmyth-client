@@ -58,7 +58,7 @@ public class ClientApp extends ApplicationAdapter {
 	World world;
 
 	// NEW
-
+	
 	public ClientApp(LocalPlayerData data) {
 		Global.runType = RUN_TYPE.client;
 		this.data = data;

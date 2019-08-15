@@ -34,7 +34,7 @@ public class CameraController {
 		if(playerCameraActive) {
 		float lerp = 0.9f;
 		Vector3 position = playerCamera.position;
-
+		
 		if (new Vector2(position.x, position.y).dst(LogicController.getInstance().getPlayer().getLoc()) > 100) {
 			position.x += (LogicController.getInstance().getPlayer().getLoc().x - position.x) * lerp * Gdx.graphics.getDeltaTime();
 			position.y += (LogicController.getInstance().getPlayer().getLoc().y - position.y) * lerp * Gdx.graphics.getDeltaTime();
