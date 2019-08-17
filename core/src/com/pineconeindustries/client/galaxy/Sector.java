@@ -112,7 +112,6 @@ public class Sector {
 			}
 
 			if (!playerExists) {
-				System.out.println("REMOPVING!");
 				removePlayer(getPlayerByID(p.getID()));
 			}
 		}
@@ -130,7 +129,6 @@ public class Sector {
 			}
 
 			if (!npcExists) {
-				System.out.println("REMOPVING!");
 				removeNPC(getNPCByID(npc.getID()));
 			}
 		}

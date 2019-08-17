@@ -70,6 +70,8 @@ public class ServerApp extends ApplicationAdapter {
 		galaxy = Galaxy.getInstance();
 		galaxy.loadSectors();
 
+		camera.position.set(0, 0, 0);
+
 	}
 
 	@Override
@@ -98,7 +100,6 @@ public class ServerApp extends ApplicationAdapter {
 
 		galaxy.update();
 
-		camera.position.set(0, 0, 0);
 		camera.update();
 
 		if (Gdx.input.isKeyPressed(Input.Keys.NUM_8)) {
@@ -106,6 +107,18 @@ public class ServerApp extends ApplicationAdapter {
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.NUM_9)) {
 			camera.zoom -= 0.02;
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+			camera.position.set(camera.position.x + 10, camera.position.y, 0);
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+			camera.position.set(camera.position.x - 10, camera.position.y, 0);
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+			camera.position.set(camera.position.x, camera.position.y + 10, 0);
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+			camera.position.set(camera.position.x, camera.position.y - 10, 0);
 		}
 	}
 
@@ -134,11 +147,12 @@ public class ServerApp extends ApplicationAdapter {
 		float aspectRatio = (float) Gdx.graphics.getHeight() / (float) Gdx.graphics.getWidth();
 		batch = new SpriteBatch();
 		camera = new OrthographicCamera();
-		fixedCamera = new OrthographicCamera();
+		// fixedCamera = new OrthographicCamera();
 		viewport = new ScalingViewport(Scaling.fit, 1080, 1080 * aspectRatio, camera);
 		bg = new Sprite(new Texture("textures/lachlangalaxy.jpg"));
-		ScalingViewport scalingViewport = new ScalingViewport(Scaling.fit, 1080, 1080 * aspectRatio, fixedCamera);
-		scalingViewport.apply();
+		// ScalingViewport scalingViewport = new ScalingViewport(Scaling.fit, 1080, 1080
+		// * aspectRatio, camera);
+		// scalingViewport.apply();
 		viewport.apply();
 	}
 

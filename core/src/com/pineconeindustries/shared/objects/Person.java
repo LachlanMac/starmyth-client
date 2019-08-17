@@ -13,6 +13,7 @@ public class Person extends Entity {
 	public Person(String name, Vector2 loc, GameData game, int factionID, int structureID, int id, int sectorID) {
 		super(name, loc, game, factionID, structureID);
 		this.id = id;
+		this.sectorID = sectorID;
 		if (!game.isHeadless()) {
 			setAnimations();
 		}

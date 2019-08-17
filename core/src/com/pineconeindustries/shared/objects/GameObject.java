@@ -47,6 +47,7 @@ public abstract class GameObject {
 
 	public void setLoc(Vector2 loc) {
 		this.loc = loc;
+		System.out.println("SETTUNG KOCATUIBN TO " + loc);
 		updateBounds();
 	}
 
@@ -80,7 +81,7 @@ public abstract class GameObject {
 	public void hover() {
 
 		if (Intersector.overlaps(new Rectangle(InputManager.mouseX, InputManager.mouseY, 1, 1), this.bounds)) {
-			Log.debug("Object: " + name + "["+loc.x +"," +loc.y + "]");
+			Log.debug("Object: " + name + "[" + loc.x + "," + loc.y + "]");
 		}
 
 	}

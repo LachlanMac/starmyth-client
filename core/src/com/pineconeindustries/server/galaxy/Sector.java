@@ -3,6 +3,7 @@ package com.pineconeindustries.server.galaxy;
 import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.pineconeindustries.client.networking.packets.Packets;
 import com.pineconeindustries.client.networking.packets.custom.CustomTCPPacket;
 import com.pineconeindustries.server.data.DataScheduler;
@@ -118,7 +119,7 @@ public class Sector {
 		render = val;
 	}
 
-	public void render(Batch b) {
+	public void render(SpriteBatch b) {
 
 		if (!render) {
 			return;
@@ -165,8 +166,9 @@ public class Sector {
 
 	public void startSector() {
 		Log.serverLog("Starting sector on port " + port);
-		addNPCs();
 		addStructures();
+		addNPCs();
+		
 		update = true;
 		render = true;
 		connListener.start();
@@ -195,9 +197,20 @@ public class Sector {
 			structures.add(structure);
 			structure.loadStructure();
 
-			if (structure.getStructureID() == 1001)
-				structure.setRender(true);
 		}
+	}
+
+	public Structure getStructureByID(int id) {
+
+		Structure structure = null;
+
+		for (Structure s : structures) {
+			if (s.getStructureID() == id)
+				structure = s;
+		}
+
+		return structure;
+
 	}
 
 	public void addNPCs() {

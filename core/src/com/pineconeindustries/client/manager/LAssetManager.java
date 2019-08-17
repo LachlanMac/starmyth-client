@@ -37,6 +37,7 @@ public class LAssetManager extends AssetManager {
 		load("textures/shiptiles/hall.png", Texture.class);
 		load("textures/shiptiles/wall.png", Texture.class);
 		load("textures/playerSS.png", Texture.class);
+		load("textures/path.png", Texture.class);
 
 	}
 
@@ -62,6 +63,17 @@ public class LAssetManager extends AssetManager {
 		zoneOpenW = shipTiles[1][2];
 
 		room = shipTiles[0][3];
+	}
+
+	public TextureRegion debug(char id) {
+
+		TextureRegion x = null;
+		if (id == 'p') {
+			return null;
+		} else {
+			return wall;
+		}
+
 	}
 
 	public TextureRegion getTileID(char id) {
@@ -137,69 +149,29 @@ public class LAssetManager extends AssetManager {
 		case 'q':
 			x = wall;
 			break;
-		case 'r':
-			x = wallDiagNE;
-			break;
-		case 's':
-			x = wallDiagNW;
-			break;
 		case 't':
 			x = wallDiagSE;
 			break;
 		case 'u':
 			x = wallDiagSW;
 			break;
+		case 'r':
+			x = wallDiagNE;
+			break;
+		case 's':
+			x = wallDiagNW;
+			break;
 		default:
 			System.out.println("UNRECONGIZED PARAM = " + Character.toString(id));
 			break;
 		}
-
 		if (x == null)
 			System.out.println("DLKSFLDF  " + Character.toString(id));
 		return x;
 	}
 
-	public TextureRegion getStructureTileByID(int id) {
-
-		switch (id) {
-
-		case 0:
-			return null;
-		case 1:
-			return wall;
-		case 2:
-			return wallDiagSE;
-		case 3:
-			return wallDiagSW;
-		case 4:
-			return wallDiagNE;
-		case 5:
-			return wallDiagNW;
-		case 31:
-			return doorOpenEW;
-		case 32:
-			return doorClosedEW;
-		case 33:
-			return doorOpenNS;
-		case 34:
-			return doorClosedNS;
-		case 40:
-			return zoneClosedE;
-		case 41:
-			return zoneClosedW;
-		case 42:
-			return zoneOpenE;
-		case 43:
-			return zoneClosedW;
-		case 21:
-			return hall;
-		case 200:
-			return room;
-		default:
-			System.out.println("UNRECOGNIZED TILED " + id);
-			return null;
-		}
-
+	public TextureRegion getHall() {
+		return hall;
 	}
 
 	public void loadAnimations() {

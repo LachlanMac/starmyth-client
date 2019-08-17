@@ -23,6 +23,7 @@ public class NPC extends Person {
 	private boolean destinationReached = false;
 	private float moveSpeed = 300;
 	private boolean spin = false;
+	private boolean initiliazed = false;
 
 	public NPC(String name, Vector2 loc, GameData game, int factionID, int structureID, int id, int sectorID) {
 		super(name, loc, game, factionID, structureID, id, sectorID);
@@ -31,10 +32,11 @@ public class NPC extends Person {
 
 	public NPC(String name, Vector2 loc, GameData game, int factionID, int structureID, int id, Sector sector) {
 		super(name, loc, game, factionID, structureID, id, sector.getPort());
+
 		if (Global.isServer()) {
-			fsm = new FiniteStateMachine(this);
-			destination = new Vector2(0, 0);
 			this.sector = sector;
+			fsm = new FiniteStateMachine(this);
+
 		}
 	}
 
@@ -61,6 +63,7 @@ public class NPC extends Person {
 		}
 
 		if (renderLoc.dst(loc) > 500) {
+			System.out.println("RENDER LOCK IS NOW " + renderLoc);
 			renderLoc = loc;
 		} else {
 
@@ -79,6 +82,11 @@ public class NPC extends Person {
 
 	}
 
+	public void setLocation(Vector2 loc) {
+		this.loc = loc;
+		this.renderLoc = loc;
+	}
+
 	public void move() {
 
 		if (destination != null) {
@@ -88,17 +96,27 @@ public class NPC extends Person {
 
 	}
 
+	public void setDestination(Vector2 destination) {
+		this.destination = destination;
+	}
+
 	public void calculateMov(Vector2 dest) {
 
-		// On starting movement
 		float distance = (float) Math.sqrt(Math.pow(dest.x - loc.x, 2) + Math.pow(dest.y - loc.y, 2));
+
+		if (distance == 0) {
+			destinationReached = true;
+			destination = null;
+			return;
+		}
 		float directionX = (dest.x - loc.x) / distance;
 		float directionY = (dest.y - loc.y) / distance;
 
 		// On update
 		if (!destinationReached) {
-			loc.x += directionX * speed * (Gdx.graphics.getDeltaTime() * 100);
-			loc.y += directionY * speed * (Gdx.graphics.getDeltaTime() * 100);
+			loc.x += (directionX * speed * (Gdx.graphics.getDeltaTime() * 100));
+			loc.y += (directionY * speed * (Gdx.graphics.getDeltaTime() * 100));
+	
 			velocity = (Math.abs(loc.x) + Math.abs(loc.y)) / 2;
 
 			setLastDirectionFaced(new Vector2(directionX, directionY));
@@ -110,14 +128,36 @@ public class NPC extends Person {
 			sector.getPacketWriter()
 					.queueToAll(new UDPPacket(Packets.NPC_MOVE_PACKET, packetData, UDPPacket.packetCounter()));
 
-			if (dest.dst(loc) <= 100) {
+			if (dest.dst(loc) <= 5) {
 
-				Random r = new Random(System.currentTimeMillis());
-				destination = new Vector2(r.nextInt(1000) - 500, r.nextInt(1000) - 500);
-
+				// Random r = new Random(System.currentTimeMillis());
+				// destination = new Vector2(r.nextInt(1000) - 500, r.nextInt(1000) - 500);
+				destinationReached = true;
+				System.out.println("Destination Reached");
+				destination = null;
 			}
 
 		}
+	}
+
+	public void initialize() {
+		this.initiliazed = true;
+	}
+
+	public boolean isInitialized() {
+		return this.initiliazed;
+	}
+
+	public Vector2 getDestination() {
+		return destination;
+	}
+
+	public boolean isDestinationReached() {
+		return destinationReached;
+	}
+
+	public void setDestinationReached(boolean destinationReached) {
+		this.destinationReached = destinationReached;
 	}
 
 	public void setSpin(boolean spin) {
@@ -130,7 +170,7 @@ public class NPC extends Person {
 
 		if (Global.isServer()) {
 			fsm.performAction();
-			move();
+
 		}
 	}
 }

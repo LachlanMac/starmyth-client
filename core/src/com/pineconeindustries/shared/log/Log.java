@@ -8,7 +8,8 @@ public class Log {
 	public static boolean CONNECTION_STATUS = true;
 
 	public static void print(String out) {
-		System.out.println("Console: [" + out + "]");
+		if (DEBUG_MODE)
+			System.out.println("Console: [" + out + "]");
 	}
 
 	public static void debug(String out) {

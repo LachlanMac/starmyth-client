@@ -1,47 +1,22 @@
 package com.pineconeindustries.shared.files;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+
 public class Files {
-
-	public static String loadFile(String path, long checksum) {
-
-		StringBuilder dataBuilder = new StringBuilder();
-
-		try (BufferedReader br = new BufferedReader(new FileReader(path))) {
-
-			String sCurrentLine;
-			while ((sCurrentLine = br.readLine()) != null) {
-				dataBuilder.append(sCurrentLine);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		String data = dataBuilder.toString().trim();
-
-		long fileCS = 0;
-
-		for (int i = 0; i < data.length(); i++) {
-
-			fileCS += data.charAt(i);
-		}
-
-		if (checksum != fileCS) {
-			System.out.println("CHECKSUM FAILED  " + fileCS + "  VS  " + checksum);
-		}
-
-		return dataBuilder.toString().trim();
-
-	}
 
 	public static String loadShipLayout(String path) {
 
 		StringBuilder dataBuilder = new StringBuilder();
 
-		try (BufferedReader br = new BufferedReader(new FileReader("shiplayouts/" + path +".txt"))) {
+		File f = Gdx.files.internal("shiplayouts/" + path + ".txt").file();
+
+		try (BufferedReader br = new BufferedReader(new FileReader(f))) {
 
 			String sCurrentLine;
 			while ((sCurrentLine = br.readLine()) != null) {
@@ -58,8 +33,9 @@ public class Files {
 	public static String[] loadAIScript(String path) {
 
 		String[] schedule = new String[24];
+		File f = Gdx.files.internal(path).file();
 
-		try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+		try (BufferedReader br = new BufferedReader(new FileReader(f))) {
 
 			String sCurrentLine;
 			int i = 0;

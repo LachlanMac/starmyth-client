@@ -41,7 +41,7 @@ public abstract class Structure {
 
 	public abstract void update();
 
-	public abstract void render(Batch b);
+	public abstract void render(SpriteBatch b);
 
 	public Tile[][] getTiles() {
 		return tiles;
