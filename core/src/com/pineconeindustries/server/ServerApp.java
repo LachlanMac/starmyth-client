@@ -70,8 +70,6 @@ public class ServerApp extends ApplicationAdapter {
 		galaxy = Galaxy.getInstance();
 		galaxy.loadSectors();
 
-		
-
 	}
 
 	@Override
@@ -83,8 +81,9 @@ public class ServerApp extends ApplicationAdapter {
 
 		Gdx.gl.glClearColor(0, 0.5f, 0.3f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-		update();
+		if (headless) {
+			update();
+		}
 
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
@@ -99,6 +98,9 @@ public class ServerApp extends ApplicationAdapter {
 	public void update() {
 
 		galaxy.update();
+
+		if (headless)
+			return;
 
 		camera.update();
 

@@ -36,8 +36,8 @@ public class ClientApp extends ApplicationAdapter {
 	private float state;
 	public static String TEST_IP = "127.0.0.1";
 
-	public static String LOGIN_SERVER_IP = localHost;
-	public static String GAME_SERVER_IP = localHost;
+	public static String LOGIN_SERVER_IP = remoteHost;
+	public static String GAME_SERVER_IP = remoteHost;
 
 	SpriteBatch batch;
 	ShapeRenderer shapeBatch;

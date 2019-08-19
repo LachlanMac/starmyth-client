@@ -227,7 +227,6 @@ public class NPC extends Person {
 
 	@Override
 	public void update() {
-		hover();
 
 		if (Global.isServer()) {
 			fsm.performAction();

@@ -17,6 +17,8 @@ public class PacketParser {
 
 		String split[] = packetData.split("=");
 
+		System.out.println(packetData);
+		
 		switch (packetID) {
 
 		case Packets.MOVE_PACKET:

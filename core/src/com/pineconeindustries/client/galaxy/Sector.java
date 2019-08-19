@@ -50,7 +50,6 @@ public class Sector {
 		Collections.sort(renderList);
 		for (Entity e : renderList) {
 
-			System.out.println(player.getLayer() + " VS " + e.getLayer());
 			if (e.getLayer() == player.getLayer())
 				e.render(b);
 		}
