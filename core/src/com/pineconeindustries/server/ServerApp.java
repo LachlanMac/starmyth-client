@@ -76,14 +76,14 @@ public class ServerApp extends ApplicationAdapter {
 	public void render() {
 
 		if (headless) {
+			update();
 			return;
 		}
 
 		Gdx.gl.glClearColor(0, 0.5f, 0.3f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		if (headless) {
-			update();
-		}
+
+		update();
 
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
