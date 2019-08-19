@@ -37,8 +37,6 @@ public class LAssetManager extends AssetManager {
 		load("textures/shiptiles/hall.png", Texture.class);
 		load("textures/shiptiles/wall.png", Texture.class);
 		load("textures/playerSS.png", Texture.class);
-		load("textures/path.png", Texture.class);
-
 	}
 
 	public void loadShipTiles() {

@@ -2,6 +2,7 @@
 
 ./gradlew clean
 ./gradlew dist
-rm -rf serverJar
-mkdir serverJar
-cp ~/Documents/Starmyth/starmyth-client/desktop/build/libs/* serverJar/
+rm -rf server
+mkdir server
+cp /home/lachlan/Starmyth/starmyth-client/desktop/build/libs/desktop-1.0.jar serverJar/server.jar
+cp -rf /home/lachlan/Starmyth/starmyth-client/core/assets/* /home/lachlan/Starmyth/starmyth-client/server/
