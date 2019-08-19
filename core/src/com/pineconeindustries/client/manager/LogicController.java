@@ -1,12 +1,14 @@
 package com.pineconeindustries.client.manager;
 
-import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.pineconeindustries.client.cameras.CameraController;
 import com.pineconeindustries.client.galaxy.Sector;
 import com.pineconeindustries.client.networking.Connection;
 import com.pineconeindustries.client.networking.packets.PacketParser;
+import com.pineconeindustries.client.networking.packets.PacketRequester;
 import com.pineconeindustries.client.networking.packets.UDPPacket;
 import com.pineconeindustries.shared.log.Log;
 import com.pineconeindustries.shared.objects.Player;
@@ -20,7 +22,11 @@ public class LogicController {
 	private CameraController cam;
 	private OrthographicCamera playerCamera, fixedCamera;
 
+	ExecutorService requestPool;
+
 	private LogicController() {
+
+		requestPool = Executors.newFixedThreadPool(3);
 
 	}
 
@@ -107,6 +113,10 @@ public class LogicController {
 
 	public Sector getSector() {
 		return sector;
+	}
+
+	public void addToRequestPool(PacketRequester request) {
+		requestPool.execute(request);
 	}
 
 }

@@ -7,8 +7,8 @@ import com.pineconeindustries.shared.data.GameData;
 
 public class GroundObject extends GameObject {
 
-	public GroundObject(String name, Vector2 loc, GameData game) {
-		super(name, loc, game);
+	public GroundObject(String name, Vector2 loc, GameData game, int layer) {
+		super(name, loc, game, layer);
 		// TODO Auto-generated constructor stub
 	}
 

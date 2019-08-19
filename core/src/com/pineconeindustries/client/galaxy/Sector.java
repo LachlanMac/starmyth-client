@@ -9,11 +9,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.PriorityBlockingQueue;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.pineconeindustries.shared.log.Log;
 import com.pineconeindustries.shared.objects.Entity;
 import com.pineconeindustries.shared.objects.NPC;
 import com.pineconeindustries.shared.objects.Person;
 import com.pineconeindustries.shared.objects.Player;
 import com.pineconeindustries.shared.objects.PlayerMP;
+import com.pineconeindustries.shared.objects.Station;
+import com.pineconeindustries.shared.objects.Structure;
 
 public class Sector {
 
@@ -21,6 +25,7 @@ public class Sector {
 
 	private ArrayBlockingQueue<NPC> npcs;
 	private ArrayBlockingQueue<PlayerMP> players;
+	private ArrayBlockingQueue<Structure> structures;
 	private Player player;
 
 	private CopyOnWriteArrayList<Person> renderList;
@@ -29,19 +34,25 @@ public class Sector {
 		this.port = player.getSectorID();
 		players = new ArrayBlockingQueue<PlayerMP>(64);
 		npcs = new ArrayBlockingQueue<NPC>(128);
+		structures = new ArrayBlockingQueue<Structure>(16);
 		renderList = new CopyOnWriteArrayList<Person>();
 		this.player = player;
 		renderList.add(player);
 
-		// TEST
-
 	}
 
-	public void render(Batch b) {
+	public void render(SpriteBatch b) {
+
+		Structure s = getStructureByID(player.getStructureID());
+		if (s != null)
+			s.render(b);
 
 		Collections.sort(renderList);
 		for (Entity e : renderList) {
-			e.render(b);
+
+			System.out.println(player.getLayer() + " VS " + e.getLayer());
+			if (e.getLayer() == player.getLayer())
+				e.render(b);
 		}
 
 	}
@@ -101,6 +112,17 @@ public class Sector {
 
 	}
 
+	public boolean structureExists(int id) {
+		boolean exists = false;
+		for (Structure s : structures) {
+			if (s.getStructureID() == id)
+				exists = true;
+		}
+
+		return exists;
+
+	}
+
 	public void cleanPlayerList(ArrayList<Integer> ids) {
 
 		for (PlayerMP p : players) {
@@ -135,14 +157,43 @@ public class Sector {
 
 	}
 
+	public void cleanStructureList(ArrayList<Integer> ids) {
+
+		for (Structure structure : structures) {
+			boolean structureExists = false;
+			for (Integer i : ids) {
+				if (structure.getStructureID() == i) {
+					structureExists = true;
+				}
+			}
+
+			if (!structureExists) {
+				removeStructure(getStructureByID(structure.getStructureID()));
+			}
+		}
+
+	}
+
 	public void addNPC(NPC npc) {
+		System.out.println("Adding " + npc.getName());
 		npcs.add(npc);
 		renderList.add(npc);
+	}
+
+	public void addStructure(Structure structure) {
+		Log.print("ADDING ! Name : " + structure.getStructureName() + " : " + structure.getStructureID());
+		structures.add(structure);
+
 	}
 
 	public void removeNPC(NPC npc) {
 		npcs.remove(npc);
 		renderList.remove(npc);
+
+	}
+
+	public void removeStructure(Structure structure) {
+		structures.remove(structure);
 
 	}
 
@@ -172,6 +223,19 @@ public class Sector {
 			}
 		}
 		return pmp;
+
+	}
+
+	public Structure getStructureByID(int id) {
+
+		Structure structure = null;
+
+		for (Structure s : structures) {
+			if (s.getStructureID() == id) {
+				structure = s;
+			}
+		}
+		return structure;
 
 	}
 

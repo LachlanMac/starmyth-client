@@ -8,10 +8,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.models.AnimationSet;
 import com.pineconeindustries.shared.data.GameData;
+import com.pineconeindustries.shared.gameunits.Units;
 
 public class Entity extends GameObject implements Comparable<Entity> {
-
-	private final float DEFAULT_SPEED = 2;
 
 	protected final int MAX_FRAMES_SINCE_LAST_MOVE = 6;
 	protected float interval, velocity, speed;
@@ -21,13 +20,13 @@ public class Entity extends GameObject implements Comparable<Entity> {
 	Animation<TextureRegion> currentFrame;
 	Vector2 renderLoc, lastDirectionFaced;
 
-	public Entity(String name, Vector2 loc, GameData game, int factionID, int structureID) {
-		super(name, loc, game);
+	public Entity(String name, Vector2 loc, GameData game, int factionID, int structureID, int layer) {
+		super(name, loc, game, layer);
 
 		interval = 0;
 		velocity = 0;
 		framesSinceLastMove = 0;
-		speed = DEFAULT_SPEED;
+		speed = Units.ENTITY_SPEED;
 		renderLoc = loc;
 		lastDirectionFaced = loc;
 		this.factionID = factionID;
@@ -39,8 +38,6 @@ public class Entity extends GameObject implements Comparable<Entity> {
 		} else {
 			animSet = null;
 		}
-
-		
 
 		sectorX = (int) this.loc.x / 8192;
 		sectorY = (int) this.loc.y / 8192;
@@ -143,10 +140,6 @@ public class Entity extends GameObject implements Comparable<Entity> {
 		this.lastDirectionFaced = lastDirectionFaced;
 	}
 
-	public float getDEFAULT_SPEED() {
-		return DEFAULT_SPEED;
-	}
-
 	public int getMAX_FRAMES_SINCE_LAST_MOVE() {
 		return MAX_FRAMES_SINCE_LAST_MOVE;
 	}
@@ -177,7 +170,7 @@ public class Entity extends GameObject implements Comparable<Entity> {
 		return -loc.y;
 
 	}
-
+	
 	@Override
 	public int compareTo(Entity o) {
 

@@ -16,8 +16,8 @@ public class Projectile extends GameObject {
 	Texture plasma;
 	Sprite pSprite;
 
-	public Projectile(String name, Vector2 loc, GameData game, Vector2 direction) {
-		super(name, loc, game);
+	public Projectile(String name, Vector2 loc, GameData game, Vector2 direction, int layer) {
+		super(name, loc, game, layer);
 		this.direction = direction;
 		this.start = loc;
 		plasma = game.Assets().get("textures/plasma.png", Texture.class);

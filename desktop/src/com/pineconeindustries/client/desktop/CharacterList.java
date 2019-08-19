@@ -10,6 +10,7 @@ public class CharacterList {
 	String name1, name2, name3, name4;
 	int charID1, charID2, charID3, charID4;
 	int sector1, sector2, sector3, sector4;
+	int layerID1, layerID2, layerID3, layerID4;
 	float x1, x2, x3, x4;
 	float y1, y2, y3, y4;
 	String model1, model2, model3, model4;
@@ -46,7 +47,8 @@ public class CharacterList {
 			String name3, String name4, int charID1, int charID2, int charID3, int charID4, int sector1, int sector2,
 			int sector3, int sector4, float x1, float x2, float x3, float x4, float y1, float y2, float y3, float y4,
 			String model1, String model2, String model3, String model4, String user1, String user2, String user3,
-			String user4, int id1, int id2, int id3, int id4, int account_id, String status) {
+			String user4, int id1, int id2, int id3, int id4, int account_id, int layerID1, int layerID2, int layerID3,
+			int layerID4, String status) {
 		super();
 		this.status1 = status1;
 		this.status2 = status2;
@@ -84,6 +86,10 @@ public class CharacterList {
 		this.id2 = id2;
 		this.id3 = id3;
 		this.id4 = id4;
+		this.layerID1 = layerID1;
+		this.layerID2 = layerID2;
+		this.layerID3 = layerID3;
+		this.layerID4 = layerID4;
 		this.account_id = account_id;
 		this.status = status;
 	}
@@ -368,22 +374,22 @@ public class CharacterList {
 			return list;
 		} else if (name2 == null) {
 
-			list.add(new LocalPlayerData(charID1, id1, model1, name1, sector1, status1, user1, x1, y1));
+			list.add(new LocalPlayerData(charID1, id1, model1, name1, sector1, status1, user1, x1, y1, layerID1));
 			return list;
 		} else if (name3 == null) {
-			list.add(new LocalPlayerData(charID1, id1, model1, name1, sector1, status1, user1, x1, y1));
-			list.add(new LocalPlayerData(charID2, id2, model2, name2, sector2, status2, user2, x2, y2));
+			list.add(new LocalPlayerData(charID1, id1, model1, name1, sector1, status1, user1, x1, y1, layerID1));
+			list.add(new LocalPlayerData(charID2, id2, model2, name2, sector2, status2, user2, x2, y2, layerID2));
 			return list;
 		} else if (name4 == null) {
-			list.add(new LocalPlayerData(charID1, id1, model1, name1, sector1, status1, user1, x1, y1));
-			list.add(new LocalPlayerData(charID2, id2, model2, name2, sector2, status2, user2, x2, y2));
-			list.add(new LocalPlayerData(charID3, id3, model3, name3, sector3, status3, user3, x3, y3));
+			list.add(new LocalPlayerData(charID1, id1, model1, name1, sector1, status1, user1, x1, y1, layerID1));
+			list.add(new LocalPlayerData(charID2, id2, model2, name2, sector2, status2, user2, x2, y2, layerID2));
+			list.add(new LocalPlayerData(charID3, id3, model3, name3, sector3, status3, user3, x3, y3, layerID3));
 			return list;
 		} else {
-			list.add(new LocalPlayerData(charID1, id1, model1, name1, sector1, status1, user1, x1, y1));
-			list.add(new LocalPlayerData(charID2, id2, model2, name2, sector2, status2, user2, x2, y2));
-			list.add(new LocalPlayerData(charID3, id3, model3, name3, sector3, status3, user3, x3, y3));
-			list.add(new LocalPlayerData(charID4, id4, model4, name4, sector4, status4, user4, x4, y4));
+			list.add(new LocalPlayerData(charID1, id1, model1, name1, sector1, status1, user1, x1, y1, layerID1));
+			list.add(new LocalPlayerData(charID2, id2, model2, name2, sector2, status2, user2, x2, y2, layerID2));
+			list.add(new LocalPlayerData(charID3, id3, model3, name3, sector3, status3, user3, x3, y3, layerID3));
+			list.add(new LocalPlayerData(charID4, id4, model4, name4, sector4, status4, user4, x4, y4, layerID4));
 			return list;
 		}
 

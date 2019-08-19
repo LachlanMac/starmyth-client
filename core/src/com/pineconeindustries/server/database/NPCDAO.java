@@ -22,24 +22,25 @@ public class NPCDAO {
 		this.conn = conn;
 	}
 
-	public void savePlayer(PlayerMP player) {
+	public void saveNPC(NPC npc) {
 
 		if (!Global.useDatabase) {
 			return;
 		}
 
-		Log.dbLog("Saving Player [" + player.getID() + ":" + player.getName() + "]");
+		Log.dbLog("Saving NPC [" + npc.getID() + ":" + npc.getName() + "]");
 
-		String savePlayerSQL = "UPDATE PlayerCharacter SET sector_id=?, faction_id=?, structure_id=?, local_x=?, local_y=?";
+		String savePlayerSQL = "UPDATE PlayerCharacter SET sector_id=?, faction_id=?, structure_id=?, local_x=?, local_y=?, layer=?";
 
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(savePlayerSQL);
 
-			pstmt.setInt(1, player.getSectorID());
-			pstmt.setInt(2, player.getFactionID());
-			pstmt.setInt(3, player.getStructureID());
-			pstmt.setFloat(4, player.getLoc().x);
-			pstmt.setFloat(5, player.getLoc().y);
+			pstmt.setInt(1, npc.getSectorID());
+			pstmt.setInt(2, npc.getFactionID());
+			pstmt.setInt(3, npc.getStructureID());
+			pstmt.setFloat(4, npc.getLoc().x);
+			pstmt.setFloat(5, npc.getLoc().y);
+			pstmt.setInt(6, npc.getLayer());
 
 			pstmt.executeUpdate();
 			pstmt.close();
@@ -60,19 +61,19 @@ public class NPCDAO {
 		PreparedStatement stmt;
 		try {
 			stmt = conn.prepareStatement(
-					"SELECT npc_id, npc_name, faction_id, local_x, local_y, structure_id FROM NPC WHERE sector_id=?");
+					"SELECT npc_id, npc_name, faction_id, local_x, local_y, structure_id, layer FROM NPC WHERE sector_id=?");
 			stmt.setInt(1, id);
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
 				int npcID = rs.getInt("npc_id");
 				String name = rs.getString("npc_name");
-
 				int factionID = rs.getInt("faction_id");
 				int structureID = rs.getInt("structure_id");
 				float localX = rs.getFloat("local_x");
 				float localY = rs.getFloat("local_y");
-				npcs.add(new NPC(name, new Vector2(localX, localY), GameData.getInstance(), factionID, structureID, id,
-						Galaxy.getInstance().getSectorByID(id)));
+				int layer = rs.getInt("layer");
+				npcs.add(new NPC(name, new Vector2(localX, localY), GameData.getInstance(), factionID, structureID, npcID,
+						Galaxy.getInstance().getSectorByID(id), layer));
 				Log.dbLog("Loaded NPC [" + npcID + ":" + name + "]");
 			}
 
@@ -89,16 +90,16 @@ public class NPCDAO {
 		ArrayList<NPC> npcs = new ArrayList<NPC>();
 
 		npcs.add(new NPC("NPC1", new Vector2(300, 200), GameData.getInstance(), 0, 0, 444,
-				Galaxy.getInstance().getSectorByID(sectorID)));
+				Galaxy.getInstance().getSectorByID(sectorID), 1));
 		npcs.add(new NPC("NPC2", new Vector2(600, 800), GameData.getInstance(), 0, 0, 455,
-				Galaxy.getInstance().getSectorByID(sectorID)));
+				Galaxy.getInstance().getSectorByID(sectorID), 1));
 
 		return npcs;
 
 	}
 
 	public PlayerMP getDefaultPlayer(int id) {
-		return new PlayerMP("Default Player", new Vector2(100, 100), GameData.getInstance(), 0, 0, id, 7780);
+		return new PlayerMP("Default Player", new Vector2(100, 100), GameData.getInstance(), 0, 0, id, 7780, 1);
 	}
 
 }

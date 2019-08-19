@@ -3,11 +3,11 @@ package com.pineconeindustries.client.data;
 public class LocalPlayerData {
 	private String name, user, model;
 	private String status;
-	private int charID, id, sector;
+	private int charID, id, sector, layer;
 	private float x, y;
 
 	public LocalPlayerData(int charID, int id, String model, String name, int sector, String status, String user,
-			float x, float y) {
+			float x, float y, int layer) {
 		this.charID = charID;
 		this.id = id;
 		this.model = model;
@@ -17,6 +17,7 @@ public class LocalPlayerData {
 		this.user = user;
 		this.x = x;
 		this.y = y;
+		this.layer = layer;
 
 	}
 
@@ -96,10 +97,18 @@ public class LocalPlayerData {
 		this.y = y;
 	}
 
+	public void setLayer(int layer) {
+		this.layer = layer;
+	}
+
 	public String toString() {
 
 		return "ID:" + charID + " NAME:" + name + "  [" + x + ", " + y + "] SECTOR: " + sector;
 
+	}
+
+	public int getLayer() {
+		return layer;
 	}
 
 }

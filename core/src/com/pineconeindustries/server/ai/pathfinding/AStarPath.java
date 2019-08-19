@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import com.pineconeindustries.shared.objects.GridTile;
 import com.pineconeindustries.shared.objects.Tile;
@@ -57,10 +58,10 @@ public class AStarPath {
 		}
 	}
 
-	public void setBlocks(ArrayList<GridTile> blocks) {
+	public void setBlocks(ArrayBlockingQueue<GridTile> blocks) {
 
 		for (GridTile node : blocks) {
-			
+
 			setBlock(node.getX(), node.getY());
 		}
 	}

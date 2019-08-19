@@ -30,6 +30,7 @@ public class Debug {
 			data.setUser("testclient1");
 			data.setX(0);
 			data.setY(0);
+			data.setLayer(1);
 			break;
 
 		case 2:
@@ -41,18 +42,20 @@ public class Debug {
 			data.setUser("testclient2");
 			data.setX(0);
 			data.setY(0);
+			data.setLayer(1);
 			break;
-			
+
 		case 3:
-	
+
 			data.setCharID(22);
-			data.setId(1002);
+			data.setId(1001);
 			data.setModel("1");
 			data.setSector(7780);
 			data.setStatus("ok");
 			data.setUser("testclient2");
-			data.setX(9999);
-			data.setY(9999);
+			data.setX(4000);
+			data.setY(4000);
+			data.setLayer(1);
 			break;
 		default:
 			Log.print("Error loading test client data");

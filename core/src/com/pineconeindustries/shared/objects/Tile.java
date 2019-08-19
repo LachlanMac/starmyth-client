@@ -1,6 +1,7 @@
 package com.pineconeindustries.shared.objects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.shared.data.GameData;
 
 public class Tile {
@@ -78,7 +79,7 @@ public class Tile {
 		case ROOM:
 			blocked = false;
 			break;
-		
+
 		default:
 			blocked = true;
 		}
@@ -88,12 +89,15 @@ public class Tile {
 	}
 
 	private float xLoc, yLoc;
+	private int renderX, renderY;
 	private char id;
 
-	public Tile(char id, float xLoc, float yLoc) {
+	public Tile(char id, float xLoc, float yLoc, int renderX, int renderY) {
 		this.id = id;
 		this.xLoc = xLoc;
 		this.yLoc = yLoc;
+		this.renderX = renderX;
+		this.renderY = renderY;
 	}
 
 	public void update() {
@@ -102,12 +106,14 @@ public class Tile {
 
 	public void render(SpriteBatch b) {
 
+		float multiplierX = renderX * TILE_SIZE * Structure.STRUCTURE_SIZE;
+		float multiplierY = renderY * TILE_SIZE * Structure.STRUCTURE_SIZE;
+
 		if (id == 'p') {
 			// donothing
 		} else {
-			b.draw(GameData.getInstance().Assets().getTileID(id), (xLoc * TILE_SIZE), (yLoc * TILE_SIZE));
-			// System.out.println("DRAWING AT " + (xLoc * TILE_SIZE) + " , " + (yLoc *
-			// TILE_SIZE) + " " + id);
+			b.draw(GameData.getInstance().Assets().getTileID(id), (xLoc * TILE_SIZE) + multiplierX,
+					(yLoc * TILE_SIZE) + multiplierY);
 		}
 
 	}
@@ -126,6 +132,12 @@ public class Tile {
 
 	public float getY() {
 		return yLoc;
+	}
+
+	public Vector2 getGlobalLoc() {
+		float multiplierX = renderX * TILE_SIZE * Structure.STRUCTURE_SIZE;
+		float multiplierY = renderY * TILE_SIZE * Structure.STRUCTURE_SIZE;
+		return new Vector2(xLoc + multiplierX, yLoc + multiplierY);
 	}
 
 }

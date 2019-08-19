@@ -15,6 +15,7 @@ import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.Net;
 import com.pineconeindustries.client.networking.packets.PacketFactory;
 import com.pineconeindustries.shared.data.GameData;
+import com.pineconeindustries.shared.gameunits.Units;
 
 public class Player extends Person {
 
@@ -31,8 +32,8 @@ public class Player extends Person {
 	Camera camera;
 
 	public Player(String name, Vector2 loc, GameData game, int factionID, int structureID, int id, int sectorID,
-			Camera camera) {
-		super(name, loc, game, factionID, structureID, id, sectorID);
+			Camera camera, int layer) {
+		super(name, loc, game, factionID, structureID, id, sectorID, layer);
 		this.camera = camera;
 		projectiles = new ArrayList<Projectile>();
 
@@ -49,8 +50,8 @@ public class Player extends Person {
 
 			TextureRegion t = currentFrame.getKeyFrame(state, true);
 
-			b.draw(currentFrame.getKeyFrame(state, true), renderLoc.x, renderLoc.y, 32, 32, t.getRegionWidth(),
-					t.getRegionHeight(), 1, 1, 3f + (state * 100), false);
+			b.draw(currentFrame.getKeyFrame(state, true), renderLoc.x, renderLoc.y, t.getRegionWidth() / 2,
+					t.getRegionHeight() / 2, t.getRegionWidth(), t.getRegionHeight(), 1, 1, 3f + (state * 100), false);
 
 		} else {
 			b.draw(currentFrame.getKeyFrame(state, true), renderLoc.x, renderLoc.y);
@@ -61,10 +62,9 @@ public class Player extends Person {
 			renderLoc = loc;
 		} else {
 
-			float lerp = 15f;
 			Vector2 position = renderLoc;
-			renderLoc.x += (getLoc().x - position.x) * lerp * Gdx.graphics.getDeltaTime();
-			renderLoc.y += (getLoc().y - position.y) * lerp * Gdx.graphics.getDeltaTime();
+			renderLoc.x += (getLoc().x - position.x) * Units.PLAYER_LERP * Gdx.graphics.getDeltaTime();
+			renderLoc.y += (getLoc().y - position.y) * Units.PLAYER_LERP * Gdx.graphics.getDeltaTime();
 			framesSinceLastMove++;
 		}
 

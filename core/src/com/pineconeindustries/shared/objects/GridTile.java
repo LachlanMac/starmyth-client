@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.pineconeindustries.server.ai.pathfinding.PathNode;
 import com.pineconeindustries.shared.data.GameData;
+import com.pineconeindustries.shared.gameunits.Units;
 
 public class GridTile {
 
@@ -15,6 +16,13 @@ public class GridTile {
 	public GridTile(int x, int y) {
 		this.x = x;
 		this.y = y;
+		t = GameData.getInstance().Assets().get("textures/path.png");
+	}
+
+	public GridTile(int x, int y, boolean blocked) {
+		this.x = x;
+		this.y = y;
+		this.blocked = blocked;
 		t = GameData.getInstance().Assets().get("textures/path.png");
 	}
 
@@ -39,6 +47,6 @@ public class GridTile {
 	}
 
 	public void render(SpriteBatch b) {
-		b.draw(t, x * 32, y * 32);
+		b.draw(t, x * Units.GRID_INTERVAL, y * Units.GRID_INTERVAL);
 	}
 }

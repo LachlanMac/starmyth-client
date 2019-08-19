@@ -11,12 +11,12 @@ import com.pineconeindustries.server.ai.states.State;
 import com.pineconeindustries.server.ai.states.WanderState;
 import com.pineconeindustries.server.ai.states.WorkState;
 import com.pineconeindustries.server.clock.Clock;
-import com.pineconeindustries.server.data.Station;
-import com.pineconeindustries.server.data.Structure;
 import com.pineconeindustries.server.galaxy.Galaxy;
 import com.pineconeindustries.shared.files.Files;
 import com.pineconeindustries.shared.log.Log;
 import com.pineconeindustries.shared.objects.NPC;
+import com.pineconeindustries.shared.objects.Station;
+import com.pineconeindustries.shared.objects.Structure;
 
 public class FiniteStateMachine {
 
@@ -34,8 +34,7 @@ public class FiniteStateMachine {
 	public FiniteStateMachine(NPC owner) {
 		this.owner = owner;
 
-		structure = (Station) Galaxy.getInstance().getSectorByID(owner.getSectorID())
-				.getStructureByID(owner.getStructureID());
+		structure = Galaxy.getInstance().getSectorByID(owner.getSectorID()).getStructureByID(owner.getStructureID());
 
 		currentState = new IdleState(this);
 		schedule = Files.loadAIScript("scripts/ai/default_ai");
@@ -45,7 +44,7 @@ public class FiniteStateMachine {
 		registerStates("WORK", new WorkState(this));
 		registerStates("SLEEP", new SleepState(this));
 		registerStates("MOVE", new MoveState(this));
-		Clock.getInstance().setSpeed(0.3f);
+		
 	}
 
 	public void performAction() {
@@ -61,7 +60,7 @@ public class FiniteStateMachine {
 		scheduleState = states.get(schedule[hour]);
 
 		if (!scheduleState.getKey().equals(currentState.getKey())) {
-			Log.print("Changing state to " + scheduleState.getKey() + " because its hour " + hour);
+			Log.aiStateLog(owner.getName() + " changing state to " + scheduleState.getKey());
 			changeState(scheduleState);
 		}
 
@@ -83,8 +82,8 @@ public class FiniteStateMachine {
 		return owner;
 	}
 
-	public Station getStructure() {
-		return (Station) structure;
+	public Structure getStructure() {
+		return structure;
 	}
 
 }

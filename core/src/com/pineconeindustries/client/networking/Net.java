@@ -12,7 +12,6 @@ public class Net {
 			return true;
 		else
 			return false;
-
 	}
 
 	public static Player getLocalPlayer() {

@@ -8,14 +8,14 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.math.Vector2;
-import com.pineconeindustries.server.data.Station;
-import com.pineconeindustries.server.data.Structure;
 import com.pineconeindustries.server.galaxy.Galaxy;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.log.Log;
 import com.pineconeindustries.shared.objects.NPC;
 import com.pineconeindustries.shared.objects.PlayerMP;
+import com.pineconeindustries.shared.objects.Station;
+import com.pineconeindustries.shared.objects.Structure;
 
 public class StructureDAO {
 	Connection conn;
@@ -58,8 +58,8 @@ public class StructureDAO {
 				int layers = rs.getInt("layers");
 
 				if (type == 1) {
-					structures.add(new Station(name, structureID, id, factionID, globalX, globalY, localX, localY, 64,
-							64, layers));
+					structures.add(
+							new Station(name, structureID, id, factionID, localX, localY, globalX, globalY, layers));
 					Log.dbLog("Adding station : [" + structureID + "]" + name);
 				}
 

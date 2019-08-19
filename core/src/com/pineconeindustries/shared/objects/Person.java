@@ -6,12 +6,13 @@ import com.pineconeindustries.shared.data.GameData;
 
 public class Person extends Entity {
 
-	protected float lerp = 7f, state = 0f;
+	protected float state = 0f;
 	private int id, sectorID;
 	private boolean tickrender = false;
 
-	public Person(String name, Vector2 loc, GameData game, int factionID, int structureID, int id, int sectorID) {
-		super(name, loc, game, factionID, structureID);
+	public Person(String name, Vector2 loc, GameData game, int factionID, int structureID, int id, int sectorID,
+			int layer) {
+		super(name, loc, game, factionID, structureID, layer);
 		this.id = id;
 		this.sectorID = sectorID;
 		if (!game.isHeadless()) {
@@ -38,14 +39,6 @@ public class Person extends Entity {
 
 	public void setSectorID(int sectorID) {
 		this.sectorID = sectorID;
-	}
-
-	public void lerp() {
-
-		Vector2 position = renderLoc;
-		renderLoc.x += (loc.x - position.x) * lerp * Gdx.graphics.getDeltaTime();
-		renderLoc.y += (loc.y - position.y) * lerp * Gdx.graphics.getDeltaTime();
-
 	}
 
 	public boolean shouldTickRender() {

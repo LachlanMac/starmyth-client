@@ -7,6 +7,7 @@ import com.pineconeindustries.client.networking.packets.UDPPacket;
 import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.packets.modules.ConnectionModule;
 import com.pineconeindustries.server.net.packets.modules.MoveModule;
+import com.pineconeindustries.server.net.packets.modules.StructureModule;
 import com.pineconeindustries.shared.log.Log;
 
 public class PacketParser {
@@ -52,6 +53,9 @@ public class PacketParser {
 			ConnectionModule.rxHeartbeat(packet.getData(), sector);
 			break;
 		case Packets.VERIFY_PACKET:
+			break;
+		case Packets.STRUCTURE_INFO_REQUEST_PACKET:
+			StructureModule.rxStructureLayoutRequest(packet.getData(), sector);
 			break;
 		default:
 			Log.netTraffic("Packet ID: " + packet.getPacketID(), "Invalid TCP Packet");

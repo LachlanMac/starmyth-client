@@ -28,7 +28,7 @@ public class PlayerDAO {
 
 		Log.dbLog("Saving Player [" + player.getID() + ":" + player.getName() + "]");
 
-		String savePlayerSQL = "UPDATE PlayerCharacter SET sector_id=?, faction_id=?, structure_id=?, local_x=?, local_y=?";
+		String savePlayerSQL = "UPDATE PlayerCharacter SET sector_id=?, faction_id=?, structure_id=?, local_x=?, local_y=?, layer=?";
 
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(savePlayerSQL);
@@ -38,6 +38,7 @@ public class PlayerDAO {
 			pstmt.setInt(3, player.getStructureID());
 			pstmt.setFloat(4, player.getLoc().x);
 			pstmt.setFloat(5, player.getLoc().y);
+			pstmt.setInt(6, player.getLayer());
 
 			pstmt.executeUpdate();
 			pstmt.close();
@@ -62,7 +63,7 @@ public class PlayerDAO {
 					"SELECT character_name, sector_id, faction_id, local_x, local_y, structure_id, layer FROM PlayerCharacter WHERE character_id=?");
 			stmt.setInt(1, id);
 			ResultSet rs = stmt.executeQuery();
-			
+
 			while (rs.next()) {
 
 				String name = rs.getString("character_name");
@@ -73,8 +74,7 @@ public class PlayerDAO {
 				float localY = rs.getFloat("local_y");
 				int layer = rs.getInt("layer");
 				player = new PlayerMP(name, new Vector2(localX, localY), GameData.getInstance(), factionID, structureID,
-						id, sectorID);
-				player.setLayer(layer);
+						id, sectorID, layer);
 
 			}
 
@@ -89,7 +89,7 @@ public class PlayerDAO {
 	}
 
 	public PlayerMP getDefaultPlayer(int id) {
-		return new PlayerMP("Default Player", new Vector2(100, 100), GameData.getInstance(), 0, 0, id, 7780);
+		return new PlayerMP("Default Player", new Vector2(100, 100), GameData.getInstance(), 0, 0, id, 7780, 1);
 	}
 
 }

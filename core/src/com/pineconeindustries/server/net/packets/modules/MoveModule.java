@@ -33,8 +33,8 @@ public class MoveModule {
 			player.setLastDirectionFaced(new Vector2(adjustedMov.x, adjustedMov.y));
 			player.setVelocity(velocity);
 
-			String packetData = new String(player.getID() + "=" + player.getLoc().x + "=" + player.getLoc().y
-					+ "=" + adjustedMov.x + "=" + adjustedMov.y + "=" + velocity);
+			String packetData = new String(player.getID() + "=" + player.getLoc().x + "=" + player.getLoc().y + "="
+					+ adjustedMov.x + "=" + adjustedMov.y + "=" + velocity + "=" + player.getLayer() + "=");
 
 			sector.getPacketWriter()
 					.queueToAll(new UDPPacket(Packets.MOVE_PACKET, packetData, UDPPacket.packetCounter()));

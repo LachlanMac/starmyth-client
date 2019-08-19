@@ -10,11 +10,9 @@ import com.pineconeindustries.client.manager.LogicController;
 
 public class CameraController {
 	private OrthographicCamera playerCamera, fixedCamera;
-	
 	private ScalingViewport playerViewport, fixedViewport;
 	
 	private float aspectRatio;
-	
 	private boolean playerCameraActive = true;
 	
 	public CameraController() {

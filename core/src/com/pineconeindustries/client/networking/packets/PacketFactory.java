@@ -27,4 +27,10 @@ public class PacketFactory {
 
 	}
 
+	public static TCPPacket makeStructureInfoRequestPacket(int structureID, int sectorID, int layer) {
+		String data = new String(
+				structureID + "=" + sectorID + "=" + layer + "=" + LogicController.getInstance().getPlayer().getID());
+		return new TCPPacket(Packets.STRUCTURE_INFO_REQUEST_PACKET, data);
+	}
+
 }

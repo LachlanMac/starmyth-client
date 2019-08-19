@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.packets.Packets;
 import com.pineconeindustries.client.networking.packets.custom.CustomTCPPacket;
-import com.pineconeindustries.server.data.DataScheduler;
-import com.pineconeindustries.server.data.Structure;
 import com.pineconeindustries.server.database.Database;
+import com.pineconeindustries.server.net.packets.scheduler.PacketScheduler;
 import com.pineconeindustries.server.net.players.PacketListener;
 import com.pineconeindustries.server.net.players.PacketParser;
 import com.pineconeindustries.server.net.players.PacketWriter;
@@ -17,6 +17,8 @@ import com.pineconeindustries.server.net.players.PlayerConnectionListener;
 import com.pineconeindustries.shared.log.Log;
 import com.pineconeindustries.shared.objects.NPC;
 import com.pineconeindustries.shared.objects.PlayerMP;
+import com.pineconeindustries.shared.objects.Station;
+import com.pineconeindustries.shared.objects.Structure;
 
 public class Sector {
 
@@ -33,7 +35,7 @@ public class Sector {
 	PacketWriter packetWriter;
 	PacketParser packetParser;
 
-	DataScheduler scheduler;
+	PacketScheduler scheduler;
 
 	// Class to send all players UDP packets and TCP packets
 
@@ -50,7 +52,7 @@ public class Sector {
 		packetWriter = new PacketWriter(this);
 		packetParser = new PacketParser(this);
 
-		scheduler = new DataScheduler(200, this);
+		scheduler = new PacketScheduler(200, this);
 		registerScheduledFunctions();
 		scheduler.start();
 
@@ -71,7 +73,8 @@ public class Sector {
 					String yLoc = Integer.toString((int) conn.getPlayerMP().getLoc().y);
 					sb.append(conn.getPlayerID() + "#" + conn.getPlayerMP().getName() + "#"
 							+ conn.getPlayerMP().getFactionID() + "#" + conn.getPlayerMP().getSectorID() + "#"
-							+ conn.getPlayerMP().getStructureID() + "#" + xLoc + "#" + yLoc + "=");
+							+ conn.getPlayerMP().getStructureID() + "#" + xLoc + "#" + yLoc + "#"
+							+ conn.getPlayerMP().getLayer() + "=");
 				}
 
 				String data = sb.toString();
@@ -95,7 +98,33 @@ public class Sector {
 					String xLoc = Integer.toString((int) npc.getLoc().x);
 					String yLoc = Integer.toString((int) npc.getLoc().y);
 					sb.append(npc.getID() + "#" + npc.getName() + "#" + npc.getFactionID() + "#" + npc.getSectorID()
-							+ "#" + npc.getStructureID() + "#" + xLoc + "#" + yLoc + "=");
+							+ "#" + npc.getStructureID() + "#" + xLoc + "#" + yLoc + "#" + npc.getLayer() + "=");
+				}
+
+				String data = sb.toString();
+
+				if (data.length() > 2) {
+					this.data = data.substring(0, data.length() - 1);
+				} else {
+					this.data = "";
+				}
+
+			}
+		};
+
+		// structures.add(new Station(name, structureID, id, factionID, localX, localY,
+		// globalX, globalY, 64, 64, layers));
+		CustomTCPPacket structureList = new CustomTCPPacket(Packets.STRUCTURE_LIST_PACKET, "TEST DATA") {
+			@Override
+			public void update(Sector sector) {
+
+				StringBuilder sb = new StringBuilder();
+
+				for (Structure s : structures) {
+
+					sb.append(s.getStructureID() + "#" + s.getStructureName() + "#" + sector.getPort() + "#"
+							+ s.getFactionID() + "#" + s.getLayers() + "#" + s.getRenderX() + "#" + s.getRenderY() + "#"
+							+ s.getType() + "=");
 				}
 
 				String data = sb.toString();
@@ -111,6 +140,7 @@ public class Sector {
 
 		scheduler.registerPacket(playerList);
 		scheduler.registerPacket(npcList);
+		scheduler.registerPacket(structureList);
 
 	}
 
@@ -168,7 +198,7 @@ public class Sector {
 		Log.serverLog("Starting sector on port " + port);
 		addStructures();
 		addNPCs();
-		
+
 		update = true;
 		render = true;
 		connListener.start();
@@ -195,7 +225,6 @@ public class Sector {
 		for (Structure structure : tempList) {
 
 			structures.add(structure);
-			structure.loadStructure();
 
 		}
 	}

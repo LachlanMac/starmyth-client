@@ -58,7 +58,7 @@ public class ClientApp extends ApplicationAdapter {
 	World world;
 
 	// NEW
-	
+
 	public ClientApp(LocalPlayerData data) {
 		Global.runType = RUN_TYPE.client;
 		this.data = data;
@@ -89,8 +89,8 @@ public class ClientApp extends ApplicationAdapter {
 		GameData.getInstance().loadAssets();
 		Texture temp = GameData.getInstance().Assets().get("textures/galaxybg1.png");
 		bg = new TextureRegion(temp);
-		Player player = new Player(data.getName(), new Vector2(data.getX(), data.getY()), GameData.getInstance(), 1, 0,
-				data.getCharID(), data.getSector(), cam.getPlayerCamera());
+		Player player = new Player(data.getName(), new Vector2(data.getX(), data.getY()), GameData.getInstance(), 1,
+				data.getId(), data.getCharID(), data.getSector(), cam.getPlayerCamera(), data.getLayer());
 
 		player.connectToChat(ui.getChat());
 

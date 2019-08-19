@@ -15,9 +15,7 @@ import com.pineconeindustries.shared.objects.Player;
 public class UserInterface {
 
 	Stage stage;
-
 	Table rootTable;
-
 	Chatbox chatbox;
 	Player player;
 	

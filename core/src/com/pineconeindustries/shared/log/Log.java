@@ -6,10 +6,17 @@ public class Log {
 	public static boolean DEBUG_MODE = true;
 	public static boolean DATABASE_LOG = true;
 	public static boolean CONNECTION_STATUS = true;
+	public static boolean AI_LOG = false;
 
 	public static void print(String out) {
 		if (DEBUG_MODE)
 			System.out.println("Console: [" + out + "]");
+	}
+
+	public static void aiStateLog(String out) {
+		if (AI_LOG)
+			System.out.println("AI State : [" + out + "]");
+
 	}
 
 	public static void debug(String out) {

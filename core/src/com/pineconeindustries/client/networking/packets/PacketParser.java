@@ -8,6 +8,8 @@ import com.pineconeindustries.client.networking.Net;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.objects.NPC;
 import com.pineconeindustries.shared.objects.PlayerMP;
+import com.pineconeindustries.shared.objects.Station;
+import com.pineconeindustries.shared.objects.Structure;
 
 public class PacketParser {
 
@@ -20,12 +22,14 @@ public class PacketParser {
 		case Packets.MOVE_PACKET:
 
 			try {
+
 				int playerID = Integer.parseInt(split[0]);
 				float x = Float.parseFloat(split[1]);
 				float y = Float.parseFloat(split[2]);
 				float dirX = Float.parseFloat(split[3]);
 				float dirY = Float.parseFloat(split[4]);
 				float velocity = Float.parseFloat(split[5]);
+				int layer = Integer.parseInt(split[6]);
 
 				if (Net.isLocalPlayer(playerID)) {
 
@@ -33,6 +37,7 @@ public class PacketParser {
 					Net.getLocalPlayer().setLastDirectionFaced(new Vector2(dirX, dirY));
 					Net.getLocalPlayer().setLoc(new Vector2(x, y));
 					Net.getLocalPlayer().setFramesSinceLastMove(0);
+					Net.getLocalPlayer().setLayer(layer);
 
 				} else {
 
@@ -42,6 +47,7 @@ public class PacketParser {
 						pmp.setLastDirectionFaced(new Vector2(dirX, dirY));
 						pmp.setLoc(new Vector2(x, y));
 						pmp.setFramesSinceLastMove(0);
+						pmp.setLayer(layer);
 					}
 				}
 
@@ -60,6 +66,7 @@ public class PacketParser {
 				float dirX = Float.parseFloat(split[3]);
 				float dirY = Float.parseFloat(split[4]);
 				float velocity = Float.parseFloat(split[5]);
+				int layer = Integer.parseInt(split[6]);
 
 				NPC n = LogicController.getInstance().getSector().getNPCByID(id);
 				if (n != null) {
@@ -67,6 +74,7 @@ public class PacketParser {
 					n.setLastDirectionFaced(new Vector2(dirX, dirY));
 					n.setLoc(new Vector2(x, y));
 					n.setFramesSinceLastMove(0);
+					n.setLayer(layer);
 				}
 
 			} catch (NumberFormatException e) {
@@ -90,6 +98,7 @@ public class PacketParser {
 				int structureID = Integer.parseInt(playerData[4]);
 				float xLoc = Float.parseFloat(playerData[5]);
 				float yLoc = Float.parseFloat(playerData[6]);
+				int layer = Integer.parseInt(playerData[7]);
 
 				if (Net.isLocalPlayer(playerID)) {
 					// player is still part of sector list
@@ -98,7 +107,7 @@ public class PacketParser {
 					if (LogicController.getInstance().getSector().getPlayerByID(playerID) == null) {
 
 						LogicController.getInstance().getSector().addPlayer(new PlayerMP(name, new Vector2(xLoc, yLoc),
-								GameData.getInstance(), factionID, structureID, playerID, sectorID));
+								GameData.getInstance(), factionID, structureID, playerID, sectorID, layer));
 
 					}
 				}
@@ -123,18 +132,61 @@ public class PacketParser {
 				int structureID = Integer.parseInt(npcData[4]);
 				float xLoc = Float.parseFloat(npcData[5]);
 				float yLoc = Float.parseFloat(npcData[6]);
-
+				int layer = Integer.parseInt(npcData[7]);
 				npcIDs.add(npcID);
 
 				if (!LogicController.getInstance().getSector().npcExists(npcID)) {
+
 					LogicController.getInstance().getSector().addNPC(new NPC(name, new Vector2(xLoc, yLoc),
-							GameData.getInstance(), factionID, structureID, npcID, sectorID));
+							GameData.getInstance(), factionID, structureID, npcID, sectorID, layer));
 				}
 
 			}
 
 			LogicController.getInstance().getSector().cleanPlayerList(npcIDs);
 
+			break;
+		case Packets.STRUCTURE_LIST_PACKET:
+
+			ArrayList<Integer> structureIDs = new ArrayList<Integer>();
+
+			for (String data : split) {
+
+				String[] structureData = data.split("#");
+				int structureID = Integer.parseInt(structureData[0]);
+				String structureName = structureData[1];
+				int sectorID = Integer.parseInt(structureData[2]);
+				int factionID = Integer.parseInt(structureData[3]);
+				int layers = Integer.parseInt(structureData[4]);
+				int xLoc = Integer.parseInt(structureData[5]);
+				int yLoc = Integer.parseInt(structureData[6]);
+				int type = Integer.parseInt(structureData[7]);
+
+				if (!LogicController.getInstance().getSector().structureExists(structureID)) {
+
+					if (type == 1) {
+
+						LogicController.getInstance().getSector().addStructure(
+								new Station(structureName, structureID, sectorID, factionID, xLoc, yLoc, 0, 0, layers));
+					}
+
+				}
+
+			}
+
+			// LogicController.getInstance().getSector().cleanStructureList(structureIDs);
+
+			break;
+		case Packets.STRUCTURE_INFO_RESPONSE_PACKET:
+
+			int id = Integer.parseInt(split[0]);
+			int layer = Integer.parseInt(split[1]);
+			String layoutData = split[2];
+
+			LogicController.getInstance().getSector().getStructureByID(id).getLayerByNumber(layer)
+					.setLayerData(layoutData);
+
+			break;
 		default:
 		}
 

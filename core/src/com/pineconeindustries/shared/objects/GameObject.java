@@ -15,7 +15,7 @@ public abstract class GameObject {
 	GameData game;
 
 	protected boolean debugMode = false;
-	protected int layer;
+	protected int layer = 0;
 	protected int DEFAULT_BOUNDS_WIDTH = 64;
 	protected int DEFAULT_BOUNDS_HEIGHT = 64;
 	protected float rotation;
@@ -25,10 +25,11 @@ public abstract class GameObject {
 
 	private String name;
 
-	public GameObject(String name, Vector2 loc, GameData game) {
+	public GameObject(String name, Vector2 loc, GameData game, int layer) {
 		this.name = name;
 		this.loc = loc;
 		this.game = game;
+		this.layer = layer;
 
 		bounds = new Rectangle(loc.x, loc.y, boundsWidth, boundsHeight);
 	}
@@ -47,7 +48,6 @@ public abstract class GameObject {
 
 	public void setLoc(Vector2 loc) {
 		this.loc = loc;
-		System.out.println("SETTUNG KOCATUIBN TO " + loc);
 		updateBounds();
 	}
 
@@ -97,4 +97,5 @@ public abstract class GameObject {
 	public void setLayer(int layer) {
 		this.layer = layer;
 	}
+
 }

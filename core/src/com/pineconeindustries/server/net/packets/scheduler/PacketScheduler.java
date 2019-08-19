@@ -1,4 +1,4 @@
-package com.pineconeindustries.server.data;
+package com.pineconeindustries.server.net.packets.scheduler;
 
 import java.util.ArrayList;
 
@@ -9,7 +9,7 @@ import com.pineconeindustries.server.clock.Clock;
 import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.shared.log.Log;
 
-public class DataScheduler extends Thread {
+public class PacketScheduler extends Thread {
 
 	int currentIndex = 0;
 	int interval = 0;
@@ -17,7 +17,7 @@ public class DataScheduler extends Thread {
 
 	ArrayList<CustomPacket> packets;
 
-	public DataScheduler(int interval, Sector sector) {
+	public PacketScheduler(int interval, Sector sector) {
 		this.interval = interval;
 		this.sector = sector;
 		packets = new ArrayList<CustomPacket>();

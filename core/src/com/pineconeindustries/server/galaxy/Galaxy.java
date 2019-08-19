@@ -104,4 +104,17 @@ public class Galaxy {
 		globalPlayerList.remove(player);
 	}
 
+	public PlayerConnection getPlayerConnectionByID(int id) {
+
+		PlayerConnection connection = null;
+
+		for (PlayerConnection conn : globalPlayerList) {
+			if (conn.getPlayerID() == id)
+				connection = conn;
+		}
+
+		return connection;
+
+	}
+
 }

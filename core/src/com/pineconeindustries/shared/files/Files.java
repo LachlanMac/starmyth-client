@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.pineconeindustries.shared.data.Global;
 
 public class Files {
 
@@ -14,7 +15,57 @@ public class Files {
 
 		StringBuilder dataBuilder = new StringBuilder();
 
-		File f = Gdx.files.internal("shiplayouts/" + path + ".txt").file();
+		File f;
+
+		if (Global.isServer()) {
+			f = Gdx.files.internal("server/shiplayouts/" + path + ".txt").file();
+		} else {
+			f = Gdx.files.internal("shiplayouts/" + path + ".txt").file();
+		}
+
+		try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+
+			String sCurrentLine;
+			while ((sCurrentLine = br.readLine()) != null) {
+				dataBuilder.append(sCurrentLine);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return dataBuilder.toString().trim();
+
+	}
+
+	public static boolean cachedShipLayout(String path, long checksum) {
+
+		boolean exists = Gdx.files.internal("shiplayouts/" + path + ".txt").file().exists();
+		boolean cs = false;
+		long fileCS = 0;
+		if (exists) {
+
+			char[] array = loadShipLayout(path).toCharArray();
+
+			for (char c : array) {
+				fileCS += c;
+			}
+
+		}
+
+		return (checksum == fileCS && exists);
+
+	}
+
+	public static String loadShipPathmap(String path) {
+
+		StringBuilder dataBuilder = new StringBuilder();
+		File f;
+
+		if (Global.isServer()) {
+			f = Gdx.files.internal("server/shiplayouts/" + path + "-pm.txt").file();
+		} else {
+			f = Gdx.files.internal("shiplayouts/" + path + "-pm.txt").file();
+		}
 
 		try (BufferedReader br = new BufferedReader(new FileReader(f))) {
 

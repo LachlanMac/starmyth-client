@@ -91,7 +91,7 @@ public class PacketListener extends Thread {
 	public DatagramSocket getSocket() {
 
 		if (socket == null) {
-			System.out.println("WTF");
+			return null;
 		}
 		return socket;
 	}
