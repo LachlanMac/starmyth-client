@@ -65,12 +65,12 @@ public class ServerApp extends ApplicationAdapter {
 			createCamera();
 
 			Gdx.input.setInputProcessor(stage);
-
+			camera.position.set(0, 0, 0);
 		}
 		galaxy = Galaxy.getInstance();
 		galaxy.loadSectors();
 
-		camera.position.set(0, 0, 0);
+		
 
 	}
 
