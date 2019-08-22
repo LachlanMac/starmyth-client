@@ -53,13 +53,12 @@ public class ServerApp extends ApplicationAdapter {
 
 	@Override
 	public void create() {
-
-		Database.getInstance();
-
 		gameData = GameData.getInstance();
 		gameData.setHeadless(headless);
 		gameData.registerAssetManager(new LAssetManager());
 		gameData.loadAssets();
+		Database.getInstance();
+
 		if (!headless) {
 
 			Box2D.init();

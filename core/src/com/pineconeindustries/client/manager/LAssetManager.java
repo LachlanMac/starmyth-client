@@ -38,6 +38,7 @@ public class LAssetManager extends AssetManager {
 		load("textures/shiptiles/wall.png", Texture.class);
 		load("textures/playerSS.png", Texture.class);
 		load("textures/elevator.png", Texture.class);
+		
 	}
 
 	public void loadShipTiles() {
@@ -60,7 +61,6 @@ public class LAssetManager extends AssetManager {
 		zoneOpenW = shipTiles[1][2];
 		room = shipTiles[0][3];
 
-		elevator = get("textures/elevator.png");
 	}
 
 	public TextureRegion debug(char id) {
