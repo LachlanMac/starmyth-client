@@ -29,20 +29,17 @@ public class Elevator implements Clickable {
 		this.tileY = tileY;
 		this.structure = structure;
 		this.wall = wall;
-		if (!Global.isHeadlessServer()) {
-			Texture text = GameData.getInstance().Assets().get("textures/elevator.png");
-			t = new Sprite(text);
-		}
 
 		loc = structure.getGlobalVector(
 				new Vector2((tileX * Units.TILE_SIZE) + getXOffset(), (tileY * Units.TILE_SIZE) + getYOffset()));
-		this.rotation =
 
-				getRotation();
-
-		t.setRotation(rotation);
-		t.setPosition(loc.x, loc.y);
-
+		if (!Global.isHeadlessServer()) {
+			Texture text = GameData.getInstance().Assets().get("textures/elevator.png");
+			t = new Sprite(text);
+			this.rotation = getRotation();
+			t.setRotation(rotation);
+			t.setPosition(loc.x, loc.y);
+		}
 	}
 
 	public int getXOffset() {
