@@ -57,6 +57,7 @@ public class ServerApp extends ApplicationAdapter {
 		gameData.setHeadless(headless);
 		gameData.registerAssetManager(new LAssetManager());
 		gameData.loadAssets();
+		
 		Database.getInstance();
 
 		if (!headless) {
