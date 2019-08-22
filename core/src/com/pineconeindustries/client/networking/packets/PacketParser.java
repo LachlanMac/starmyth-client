@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.Net;
+import com.pineconeindustries.server.net.packets.types.Packets;
 import com.pineconeindustries.shared.data.GameData;
+import com.pineconeindustries.shared.objects.Elevator;
 import com.pineconeindustries.shared.objects.NPC;
 import com.pineconeindustries.shared.objects.PlayerMP;
 import com.pineconeindustries.shared.objects.Station;
@@ -17,8 +19,6 @@ public class PacketParser {
 
 		String split[] = packetData.split("=");
 
-		System.out.println(packetData);
-		
 		switch (packetID) {
 
 		case Packets.MOVE_PACKET:
@@ -54,7 +54,7 @@ public class PacketParser {
 				}
 
 			} catch (NumberFormatException e) {
-
+				System.out.println(e.getMessage());
 			}
 
 			break;
@@ -68,7 +68,7 @@ public class PacketParser {
 				float dirX = Float.parseFloat(split[3]);
 				float dirY = Float.parseFloat(split[4]);
 				float velocity = Float.parseFloat(split[5]);
-				int layer = Integer.parseInt(split[6]);
+				int layer = Integer.parseInt(split[6].trim());
 
 				NPC n = LogicController.getInstance().getSector().getNPCByID(id);
 				if (n != null) {
@@ -80,7 +80,7 @@ public class PacketParser {
 				}
 
 			} catch (NumberFormatException e) {
-
+				System.out.println(e.getMessage());
 			}
 
 			break;
@@ -109,7 +109,7 @@ public class PacketParser {
 					if (LogicController.getInstance().getSector().getPlayerByID(playerID) == null) {
 
 						LogicController.getInstance().getSector().addPlayer(new PlayerMP(name, new Vector2(xLoc, yLoc),
-								GameData.getInstance(), factionID, structureID, playerID, sectorID, layer));
+								factionID, structureID, playerID, sectorID, layer));
 
 					}
 				}
@@ -139,8 +139,8 @@ public class PacketParser {
 
 				if (!LogicController.getInstance().getSector().npcExists(npcID)) {
 
-					LogicController.getInstance().getSector().addNPC(new NPC(name, new Vector2(xLoc, yLoc),
-							GameData.getInstance(), factionID, structureID, npcID, sectorID, layer));
+					LogicController.getInstance().getSector().addNPC(
+							new NPC(name, new Vector2(xLoc, yLoc), factionID, structureID, npcID, sectorID, layer));
 				}
 
 			}
@@ -175,11 +175,33 @@ public class PacketParser {
 				}
 
 			}
+			break;
+		case Packets.STRUCTURE_ELEVATOR_RESPONSE_PACKET:
 
-			// LogicController.getInstance().getSector().cleanStructureList(structureIDs);
+			ArrayList<Elevator> elevators = new ArrayList<Elevator>();
+
+			int structID = 0;
+
+			for (String data : split) {
+
+				String elevatorData[] = data.split("#");
+				int elevatorID = Integer.parseInt(elevatorData[0]);
+				int tileX = Integer.parseInt(elevatorData[1]);
+				int tileY = Integer.parseInt(elevatorData[2]);
+				int eStructID = Integer.parseInt(elevatorData[3]);
+				String wall = elevatorData[4];
+				Structure struct = LogicController.getInstance().getSector().getStructureByID(eStructID);
+				structID = struct.getStructureID();
+
+				Elevator e = new Elevator(elevatorID, tileX, tileY, struct, wall.trim());
+				elevators.add(e);
+
+			}
+			LogicController.getInstance().getSector().getStructureByID(structID).loadElevators(elevators);
 
 			break;
-		case Packets.STRUCTURE_INFO_RESPONSE_PACKET:
+
+		case Packets.STRUCTURE_LAYER_RESPONSE_PACKET:
 
 			int id = Integer.parseInt(split[0]);
 			int layer = Integer.parseInt(split[1]);

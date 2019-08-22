@@ -16,11 +16,11 @@ public class Projectile extends GameObject {
 	Texture plasma;
 	Sprite pSprite;
 
-	public Projectile(String name, Vector2 loc, GameData game, Vector2 direction, int layer) {
-		super(name, loc, game, layer);
+	public Projectile(String name, Vector2 loc, Vector2 direction, int layer) {
+		super(name, loc, layer);
 		this.direction = direction;
 		this.start = loc;
-		plasma = game.Assets().get("textures/plasma.png", Texture.class);
+		plasma = GameData.getInstance().Assets().get("textures/plasma.png", Texture.class);
 		pSprite = new Sprite(plasma);
 	}
 
@@ -46,8 +46,8 @@ public class Projectile extends GameObject {
 	}
 
 	@Override
-	public void renderDebug(ShapeRenderer b) {
-		b.rect(bounds.x, bounds.y, bounds.width, bounds.height);
+	public void debugRender(ShapeRenderer debugRenderer) {
+		// TODO Auto-generated method stub
 
 	}
 

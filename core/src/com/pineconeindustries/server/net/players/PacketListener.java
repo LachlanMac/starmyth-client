@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
-import com.pineconeindustries.client.networking.packets.UDPPacket;
 import com.pineconeindustries.server.galaxy.Sector;
+import com.pineconeindustries.server.net.packets.types.UDPPacket;
 
 public class PacketListener extends Thread {
 

@@ -7,6 +7,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.pineconeindustries.client.manager.LogicController;
@@ -86,6 +87,16 @@ public class Station extends Structure {
 
 	public void setRenderLayer(int renderLayer) {
 		this.renderLayer = renderLayer;
+	}
+
+	@Override
+	public void debugRender(ShapeRenderer debugRenderer) {
+		for (StructureLayer layer : layerList) {
+
+			if (layer.getLayer() == renderLayer) {
+				layer.debugRender(debugRenderer);
+			}
+		}
 	}
 
 }

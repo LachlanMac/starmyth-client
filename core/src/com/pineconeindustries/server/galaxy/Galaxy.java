@@ -5,6 +5,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.pineconeindustries.server.ai.FiniteStateMachine;
 import com.pineconeindustries.server.ai.states.*;
 import com.pineconeindustries.server.clock.Clock;
@@ -38,6 +39,12 @@ public class Galaxy {
 	public void render(SpriteBatch b) {
 		for (Sector s : sectors) {
 			s.render(b);
+		}
+	}
+
+	public void debugRender(ShapeRenderer debugRenderer) {
+		for (Sector s : sectors) {
+			s.debugRender(debugRenderer);
 		}
 	}
 

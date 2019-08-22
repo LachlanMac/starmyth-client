@@ -1,14 +1,17 @@
 package com.pineconeindustries.shared.objects;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.networking.packets.PacketFactory;
 import com.pineconeindustries.client.networking.packets.PacketRequester;
 import com.pineconeindustries.server.ai.pathfinding.PathNode;
+import com.pineconeindustries.server.net.players.PlayerConnection;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.files.Files;
 import com.pineconeindustries.shared.gameunits.Units;
@@ -17,19 +20,19 @@ import com.pineconeindustries.shared.log.Log;
 public abstract class Structure {
 
 	public final static int STRUCTURE_SIZE = 64;
-
 	protected int width, height, structureID, sectorID, factionID, renderX, renderY, layers, type;
 	protected float globalX, globalY;
 	private String data;
 	protected long checksum;
 	protected String structureName, packetData;
-	protected boolean render = false;
+	protected boolean render = false, gotElevatorData = false;
 	protected Tile[][] tiles;
 	protected ArrayBlockingQueue<GridTile> blockedTiles;
 	protected ArrayBlockingQueue<GridTile> unblockedTiles;
 	protected ArrayBlockingQueue<StructureLayer> layerList;
 	protected GridTile[][] grid;
 	protected Random rn = new Random(System.currentTimeMillis());
+	protected ArrayList<Elevator> elevators;
 
 	public Structure(String structureName, int structureID, int sectorID, int factionID, int renderX, int renderY,
 			float globalX, float globalY, int layers) {
@@ -45,6 +48,11 @@ public abstract class Structure {
 		layerList = new ArrayBlockingQueue<StructureLayer>(4);
 		this.type = 0;
 		loadLayers();
+		elevators = new ArrayList<Elevator>();
+
+		if (Global.isClient()) {
+			requestData();
+		}
 
 	}
 
@@ -70,16 +78,25 @@ public abstract class Structure {
 
 	}
 
-	public Vector2 getGlobalVector(Vector2 vector) {
+	public Vector2 getGlobalVector(Vector2 local) {
 
-		return new Vector2(vector.x + (renderX * STRUCTURE_SIZE * Tile.TILE_SIZE),
-				vector.y + (renderX * STRUCTURE_SIZE * Tile.TILE_SIZE));
+		return new Vector2(local.x + (renderX * STRUCTURE_SIZE * Tile.TILE_SIZE),
+				local.y + (renderX * STRUCTURE_SIZE * Tile.TILE_SIZE));
+
+	}
+
+	public Vector2 getLocalVector(Vector2 global) {
+
+		return new Vector2(global.x - (renderX * STRUCTURE_SIZE * Tile.TILE_SIZE),
+				global.y - (renderX * STRUCTURE_SIZE * Tile.TILE_SIZE));
 
 	}
 
 	public abstract void update();
 
 	public abstract void render(SpriteBatch b);
+
+	public abstract void debugRender(ShapeRenderer debugRenderer);
 
 	public Tile[][] getTiles() {
 		return tiles;
@@ -138,6 +155,33 @@ public abstract class Structure {
 			}
 		}
 		return layer;
+	}
+
+	public void requestData() {
+
+		PacketRequester requester = new PacketRequester(
+				PacketFactory.makeElevatorRequestPacket(getStructureID(), getSectorID()), 2, 5) {
+			@Override
+			public void checkValidity() {
+
+				if (gotElevatorData) {
+					this.kill();
+					return;
+				}
+
+			}
+		};
+
+		requester.start();
+	}
+
+	public void loadElevators(ArrayList<Elevator> elevators) {
+		gotElevatorData = true;
+		this.elevators = elevators;
+	}
+
+	public ArrayList<Elevator> getElevators() {
+		return elevators;
 	}
 
 }

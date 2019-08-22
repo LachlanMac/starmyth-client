@@ -1,4 +1,4 @@
-package com.pineconeindustries.client.networking.packets;
+package com.pineconeindustries.server.net.packets.types;
 
 public class Packets {
 
@@ -12,8 +12,11 @@ public class Packets {
 	public static final int NPC_LIST_PACKET = 8002;
 	public static final int STRUCTURE_LIST_PACKET = 8004;
 
-	public static final int STRUCTURE_INFO_REQUEST_PACKET = 8100;
-	public static final int STRUCTURE_INFO_RESPONSE_PACKET = 8101;
+	
+	public static final int STRUCTURE_ELEVATOR_REQUEST_PACKET = 8100;
+	public static final int STRUCTURE_ELEVATOR_RESPONSE_PACKET = 8101;
+	public static final int STRUCTURE_LAYER_REQUEST_PACKET = 8102;
+	public static final int STRUCTURE_LAYER_RESPONSE_PACKET = 8103;
 
 	public static final int HEART_BEAT_PACKET = 9000;
 	public static final int VERIFY_PACKET = 9001;

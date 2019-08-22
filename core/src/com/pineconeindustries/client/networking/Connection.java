@@ -19,9 +19,10 @@ import com.pineconeindustries.client.ClientApp;
 import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.listeners.TCPListener;
 import com.pineconeindustries.client.networking.listeners.UDPListener;
-import com.pineconeindustries.client.networking.packets.Packet;
 import com.pineconeindustries.client.networking.packets.PacketFactory;
-import com.pineconeindustries.client.networking.packets.TCPPacket;
+import com.pineconeindustries.server.net.packets.types.Packet;
+import com.pineconeindustries.server.net.packets.types.TCPPacket;
+import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.log.Log;
 
 public class Connection implements Runnable {
@@ -62,7 +63,7 @@ public class Connection implements Runnable {
 
 		try {
 
-			tcpSocket = new Socket(ClientApp.GAME_SERVER_IP, port);
+			tcpSocket = new Socket(Global.GAME_SERVER_IP, port);
 			udpSocket = new DatagramSocket();
 
 			udpPort = udpSocket.getLocalPort();
@@ -93,7 +94,7 @@ public class Connection implements Runnable {
 
 		try {
 
-			tcpSocket = new Socket(ClientApp.GAME_SERVER_IP, port);
+			tcpSocket = new Socket(Global.GAME_SERVER_IP, port);
 			udpSocket = new DatagramSocket();
 
 			udpPort = udpSocket.getLocalPort();
@@ -162,8 +163,7 @@ public class Connection implements Runnable {
 
 		byte[] out = outMsg.getBytes();
 		try {
-			DatagramPacket dp = new DatagramPacket(out, out.length, InetAddress.getByName(ClientApp.GAME_SERVER_IP),
-					port);
+			DatagramPacket dp = new DatagramPacket(out, out.length, InetAddress.getByName(Global.GAME_SERVER_IP), port);
 			udpSocket.send(dp);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();

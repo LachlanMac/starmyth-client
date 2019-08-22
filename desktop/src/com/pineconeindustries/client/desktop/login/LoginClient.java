@@ -30,6 +30,7 @@ import com.pineconeindustries.client.desktop.CharacterList;
 import com.pineconeindustries.client.desktop.character.CharacterScreen;
 import com.pineconeindustries.client.desktop.debug.Debug;
 import com.pineconeindustries.client.desktop.ecryption.LCrypto;
+import com.pineconeindustries.shared.data.Global;
 
 public class LoginClient extends JFrame {
 
@@ -133,7 +134,7 @@ public class LoginClient extends JFrame {
 						encryptedUser = LCrypto.encrypt(user);
 						encryptedPass = LCrypto.encrypt(password);
 
-						url = new URL("http://" + ClientApp.LOGIN_SERVER_IP + "/authserver/auth/" + encryptedUser + "/"
+						url = new URL("http://" + Global.LOGIN_SERVER_IP + "/authserver/auth/" + encryptedUser + "/"
 								+ encryptedPass);
 
 						HttpURLConnection con = (HttpURLConnection) url.openConnection();

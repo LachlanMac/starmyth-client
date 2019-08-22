@@ -73,8 +73,7 @@ public class PlayerDAO {
 				float localX = rs.getFloat("local_x");
 				float localY = rs.getFloat("local_y");
 				int layer = rs.getInt("layer");
-				player = new PlayerMP(name, new Vector2(localX, localY), GameData.getInstance(), factionID, structureID,
-						id, sectorID, layer);
+				player = new PlayerMP(name, new Vector2(localX, localY), factionID, structureID, id, sectorID, layer);
 
 			}
 
@@ -89,7 +88,7 @@ public class PlayerDAO {
 	}
 
 	public PlayerMP getDefaultPlayer(int id) {
-		return new PlayerMP("Default Player", new Vector2(100, 100), GameData.getInstance(), 0, 0, id, 7780, 1);
+		return new PlayerMP("Default Player", new Vector2(100, 100), 0, 0, id, 7780, 1);
 	}
 
 }

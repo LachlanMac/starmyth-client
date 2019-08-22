@@ -1,4 +1,4 @@
-package com.pineconeindustries.client.networking.packets;
+package com.pineconeindustries.server.net.packets.types;
 
 import java.net.DatagramPacket;
 import java.net.InetAddress;

@@ -1,9 +1,9 @@
 package com.pineconeindustries.server.net.packets.modules;
 
 import com.badlogic.gdx.math.Vector2;
-import com.pineconeindustries.client.networking.packets.Packets;
-import com.pineconeindustries.client.networking.packets.UDPPacket;
 import com.pineconeindustries.server.galaxy.Sector;
+import com.pineconeindustries.server.net.packets.types.Packets;
+import com.pineconeindustries.server.net.packets.types.UDPPacket;
 import com.pineconeindustries.server.net.players.PlayerConnection;
 import com.pineconeindustries.shared.gameunits.Units;
 import com.pineconeindustries.shared.log.Log;

@@ -1,6 +1,7 @@
 package com.pineconeindustries.client.networking.packets;
 
 import com.pineconeindustries.client.manager.LogicController;
+import com.pineconeindustries.server.net.packets.types.TCPPacket;
 
 public class PacketRequester extends Thread {
 

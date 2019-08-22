@@ -1,10 +1,14 @@
 package com.pineconeindustries.server.net.packets.modules;
 
-import com.pineconeindustries.client.networking.packets.Packets;
-import com.pineconeindustries.client.networking.packets.TCPPacket;
+import java.util.ArrayList;
+
 import com.pineconeindustries.server.galaxy.Galaxy;
 import com.pineconeindustries.server.galaxy.Sector;
+import com.pineconeindustries.server.net.packets.types.Packets;
+import com.pineconeindustries.server.net.packets.types.TCPPacket;
 import com.pineconeindustries.shared.log.Log;
+import com.pineconeindustries.shared.objects.Elevator;
+import com.pineconeindustries.shared.objects.Structure;
 
 public class StructureModule {
 
@@ -20,7 +24,32 @@ public class StructureModule {
 				.getStructureByID(structureID).getLayerByNumber(layer).getRaw();
 
 		Galaxy.getInstance().getPlayerConnectionByID(playerID)
-				.sendTCP(new TCPPacket(Packets.STRUCTURE_INFO_RESPONSE_PACKET, rawData));
+				.sendTCP(new TCPPacket(Packets.STRUCTURE_LAYER_RESPONSE_PACKET, rawData));
+
+	}
+
+	public static void rxStructureElevatorRequest(String data, Sector sector) {
+		String split[] = data.split("=");
+		int structureID = Integer.parseInt(split[0]);
+		int sectorID = Integer.parseInt(split[1]);
+		int playerID = Integer.parseInt(split[2]);
+
+		Structure s = Galaxy.getInstance().getSectorByID(sectorID).getStructureByID(structureID);
+		System.out.println(data + "    " + s.getStructureName());
+		ArrayList<Elevator> elevators = Galaxy.getInstance().getSectorByID(sectorID).getStructureByID(structureID)
+				.getElevators();
+		
+		StringBuilder sb = new StringBuilder();
+		for (Elevator e : elevators) {
+			sb.append(e.getData());
+		}
+
+		String outData = sb.toString();
+
+		outData = outData.substring(0, outData.length() - 1);
+
+		Galaxy.getInstance().getPlayerConnectionByID(playerID)
+				.sendTCP(new TCPPacket(Packets.STRUCTURE_ELEVATOR_RESPONSE_PACKET, outData));
 
 	}
 

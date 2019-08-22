@@ -15,13 +15,11 @@ public class PlayerMP extends Person {
 
 	int dcCount = 0;
 	boolean setToDisconnect = false;
-	private int sectorID;
 	private boolean spin = true;
 
-	public PlayerMP(String name, Vector2 loc, GameData game, int factionID, int structureID, int playerID, int sectorID,
-			int layer) {
-		super(name, loc, game, factionID, structureID, playerID, sectorID, layer);
-		this.sectorID = sectorID;
+	public PlayerMP(String name, Vector2 loc, int factionID, int structureID, int playerID, int sectorID, int layer) {
+		super(name, loc, factionID, structureID, playerID, sectorID, layer);
+		speed = Units.PLAYER_MOVE_SPEED;
 
 	}
 
@@ -63,10 +61,6 @@ public class PlayerMP extends Person {
 				velocity = 0;
 		}
 
-	}
-
-	public void setSpin(boolean spin) {
-		this.spin = spin;
 	}
 
 	@Override

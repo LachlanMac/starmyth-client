@@ -1,13 +1,13 @@
 package com.pineconeindustries.server.net.players;
 
-import com.pineconeindustries.client.networking.packets.Packet;
-import com.pineconeindustries.client.networking.packets.Packets;
-import com.pineconeindustries.client.networking.packets.TCPPacket;
-import com.pineconeindustries.client.networking.packets.UDPPacket;
 import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.packets.modules.ConnectionModule;
 import com.pineconeindustries.server.net.packets.modules.MoveModule;
 import com.pineconeindustries.server.net.packets.modules.StructureModule;
+import com.pineconeindustries.server.net.packets.types.Packet;
+import com.pineconeindustries.server.net.packets.types.Packets;
+import com.pineconeindustries.server.net.packets.types.TCPPacket;
+import com.pineconeindustries.server.net.packets.types.UDPPacket;
 import com.pineconeindustries.shared.log.Log;
 
 public class PacketParser {
@@ -54,8 +54,11 @@ public class PacketParser {
 			break;
 		case Packets.VERIFY_PACKET:
 			break;
-		case Packets.STRUCTURE_INFO_REQUEST_PACKET:
+		case Packets.STRUCTURE_LAYER_REQUEST_PACKET:
 			StructureModule.rxStructureLayoutRequest(packet.getData(), sector);
+			break;
+		case Packets.STRUCTURE_ELEVATOR_REQUEST_PACKET:
+			StructureModule.rxStructureElevatorRequest(packet.getData(), sector);
 			break;
 		default:
 			Log.netTraffic("Packet ID: " + packet.getPacketID(), "Invalid TCP Packet");

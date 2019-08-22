@@ -11,39 +11,39 @@ import com.pineconeindustries.shared.log.Log;
 
 public abstract class GameObject {
 
-	Vector2 loc;
-	GameData game;
-
+	protected Vector2 loc;
 	protected boolean debugMode = false;
 	protected int layer = 0;
 	protected int DEFAULT_BOUNDS_WIDTH = 64;
 	protected int DEFAULT_BOUNDS_HEIGHT = 64;
 	protected float rotation;
-	private int boundsWidth = 64;
-	private int boundsHeight = 64;
-	Rectangle bounds;
+	private int boundsWidth = DEFAULT_BOUNDS_WIDTH;
+	private int boundsHeight = DEFAULT_BOUNDS_HEIGHT;
+	protected Rectangle bounds;
 
 	private String name;
 
-	public GameObject(String name, Vector2 loc, GameData game, int layer) {
+	public GameObject(String name, Vector2 loc, int layer) {
 		this.name = name;
 		this.loc = loc;
-		this.game = game;
 		this.layer = layer;
-
 		bounds = new Rectangle(loc.x, loc.y, boundsWidth, boundsHeight);
 	}
 
 	public abstract void update();
 
-	public abstract void renderDebug(ShapeRenderer b);
-
 	public abstract void render(Batch b);
+
+	public abstract void debugRender(ShapeRenderer debugRenderer);
 
 	public abstract void dispose();
 
 	public Vector2 getLoc() {
 		return loc;
+	}
+
+	public Rectangle getProposedBounds(Vector2 vec) {
+		return new Rectangle(vec.x, vec.y, boundsWidth, boundsHeight);
 	}
 
 	public void setLoc(Vector2 loc) {

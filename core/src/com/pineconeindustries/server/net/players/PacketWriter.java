@@ -5,11 +5,11 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.concurrent.ArrayBlockingQueue;
 
-import com.pineconeindustries.client.networking.packets.Packet;
-import com.pineconeindustries.client.networking.packets.Packet.PACKET_TYPE;
 import com.pineconeindustries.server.galaxy.Sector;
-import com.pineconeindustries.client.networking.packets.TCPPacket;
-import com.pineconeindustries.client.networking.packets.UDPPacket;
+import com.pineconeindustries.server.net.packets.types.Packet;
+import com.pineconeindustries.server.net.packets.types.TCPPacket;
+import com.pineconeindustries.server.net.packets.types.UDPPacket;
+import com.pineconeindustries.server.net.packets.types.Packet.PACKET_TYPE;
 import com.pineconeindustries.shared.log.Log;
 
 public class PacketWriter extends Thread {

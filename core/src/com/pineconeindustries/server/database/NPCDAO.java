@@ -72,7 +72,7 @@ public class NPCDAO {
 				float localX = rs.getFloat("local_x");
 				float localY = rs.getFloat("local_y");
 				int layer = rs.getInt("layer");
-				npcs.add(new NPC(name, new Vector2(localX, localY), GameData.getInstance(), factionID, structureID, npcID,
+				npcs.add(new NPC(name, new Vector2(localX, localY), factionID, structureID, npcID,
 						Galaxy.getInstance().getSectorByID(id), layer));
 				Log.dbLog("Loaded NPC [" + npcID + ":" + name + "]");
 			}
@@ -89,17 +89,15 @@ public class NPCDAO {
 
 		ArrayList<NPC> npcs = new ArrayList<NPC>();
 
-		npcs.add(new NPC("NPC1", new Vector2(300, 200), GameData.getInstance(), 0, 0, 444,
-				Galaxy.getInstance().getSectorByID(sectorID), 1));
-		npcs.add(new NPC("NPC2", new Vector2(600, 800), GameData.getInstance(), 0, 0, 455,
-				Galaxy.getInstance().getSectorByID(sectorID), 1));
+		npcs.add(new NPC("NPC1", new Vector2(300, 200), 0, 0, 444, Galaxy.getInstance().getSectorByID(sectorID), 1));
+		npcs.add(new NPC("NPC2", new Vector2(600, 800), 0, 0, 455, Galaxy.getInstance().getSectorByID(sectorID), 1));
 
 		return npcs;
 
 	}
 
 	public PlayerMP getDefaultPlayer(int id) {
-		return new PlayerMP("Default Player", new Vector2(100, 100), GameData.getInstance(), 0, 0, id, 7780, 1);
+		return new PlayerMP("Default Player", new Vector2(100, 100), 0, 0, id, 7780, 1);
 	}
 
 }

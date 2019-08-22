@@ -1,6 +1,9 @@
 package com.pineconeindustries.shared.objects;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.shared.data.GameData;
 
@@ -91,6 +94,10 @@ public class Tile {
 	private float xLoc, yLoc;
 	private int renderX, renderY;
 	private char id;
+	private Rectangle bounds;
+	private boolean collidable;
+	private float multiplierX = renderX * TILE_SIZE * Structure.STRUCTURE_SIZE;
+	private float multiplierY = renderY * TILE_SIZE * Structure.STRUCTURE_SIZE;
 
 	public Tile(char id, float xLoc, float yLoc, int renderX, int renderY) {
 		this.id = id;
@@ -98,6 +105,10 @@ public class Tile {
 		this.yLoc = yLoc;
 		this.renderX = renderX;
 		this.renderY = renderY;
+		this.bounds = new Rectangle((xLoc * TILE_SIZE) + multiplierX, (yLoc * TILE_SIZE) + multiplierY, TILE_SIZE,
+				TILE_SIZE);
+		collidable = isBlocked();
+
 	}
 
 	public void update() {
@@ -106,14 +117,19 @@ public class Tile {
 
 	public void render(SpriteBatch b) {
 
-		float multiplierX = renderX * TILE_SIZE * Structure.STRUCTURE_SIZE;
-		float multiplierY = renderY * TILE_SIZE * Structure.STRUCTURE_SIZE;
-
 		if (id == 'p') {
 			// donothing
 		} else {
 			b.draw(GameData.getInstance().Assets().getTileID(id), (xLoc * TILE_SIZE) + multiplierX,
 					(yLoc * TILE_SIZE) + multiplierY);
+		}
+
+	}
+
+	public void debugRender(ShapeRenderer debugRenderer) {
+		if (collidable && id != 'p') {
+			debugRenderer.setColor(Color.CYAN);
+			debugRenderer.rect(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
 		}
 
 	}
@@ -138,6 +154,18 @@ public class Tile {
 		float multiplierX = renderX * TILE_SIZE * Structure.STRUCTURE_SIZE;
 		float multiplierY = renderY * TILE_SIZE * Structure.STRUCTURE_SIZE;
 		return new Vector2(xLoc + multiplierX, yLoc + multiplierY);
+	}
+
+	public Rectangle getBounds() {
+		return bounds;
+	}
+
+	public boolean isCollidable() {
+		return collidable;
+	}
+
+	public void setCollidable(boolean collidable) {
+		this.collidable = collidable;
 	}
 
 }

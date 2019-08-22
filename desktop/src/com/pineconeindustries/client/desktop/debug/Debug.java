@@ -3,6 +3,7 @@ package com.pineconeindustries.client.desktop.debug;
 import java.util.Random;
 
 import com.pineconeindustries.client.data.LocalPlayerData;
+import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.log.Log;
 
 public class Debug {
@@ -11,6 +12,8 @@ public class Debug {
 	public static boolean TEST_CLIENT_2 = false;
 	public static int TEST_CLIENT_1_ID = 998;
 	public static int TEST_CLIENT_2_ID = 998;
+	
+	
 
 	public static String DEBUG_USER_1 = "1";
 	public static String DEBUG_USER_2 = "2";
@@ -47,7 +50,7 @@ public class Debug {
 
 		case 3:
 
-			data.setCharID(22);
+			data.setCharID(Global.TEST_PLAYER_ID);
 			data.setId(1001);
 			data.setModel("1");
 			data.setSector(7780);

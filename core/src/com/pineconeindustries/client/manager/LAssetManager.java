@@ -14,7 +14,7 @@ import com.pineconeindustries.shared.data.GameData;
 public class LAssetManager extends AssetManager {
 
 	AnimationSet playerAnimations;
-	Texture shipSS;
+	Texture shipSS, elevator;
 
 	TextureRegion[][] shipTiles;
 
@@ -37,6 +37,7 @@ public class LAssetManager extends AssetManager {
 		load("textures/shiptiles/hall.png", Texture.class);
 		load("textures/shiptiles/wall.png", Texture.class);
 		load("textures/playerSS.png", Texture.class);
+		load("textures/elevator.png", Texture.class);
 	}
 
 	public void loadShipTiles() {
@@ -49,18 +50,17 @@ public class LAssetManager extends AssetManager {
 		wallDiagNE = shipTiles[2][2];
 		wallDiagNW = shipTiles[2][1];
 		hall = shipTiles[0][2];
-
 		doorOpenEW = shipTiles[3][2];
 		doorClosedEW = shipTiles[3][0];
 		doorOpenNS = shipTiles[3][3];
 		doorClosedNS = shipTiles[3][1];
-
 		zoneClosedE = shipTiles[1][0];
 		zoneOpenE = shipTiles[1][1];
 		zoneClosedW = shipTiles[1][3];
 		zoneOpenW = shipTiles[1][2];
-
 		room = shipTiles[0][3];
+
+		elevator = get("textures/elevator.png");
 	}
 
 	public TextureRegion debug(char id) {

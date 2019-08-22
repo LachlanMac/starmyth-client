@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.physics.box2d.World;
@@ -30,6 +32,7 @@ public class ServerApp extends ApplicationAdapter {
 	private Viewport viewport;
 	private Stage stage;
 	private SpriteBatch batch;
+	private ShapeRenderer debugRenderer;
 	private World world;
 	public int WORLD_WIDTH = 1920;
 	public int WORLD_HEIGHT = 1080;
@@ -84,14 +87,21 @@ public class ServerApp extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		update();
+		batch.setProjectionMatrix(fixedCamera.combined);
+		batch.begin();
+		batch.draw(bg, -(WORLD_WIDTH / 2), -(WORLD_HEIGHT / 2), WORLD_WIDTH, WORLD_HEIGHT);
+		batch.end();
 
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		batch.draw(bg, -(WORLD_WIDTH / 2), -(WORLD_HEIGHT / 2), WORLD_WIDTH, WORLD_HEIGHT);
 
 		galaxy.render(batch);
-
 		batch.end();
+
+		debugRenderer.setProjectionMatrix(camera.combined);
+		debugRenderer.begin(ShapeType.Line);
+		galaxy.debugRender(debugRenderer);
+		debugRenderer.end();
 		world.step(1 / 60f, 6, 2);
 	}
 
@@ -148,13 +158,14 @@ public class ServerApp extends ApplicationAdapter {
 
 		float aspectRatio = (float) Gdx.graphics.getHeight() / (float) Gdx.graphics.getWidth();
 		batch = new SpriteBatch();
+		debugRenderer = new ShapeRenderer();
 		camera = new OrthographicCamera();
-		// fixedCamera = new OrthographicCamera();
+		fixedCamera = new OrthographicCamera();
+
 		viewport = new ScalingViewport(Scaling.fit, 1080, 1080 * aspectRatio, camera);
 		bg = new Sprite(new Texture("textures/lachlangalaxy.jpg"));
-		// ScalingViewport scalingViewport = new ScalingViewport(Scaling.fit, 1080, 1080
-		// * aspectRatio, camera);
-		// scalingViewport.apply();
+		ScalingViewport scalingViewport = new ScalingViewport(Scaling.fit, 1080, 1080 * aspectRatio, fixedCamera);
+		scalingViewport.apply();
 		viewport.apply();
 	}
 

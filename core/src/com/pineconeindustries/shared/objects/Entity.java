@@ -10,18 +10,18 @@ import com.pineconeindustries.client.models.AnimationSet;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.gameunits.Units;
 
-public class Entity extends GameObject implements Comparable<Entity> {
+public abstract class Entity extends GameObject implements Comparable<Entity> {
 
 	protected final int MAX_FRAMES_SINCE_LAST_MOVE = 6;
 	protected float interval, velocity, speed;
-	protected int framesSinceLastMove, factionID, structureID, sectorX, sectorY;
+	protected int framesSinceLastMove, factionID, structureID;
 
 	AnimationSet animSet;
 	Animation<TextureRegion> currentFrame;
 	Vector2 renderLoc, lastDirectionFaced;
 
-	public Entity(String name, Vector2 loc, GameData game, int factionID, int structureID, int layer) {
-		super(name, loc, game, layer);
+	public Entity(String name, Vector2 loc, int factionID, int structureID, int layer) {
+		super(name, loc, layer);
 
 		interval = 0;
 		velocity = 0;
@@ -32,15 +32,12 @@ public class Entity extends GameObject implements Comparable<Entity> {
 		this.factionID = factionID;
 		this.structureID = structureID;
 
-		if (!game.isHeadless()) {
-			animSet = game.Assets().getDefaultAnimations();
+		if (!GameData.getInstance().isHeadless()) {
+			animSet = GameData.getInstance().Assets().getDefaultAnimations();
 			currentFrame = animSet.getAnimation(lastDirectionFaced, 0);
 		} else {
 			animSet = null;
 		}
-
-		sectorX = (int) this.loc.x / 8192;
-		sectorY = (int) this.loc.y / 8192;
 
 	}
 
@@ -61,19 +58,6 @@ public class Entity extends GameObject implements Comparable<Entity> {
 	@Override
 	public void dispose() {
 
-	}
-
-	public void updateLocalLoc() {
-		sectorX = (int) this.loc.x / 8192;
-		sectorY = (int) this.loc.y / 8192;
-	}
-
-	public int getLocalX() {
-		return sectorX;
-	}
-
-	public int getLocalY() {
-		return sectorY;
 	}
 
 	public float getInterval() {
@@ -160,21 +144,21 @@ public class Entity extends GameObject implements Comparable<Entity> {
 		this.structureID = structureID;
 	}
 
-	@Override
-	public void renderDebug(ShapeRenderer b) {
-		b.rect(bounds.x, bounds.y, bounds.width, bounds.height);
-
-	}
-
 	public Float getRenderOrder() {
 		return -loc.y;
 
 	}
-	
+
 	@Override
 	public int compareTo(Entity o) {
 
 		return getRenderOrder().compareTo(o.getRenderOrder());
+
+	}
+
+	@Override
+	public void debugRender(ShapeRenderer debugRenderer) {
+		debugRenderer.rect(bounds.x, bounds.y, bounds.width, bounds.height);
 
 	}
 

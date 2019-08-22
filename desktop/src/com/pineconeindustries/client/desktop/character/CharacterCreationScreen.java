@@ -35,6 +35,7 @@ import com.pineconeindustries.client.desktop.character.options.Options;
 import com.pineconeindustries.client.desktop.ecryption.LCrypto;
 import com.pineconeindustries.client.desktop.login.LoginClient;
 import com.pineconeindustries.client.models.CharacterModel;
+import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.utils.HexConversions;
 
 public class CharacterCreationScreen extends JPanel {
@@ -123,7 +124,7 @@ public class CharacterCreationScreen extends JPanel {
 						+ HexConversions.hexFromColor(sprite.getEyeSecondary()));
 
 				try {
-					URL url = new URL("http://" + ClientApp.LOGIN_SERVER_IP + "/create-character/" + LoginClient.ACCOUNT_ID
+					URL url = new URL("http://" + Global.LOGIN_SERVER_IP + "/create-character/" + LoginClient.ACCOUNT_ID
 							+ "/" + characterName.getText() + "/" + sb.toString());
 
 					HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -151,7 +152,7 @@ public class CharacterCreationScreen extends JPanel {
 
 				try {
 
-					URL url = new URL("http://" + ClientApp.LOGIN_SERVER_IP + "/authserver/auth/"
+					URL url = new URL("http://" + Global.LOGIN_SERVER_IP + "/authserver/auth/"
 							+ LoginClient.encryptedUser + "/" + LoginClient.encryptedPass);
 
 					HttpURLConnection con = (HttpURLConnection) url.openConnection();

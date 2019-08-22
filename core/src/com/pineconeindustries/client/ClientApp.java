@@ -31,13 +31,9 @@ import box2dLight.RayHandler;
 
 public class ClientApp extends ApplicationAdapter {
 
-	public static final String localHost = "127.0.0.1";
-	public static final String remoteHost = "73.230.126.75";
-	private float state;
-	public static String TEST_IP = "127.0.0.1";
 
-	public static String LOGIN_SERVER_IP = remoteHost;
-	public static String GAME_SERVER_IP = remoteHost;
+	private float state;
+	
 
 	SpriteBatch batch;
 	ShapeRenderer shapeBatch;
@@ -89,8 +85,8 @@ public class ClientApp extends ApplicationAdapter {
 		GameData.getInstance().loadAssets();
 		Texture temp = GameData.getInstance().Assets().get("textures/galaxybg1.png");
 		bg = new TextureRegion(temp);
-		Player player = new Player(data.getName(), new Vector2(data.getX(), data.getY()), GameData.getInstance(), 1,
-				data.getId(), data.getCharID(), data.getSector(), cam.getPlayerCamera(), data.getLayer());
+		Player player = new Player(data.getName(), new Vector2(data.getX(), data.getY()), 1, data.getId(),
+				data.getCharID(), data.getSector(), cam.getPlayerCamera(), data.getLayer());
 
 		player.connectToChat(ui.getChat());
 

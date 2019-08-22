@@ -3,6 +3,7 @@ package com.pineconeindustries.shared.objects;
 import java.util.Random;
 import java.util.concurrent.ArrayBlockingQueue;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.pineconeindustries.client.networking.packets.PacketFactory;
 import com.pineconeindustries.client.networking.packets.PacketRequester;
 import com.pineconeindustries.server.ai.pathfinding.PathNode;
@@ -47,6 +48,19 @@ public class StructureLayer {
 		for (int y = 0; y < Units.STRUCTURE_SIZE; y++) {
 			for (int x = 0; x < Units.STRUCTURE_SIZE; x++) {
 				tiles[x][y].render(b);
+			}
+		}
+
+		for (Elevator e : parent.getElevators()) {
+			e.render(b);
+		}
+	}
+
+	public void debugRender(ShapeRenderer debugRenderer) {
+
+		for (int y = 0; y < Units.STRUCTURE_SIZE; y++) {
+			for (int x = 0; x < Units.STRUCTURE_SIZE; x++) {
+				tiles[x][y].debugRender(debugRenderer);
 			}
 		}
 	}
@@ -167,8 +181,7 @@ public class StructureLayer {
 	public void requestData() {
 
 		PacketRequester requester = new PacketRequester(
-				PacketFactory.makeStructureInfoRequestPacket(parent.getStructureID(), parent.getSectorID(), layer), 2,
-				5) {
+				PacketFactory.makeLayerRequestPacket(parent.getStructureID(), parent.getSectorID(), layer), 2, 5) {
 			@Override
 			public void checkValidity() {
 
@@ -185,6 +198,14 @@ public class StructureLayer {
 
 	public int getLayer() {
 		return layer;
+	}
+
+	public Tile getTileAt(float x, float y) {
+
+		int tileX = (int) x / Units.TILE_SIZE;
+		int tileY = (int) y / Units.TILE_SIZE;
+
+		return tiles[tileX][tileY];
 	}
 
 	public PathNode getRandomStartNode() {

@@ -12,6 +12,7 @@ import com.pineconeindustries.server.galaxy.Galaxy;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.log.Log;
+import com.pineconeindustries.shared.objects.Elevator;
 import com.pineconeindustries.shared.objects.NPC;
 import com.pineconeindustries.shared.objects.PlayerMP;
 import com.pineconeindustries.shared.objects.Station;
@@ -29,6 +30,35 @@ public class StructureDAO {
 		if (!Global.useDatabase) {
 			return;
 		}
+
+	}
+
+	public ArrayList<Elevator> loadElevatorsByStructure(Structure structure) {
+
+		ArrayList<Elevator> elevators = new ArrayList<Elevator>();
+
+		PreparedStatement stmt;
+		try {
+			stmt = conn.prepareStatement("SELECT elevator_id, tile_x, tile_y, wall FROM Elevator WHERE structure_id=?");
+			stmt.setInt(1, structure.getStructureID());
+			ResultSet rs = stmt.executeQuery();
+
+			while (rs.next()) {
+
+				int elevatorID = rs.getInt("elevator_id");
+				int x = rs.getInt("tile_x");
+				int y = rs.getInt("tile_y");
+				String wall = rs.getString("wall");
+
+				elevators.add(new Elevator(elevatorID, x, y, structure, wall));
+
+			}
+
+		} catch (SQLException e) {
+			Log.dbLog("Error Loading Station From Database: " + e.getMessage());
+		}
+		Log.dbLog("Adding elevators to " + structure.getStructureName());
+		return elevators;
 
 	}
 
@@ -58,8 +88,9 @@ public class StructureDAO {
 				int layers = rs.getInt("layers");
 
 				if (type == 1) {
-					structures.add(
-							new Station(name, structureID, id, factionID, localX, localY, globalX, globalY, layers));
+					Station s = new Station(name, structureID, id, factionID, localX, localY, globalX, globalY, layers);
+					s.loadElevators(loadElevatorsByStructure(s));
+					structures.add(s);
 					Log.dbLog("Adding station : [" + structureID + "]" + name);
 				}
 

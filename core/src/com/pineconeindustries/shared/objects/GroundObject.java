@@ -7,8 +7,8 @@ import com.pineconeindustries.shared.data.GameData;
 
 public class GroundObject extends GameObject {
 
-	public GroundObject(String name, Vector2 loc, GameData game, int layer) {
-		super(name, loc, game, layer);
+	public GroundObject(String name, Vector2 loc, int layer) {
+		super(name, loc, layer);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -30,13 +30,9 @@ public class GroundObject extends GameObject {
 
 	}
 
-	public void onClick() {
-
-	}
-
 	@Override
-	public void renderDebug(ShapeRenderer b) {
-		b.rect(bounds.x, bounds.y, bounds.width, bounds.height);
+	public void debugRender(ShapeRenderer debugRenderer) {
+		// TODO Auto-generated method stub
 
 	}
 

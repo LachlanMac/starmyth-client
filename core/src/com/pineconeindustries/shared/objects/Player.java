@@ -31,9 +31,9 @@ public class Player extends Person {
 	Chatbox chatbox;
 	Camera camera;
 
-	public Player(String name, Vector2 loc, GameData game, int factionID, int structureID, int id, int sectorID,
-			Camera camera, int layer) {
-		super(name, loc, game, factionID, structureID, id, sectorID, layer);
+	public Player(String name, Vector2 loc, int factionID, int structureID, int id, int sectorID, Camera camera,
+			int layer) {
+		super(name, loc, factionID, structureID, id, sectorID, layer);
 		this.camera = camera;
 		projectiles = new ArrayList<Projectile>();
 
@@ -176,19 +176,6 @@ public class Player extends Person {
 
 	public Camera getCamera() {
 		return camera;
-	}
-
-	public boolean changedStructure() {
-
-		int tempSectorX = (int) this.loc.x / 8192;
-		int tempSectorY = (int) this.loc.y / 8192;
-
-		if (tempSectorX != sectorX || tempSectorY != sectorY) {
-			return true;
-		} else {
-			return false;
-		}
-
 	}
 
 }

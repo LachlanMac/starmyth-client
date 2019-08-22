@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.pineconeindustries.client.manager.LogicController;
-import com.pineconeindustries.client.networking.packets.Packets;
 import com.pineconeindustries.client.networking.packets.custom.CustomTCPPacket;
 import com.pineconeindustries.server.database.Database;
 import com.pineconeindustries.server.net.packets.scheduler.PacketScheduler;
+import com.pineconeindustries.server.net.packets.types.Packets;
 import com.pineconeindustries.server.net.players.PacketListener;
 import com.pineconeindustries.server.net.players.PacketParser;
 import com.pineconeindustries.server.net.players.PacketWriter;
@@ -166,6 +167,21 @@ public class Sector {
 		}
 		for (NPC npc : npcs) {
 			npc.render(b);
+		}
+	}
+
+	public void debugRender(ShapeRenderer debugRenderer) {
+		for (Structure structure : structures) {
+			structure.debugRender(debugRenderer);
+		}
+
+		for (PlayerConnection conn : players) {
+
+			conn.getPlayerMP().debugRender(debugRenderer);
+
+		}
+		for (NPC npc : npcs) {
+			npc.debugRender(debugRenderer);
 		}
 	}
 

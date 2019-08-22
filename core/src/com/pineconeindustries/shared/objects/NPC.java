@@ -6,12 +6,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.pineconeindustries.client.networking.packets.Packets;
-import com.pineconeindustries.client.networking.packets.UDPPacket;
 import com.pineconeindustries.server.ai.FiniteStateMachine;
 import com.pineconeindustries.server.ai.pathfinding.AStarPath;
 import com.pineconeindustries.server.ai.pathfinding.PathNode;
 import com.pineconeindustries.server.galaxy.Sector;
+import com.pineconeindustries.server.net.packets.types.Packets;
+import com.pineconeindustries.server.net.packets.types.UDPPacket;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.gameunits.Units;
@@ -29,20 +29,19 @@ public class NPC extends Person {
 	private LinkedList<PathNode> path;
 
 	// CLIENT CONSTRUCTOR
-	public NPC(String name, Vector2 loc, GameData game, int factionID, int structureID, int id, int sectorID,
-			int layer) {
-		super(name, loc, game, factionID, structureID, id, sectorID, layer);
+	public NPC(String name, Vector2 loc, int factionID, int structureID, int id, int sectorID, int layer) {
+		super(name, loc, factionID, structureID, id, sectorID, layer);
 	}
 
 	// SERVER CONSTRUCTOR
-	public NPC(String name, Vector2 loc, GameData game, int factionID, int structureID, int id, Sector sector,
-			int layer) {
-		super(name, loc, game, factionID, structureID, id, sector.getPort(), layer);
+	public NPC(String name, Vector2 loc, int factionID, int structureID, int id, Sector sector, int layer) {
+		super(name, loc, factionID, structureID, id, sector.getPort(), layer);
 
 		if (Global.isServer()) {
 			this.sector = sector;
 			this.structure = sector.getStructureByID(structureID);
 			fsm = new FiniteStateMachine(this);
+			speed = Units.NPC_SPEED;
 		}
 	}
 
@@ -90,6 +89,7 @@ public class NPC extends Person {
 	public void setLocation(Vector2 loc) {
 		this.loc = loc;
 		this.renderLoc = loc;
+
 	}
 
 	public void move() {
@@ -119,13 +119,15 @@ public class NPC extends Person {
 
 		// On update
 		if (!destinationReached) {
-			loc.x += (directionX * speed * (Gdx.graphics.getDeltaTime() * 100));
-			loc.y += (directionY * speed * (Gdx.graphics.getDeltaTime() * 100));
+			loc.x += (directionX * speed * (Gdx.graphics.getDeltaTime()));
+			loc.y += (directionY * speed * (Gdx.graphics.getDeltaTime()));
 
 			velocity = (Math.abs(loc.x) + Math.abs(loc.y)) / 2;
 
 			setLastDirectionFaced(new Vector2(directionX, directionY));
 			setVelocity(velocity);
+			bounds.x = loc.x;
+			bounds.y = loc.y;
 
 			String packetData = new String(getID() + "=" + getLoc().x + "=" + getLoc().y + "=" + directionX + "="
 					+ directionY + "=" + velocity + "=" + layer);
@@ -215,10 +217,6 @@ public class NPC extends Person {
 
 	public void setDestinationReached(boolean destinationReached) {
 		this.destinationReached = destinationReached;
-	}
-
-	public void setSpin(boolean spin) {
-		this.spin = spin;
 	}
 
 	public boolean hasPath() {

@@ -2,6 +2,9 @@ package com.pineconeindustries.client.networking.packets;
 
 import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.Net;
+import com.pineconeindustries.server.net.packets.types.Packets;
+import com.pineconeindustries.server.net.packets.types.TCPPacket;
+import com.pineconeindustries.server.net.packets.types.UDPPacket;
 
 public class PacketFactory {
 
@@ -27,10 +30,17 @@ public class PacketFactory {
 
 	}
 
-	public static TCPPacket makeStructureInfoRequestPacket(int structureID, int sectorID, int layer) {
+	public static TCPPacket makeLayerRequestPacket(int structureID, int sectorID, int layer) {
 		String data = new String(
 				structureID + "=" + sectorID + "=" + layer + "=" + LogicController.getInstance().getPlayer().getID());
-		return new TCPPacket(Packets.STRUCTURE_INFO_REQUEST_PACKET, data);
+		return new TCPPacket(Packets.STRUCTURE_LAYER_REQUEST_PACKET, data);
+	}
+
+	public static TCPPacket makeElevatorRequestPacket(int structureID, int sectorID) {
+		System.out.println("REQUESTIN ELEVATOR");
+		String data = new String(
+				structureID + "=" + sectorID + "=" + LogicController.getInstance().getPlayer().getID());
+		return new TCPPacket(Packets.STRUCTURE_ELEVATOR_REQUEST_PACKET, data);
 	}
 
 }
