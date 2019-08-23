@@ -34,7 +34,6 @@ public class UDPListener extends Thread {
 				packetData = new byte[PACKET_SIZE];
 				packet = new DatagramPacket(packetData, PACKET_SIZE);
 				socket.receive(packet);
-
 				udpQueue.add(new String(packet.getData()));
 
 			} catch (SocketTimeoutException e) {

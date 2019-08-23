@@ -160,7 +160,6 @@ public class Connection implements Runnable {
 	}
 
 	public void sendUDP(String outMsg) {
-
 		byte[] out = outMsg.getBytes();
 		try {
 			DatagramPacket dp = new DatagramPacket(out, out.length, InetAddress.getByName(Global.GAME_SERVER_IP), port);
