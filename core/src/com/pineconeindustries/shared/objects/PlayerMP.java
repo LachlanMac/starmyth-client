@@ -8,8 +8,13 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.pineconeindustries.client.models.AnimationSet;
+import com.pineconeindustries.server.galaxy.Galaxy;
+import com.pineconeindustries.server.galaxy.Sector;
+import com.pineconeindustries.server.net.packets.modules.MoveModule;
 import com.pineconeindustries.shared.data.GameData;
+import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.gameunits.Units;
+import com.pineconeindustries.shared.utils.VectorMath;
 
 public class PlayerMP extends Person {
 
@@ -17,10 +22,22 @@ public class PlayerMP extends Person {
 	boolean setToDisconnect = false;
 	private boolean spin = true;
 
+	private boolean[] inputState = new boolean[10];
+
+	Sector serverSector;
+
 	public PlayerMP(String name, Vector2 loc, int factionID, int structureID, int playerID, int sectorID, int layer) {
 		super(name, loc, factionID, structureID, playerID, sectorID, layer);
 		speed = Units.PLAYER_MOVE_SPEED;
 
+		if (Global.isServer()) {
+			serverSector = Galaxy.getInstance().getSectorByID(sectorID);
+		}
+
+	}
+
+	public void setInputState(boolean[] inputState) {
+		this.inputState = inputState;
 	}
 
 	public boolean isSetToDisconnect() {
@@ -70,6 +87,22 @@ public class PlayerMP extends Person {
 		if (dcCount > 600) {
 			setToDisconnect = true;
 		}
+
+		if (Global.isClient())
+			return;
+
+		Vector2 dir = VectorMath.getDirectionByInput(inputState);
+
+		float x = dir.x;
+		float y = dir.y;
+
+		Vector2 adjustedMov = new Vector2(x * Units.PLAYER_MOVE_SPEED, y * Units.PLAYER_MOVE_SPEED);
+		float velocity = (Math.abs(adjustedMov.x) + Math.abs(adjustedMov.y)) / 2;
+
+		setLastDirectionFaced(new Vector2(adjustedMov.x, adjustedMov.y));
+		loc.add(new Vector2(adjustedMov.x, adjustedMov.y));
+		serverSector.getPacketWriter()
+				.queueToAll(MoveModule.getMovePacket(getID(), getLoc(), dir, velocity, getLayer()));
 
 	}
 

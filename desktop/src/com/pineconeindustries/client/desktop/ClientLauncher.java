@@ -51,6 +51,7 @@ public class ClientLauncher {
 		config.width = 1920;
 		config.height = 1080;
 		config.foregroundFPS = 60;
+		config.backgroundFPS = 60;
 		config.samples = 4;
 		// config.fullscreen = true;
 		

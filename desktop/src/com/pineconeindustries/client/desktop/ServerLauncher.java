@@ -23,7 +23,6 @@ public class ServerLauncher {
 		ServerLauncher launcher = new ServerLauncher();
 		launcher.registerFonts();
 
-	
 		if (HEADLESS)
 			new HeadlessApplication(new ServerApp(HEADLESS));
 		else {
@@ -31,11 +30,13 @@ public class ServerLauncher {
 			config.vSyncEnabled = true;
 			config.width = 1920;
 			config.height = 1080;
-			config.foregroundFPS = 60;
+
+			config.foregroundFPS = 20;
+			config.backgroundFPS = 20;
 			config.samples = 4;
 			// config.fullscreen = true;
 			new LwjglApplication(new ServerApp(HEADLESS), config);
-			
+
 		}
 	}
 

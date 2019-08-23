@@ -3,6 +3,7 @@ package com.pineconeindustries.shared.objects;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -11,6 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.pineconeindustries.client.chat.Chatbox;
 import com.pineconeindustries.client.manager.InputManager;
+import com.pineconeindustries.client.manager.InputState;
 import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.Net;
 import com.pineconeindustries.client.networking.packets.PacketFactory;
@@ -23,11 +25,10 @@ public class Player extends Person {
 
 	ArrayList<Projectile> projectiles;
 
-	private final int updateInterval = 5;
-	private int currentIntervalFrame = 0;
 	final float camspeed = 0.1f, icamspeed = 1.0f - camspeed;
 	BitmapFont font = new BitmapFont();
 
+	private String lastState;
 	private boolean moveDisabled = false;
 
 	Chatbox chatbox;
@@ -38,6 +39,7 @@ public class Player extends Person {
 		super(name, loc, factionID, structureID, id, sectorID, layer);
 		this.camera = camera;
 		projectiles = new ArrayList<Projectile>();
+		lastState = InputState.getDefaultState();
 
 	}
 
@@ -88,7 +90,7 @@ public class Player extends Person {
 	}
 
 	public void update() {
-
+		InputState.update();
 		hover();
 
 		for (Projectile project : projectiles) {
@@ -96,15 +98,8 @@ public class Player extends Person {
 
 		}
 
-		currentIntervalFrame += 1;
-
-		if (currentIntervalFrame >= interval) {
-
-			if (!chatbox.isTyping())
-				move();
-
-			currentIntervalFrame = 0;
-		}
+		if (!chatbox.isTyping())
+			move();
 
 	}
 
@@ -116,62 +111,18 @@ public class Player extends Person {
 
 	public void move() {
 
-		currentIntervalFrame += 1;
-
 		if (moveDisabled)
 			return;
-		Vector2 click;
-		float x = 0;
-		float y = 0;
 
-		float magnitude = speed;
+		String currentState = InputState.getState();
 
-		if (InputManager.isPressed(InputManager.SPRINT)) {
-			magnitude = magnitude * 1.35f;
-		}
+		if (!lastState.equals(currentState)) {
 
-		if (InputManager.isPressed(InputManager.DOWN)) {
-			y--;
-		}
-
-		if (InputManager.isPressed(InputManager.UP)) {
-			y++;
-		}
-
-		if (InputManager.isPressed(InputManager.RIGHT)) {
-			x++;
-		}
-
-		if (InputManager.isPressed(InputManager.LEFT)) {
-			x--;
-		}
-		if (InputManager.isPressed(InputManager.CENTER_CAMERA)) {
+			LogicController.getInstance().sendUDP(PacketFactory.makeInputChangePacket(currentState));
+			lastState = currentState;
 
 		}
 
-		if (InputManager.isPressed(InputManager.TEST_BUTTON)) {
-
-			Net.getConnection().switchSector(7781);
-
-		}
-
-		if ((click = InputManager.mouseDown(InputManager.MOUSE_DOWN)) != null) {
-			Vector3 worldCoordinates = camera.unproject(new Vector3(click.x, click.y, 0));
-
-		}
-
-		Vector2 movVector = new Vector2(x, y).nor();
-
-		Vector2 convertedVector = new Vector2((movVector.x * magnitude * 2), (movVector.y * magnitude * 2));
-
-		if (x == 0 && y == 0) {
-			// do nothing
-		} else {
-
-			LogicController.getInstance().sendUDP(PacketFactory.makeMoveRequestPacket(
-					convertedVector.x * Gdx.graphics.getDeltaTime(), convertedVector.y * Gdx.graphics.getDeltaTime()));
-			// lnet.sendMove(playerID, convertedVector);
-		}
 	}
 
 	public void disableInput() {

@@ -9,27 +9,8 @@ import com.pineconeindustries.shared.objects.Projectile;
 
 public class InputManager {
 
-	public static int DOWN = Input.Keys.S;
-	public static int UP = Input.Keys.W;
-	public static int RIGHT = Input.Keys.D;
-	public static int LEFT = Input.Keys.A;
-	public static int SPRINT = Input.Keys.SHIFT_LEFT;
-	public static int ENTER = Input.Keys.ENTER;
-	public static int TEST_BUTTON = Input.Keys.U;
-	public static int CENTER_CAMERA = Input.Keys.Y;
-	public static int MOUSE_DOWN = Input.Buttons.LEFT;
 	public static float mouseX = 0f;
 	public static float mouseY = 0f;
-
-	public static boolean isPressed(int keycode) {
-
-		if (Gdx.input.isKeyPressed(keycode)) {
-			return true;
-		} else {
-			return false;
-		}
-
-	}
 
 	public static void updateMouse(Camera cam) {
 		Vector3 worldCoordinates = cam.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));

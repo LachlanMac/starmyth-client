@@ -108,38 +108,33 @@ public class ServerApp extends ApplicationAdapter {
 	}
 
 	public void update() {
-		currentInterval += 1;
 
-		if (currentInterval >= Global.SERVER_UPDATE_INTERVAL) {
+		galaxy.update();
 
-			galaxy.update();
+		if (headless)
+			return;
 
-			if (headless)
-				return;
+		camera.update();
 
-			camera.update();
-
-			if (Gdx.input.isKeyPressed(Input.Keys.NUM_8)) {
-				camera.zoom += 0.02;
-			}
-			if (Gdx.input.isKeyPressed(Input.Keys.NUM_9)) {
-				camera.zoom -= 0.02;
-			}
-			if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-				camera.position.set(camera.position.x + 10, camera.position.y, 0);
-			}
-			if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-				camera.position.set(camera.position.x - 10, camera.position.y, 0);
-			}
-			if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-				camera.position.set(camera.position.x, camera.position.y + 10, 0);
-			}
-			if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-				camera.position.set(camera.position.x, camera.position.y - 10, 0);
-			}
-
-			currentInterval = 0;
+		if (Gdx.input.isKeyPressed(Input.Keys.NUM_8)) {
+			camera.zoom += 0.02;
 		}
+		if (Gdx.input.isKeyPressed(Input.Keys.NUM_9)) {
+			camera.zoom -= 0.02;
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+			camera.position.set(camera.position.x + 10, camera.position.y, 0);
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+			camera.position.set(camera.position.x - 10, camera.position.y, 0);
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+			camera.position.set(camera.position.x, camera.position.y + 10, 0);
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+			camera.position.set(camera.position.x, camera.position.y - 10, 0);
+		}
+
 	}
 
 	@Override

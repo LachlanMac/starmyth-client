@@ -39,6 +39,9 @@ public class PacketParser {
 		case Packets.MOVE_REQUEST_PACKET:
 			MoveModule.rxMoveRequest(packet.getData(), sector);
 			break;
+		case Packets.INPUT_CHANGE_PACKET:
+			MoveModule.rxInputChangePacket(packet.getData(), sector);
+			break;
 		default:
 			Log.netTraffic("Packet ID: " + packet.getPacketID(), "Invalid UDP Packet");
 
@@ -60,6 +63,7 @@ public class PacketParser {
 		case Packets.STRUCTURE_ELEVATOR_REQUEST_PACKET:
 			StructureModule.rxStructureElevatorRequest(packet.getData(), sector);
 			break;
+
 		default:
 			Log.netTraffic("Packet ID: " + packet.getPacketID(), "Invalid TCP Packet");
 

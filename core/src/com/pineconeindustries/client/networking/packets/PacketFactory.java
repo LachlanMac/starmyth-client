@@ -18,6 +18,14 @@ public class PacketFactory {
 
 	}
 
+	public static UDPPacket makeInputChangePacket(String state) {
+		String data = Integer.toString(LogicController.getInstance().getPlayer().getID()) + "=" + state;
+
+		packetNumber++;
+		return new UDPPacket(Packets.INPUT_CHANGE_PACKET, data, packetNumber);
+
+	}
+
 	public static TCPPacket makeHeartbeatPacket() {
 		String data = Integer.toString(LogicController.getInstance().getPlayer().getID());
 		return new TCPPacket(Packets.HEART_BEAT_PACKET, data);

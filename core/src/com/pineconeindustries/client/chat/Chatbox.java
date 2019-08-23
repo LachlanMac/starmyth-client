@@ -12,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Queue;
 import com.pineconeindustries.client.manager.InputManager;
-
+import com.pineconeindustries.client.manager.InputState;
 
 public class Chatbox extends Table {
 
@@ -31,7 +31,6 @@ public class Chatbox extends Table {
 
 	Stage stage;
 	Queue<Label> chatQueue;
-
 
 	public Chatbox(float widthPercent, float heightPercent, Skin skin, Stage stage) {
 		super(skin);
@@ -68,7 +67,7 @@ public class Chatbox extends Table {
 
 	public void update() {
 
-		if (InputManager.isPressed(InputManager.ENTER)) {
+		if (InputState.isPressed(InputState.ENTER)) {
 
 			if (stage.getKeyboardFocus() == chatEntry) {
 
@@ -131,8 +130,6 @@ public class Chatbox extends Table {
 	public float getChatboxWidth() {
 		return chatBoxWidth;
 	}
-
-	
 
 	public boolean isTyping() {
 

@@ -20,8 +20,6 @@ public class PacketParser {
 
 		String split[] = packetData.split("=");
 
-		
-
 		switch (packetID) {
 
 		case Packets.MOVE_PACKET:
@@ -89,7 +87,6 @@ public class PacketParser {
 			break;
 
 		case Packets.PLAYER_LIST_PACKET:
-			System.out.println("Received Player List " + packetID);
 
 			ArrayList<Integer> ids = new ArrayList<Integer>();
 
@@ -124,7 +121,7 @@ public class PacketParser {
 			break;
 
 		case Packets.NPC_LIST_PACKET:
-			System.out.println("Received NPC List " + packetID);
+
 			ArrayList<Integer> npcIDs = new ArrayList<Integer>();
 
 			for (String data : split) {
@@ -153,7 +150,6 @@ public class PacketParser {
 
 			break;
 		case Packets.STRUCTURE_LIST_PACKET:
-			System.out.println("Received Structure List " + packetID);
 
 			ArrayList<Integer> structureIDs = new ArrayList<Integer>();
 
@@ -172,7 +168,7 @@ public class PacketParser {
 				if (!LogicController.getInstance().getSector().structureExists(structureID)) {
 
 					if (type == 1) {
-						
+
 						LogicController.getInstance().getSector().addStructure(
 								new Station(structureName, structureID, sectorID, factionID, xLoc, yLoc, 0, 0, layers));
 					}
@@ -182,7 +178,7 @@ public class PacketParser {
 			}
 			break;
 		case Packets.STRUCTURE_ELEVATOR_RESPONSE_PACKET:
-			System.out.println("Received Elevator Response " + packetID);
+
 			ArrayList<Elevator> elevators = new ArrayList<Elevator>();
 
 			int structID = 0;
@@ -207,7 +203,6 @@ public class PacketParser {
 			break;
 
 		case Packets.STRUCTURE_LAYER_RESPONSE_PACKET:
-			System.out.println("Received Layer Data " + packetID);
 
 			int id = Integer.parseInt(split[0]);
 			int layer = Integer.parseInt(split[1]);

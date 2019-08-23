@@ -8,8 +8,57 @@ import com.pineconeindustries.shared.gameunits.Units;
 import com.pineconeindustries.shared.log.Log;
 import com.pineconeindustries.shared.objects.PlayerMP;
 import com.pineconeindustries.shared.objects.Tile;
+import com.pineconeindustries.shared.utils.VectorMath;
 
 public class MoveModule {
+
+	public static void rxInputChangePacket(String data, Sector sector) {
+
+		String[] split = data.split("=");
+		int playerID = Integer.parseInt(split[0]);
+		String state = split[1];
+
+		PlayerMP player = sector.getPlayerByID(playerID);
+		if (player == null) {
+			return;
+		}
+
+		boolean inputState[] = new boolean[10];
+
+		if (state.charAt(0) == '1') {
+			inputState[0] = true;
+		}
+		if (state.charAt(1) == '1') {
+			inputState[1] = true;
+		}
+		if (state.charAt(2) == '1') {
+			inputState[2] = true;
+		}
+		if (state.charAt(3) == '1') {
+			inputState[3] = true;
+		}
+		if (state.charAt(4) == '1') {
+			inputState[4] = true;
+		}
+		if (state.charAt(5) == '1') {
+			inputState[5] = true;
+		}
+		if (state.charAt(6) == '1') {
+			inputState[6] = true;
+		}
+		if (state.charAt(7) == '1') {
+			inputState[7] = true;
+		}
+		if (state.charAt(8) == '1') {
+			inputState[8] = true;
+		}
+		if (state.charAt(9) == '1') {
+			inputState[9] = true;
+		}
+
+		player.setInputState(inputState);
+
+	}
 
 	public static void rxMoveRequest(String data, Sector sector) {
 
@@ -23,6 +72,8 @@ public class MoveModule {
 			if (player == null) {
 				return;
 			}
+			
+			
 
 			Vector2 adjustedMov = new Vector2(x * Units.PLAYER_MOVE_SPEED, y * Units.PLAYER_MOVE_SPEED);
 			float velocity = (Math.abs(adjustedMov.x) + Math.abs(adjustedMov.y)) / 2;
