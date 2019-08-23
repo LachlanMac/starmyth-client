@@ -26,6 +26,7 @@ import com.pineconeindustries.shared.data.Global.RUN_TYPE;
 
 public class ServerApp extends ApplicationAdapter {
 
+	private int currentInterval = 0;
 	public boolean headless = false;
 	private OrthographicCamera camera, fixedCamera;
 	private GameData gameData;
@@ -57,7 +58,7 @@ public class ServerApp extends ApplicationAdapter {
 		gameData.setHeadless(headless);
 		gameData.registerAssetManager(new LAssetManager());
 		gameData.loadAssets();
-		
+
 		Database.getInstance();
 
 		if (!headless) {
@@ -87,6 +88,7 @@ public class ServerApp extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		update();
+
 		batch.setProjectionMatrix(fixedCamera.combined);
 		batch.begin();
 		batch.draw(bg, -(WORLD_WIDTH / 2), -(WORLD_HEIGHT / 2), WORLD_WIDTH, WORLD_HEIGHT);
@@ -106,31 +108,37 @@ public class ServerApp extends ApplicationAdapter {
 	}
 
 	public void update() {
+		currentInterval += 1;
 
-		galaxy.update();
+		if (currentInterval >= Global.SERVER_UPDATE_INTERVAL) {
 
-		if (headless)
-			return;
+			galaxy.update();
 
-		camera.update();
+			if (headless)
+				return;
 
-		if (Gdx.input.isKeyPressed(Input.Keys.NUM_8)) {
-			camera.zoom += 0.02;
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.NUM_9)) {
-			camera.zoom -= 0.02;
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-			camera.position.set(camera.position.x + 10, camera.position.y, 0);
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-			camera.position.set(camera.position.x - 10, camera.position.y, 0);
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-			camera.position.set(camera.position.x, camera.position.y + 10, 0);
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-			camera.position.set(camera.position.x, camera.position.y - 10, 0);
+			camera.update();
+
+			if (Gdx.input.isKeyPressed(Input.Keys.NUM_8)) {
+				camera.zoom += 0.02;
+			}
+			if (Gdx.input.isKeyPressed(Input.Keys.NUM_9)) {
+				camera.zoom -= 0.02;
+			}
+			if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+				camera.position.set(camera.position.x + 10, camera.position.y, 0);
+			}
+			if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+				camera.position.set(camera.position.x - 10, camera.position.y, 0);
+			}
+			if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+				camera.position.set(camera.position.x, camera.position.y + 10, 0);
+			}
+			if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+				camera.position.set(camera.position.x, camera.position.y - 10, 0);
+			}
+
+			currentInterval = 0;
 		}
 	}
 

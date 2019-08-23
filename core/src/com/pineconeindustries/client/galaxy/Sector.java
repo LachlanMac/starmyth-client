@@ -180,7 +180,7 @@ public class Sector {
 	}
 
 	public void addStructure(Structure structure) {
-		Log.print("ADDING ! Name : " + structure.getStructureName() + " : " + structure.getStructureID());
+		Log.print("Adding : " + structure.getStructureName() + " : " + structure.getStructureID());
 		structures.add(structure);
 
 	}

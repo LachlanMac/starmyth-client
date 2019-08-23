@@ -158,13 +158,14 @@ public abstract class Structure {
 	}
 
 	public void requestData() {
-
+		System.out.println("Requesting Elevator Data");
 		PacketRequester requester = new PacketRequester(
 				PacketFactory.makeElevatorRequestPacket(getStructureID(), getSectorID()), 2, 5) {
 			@Override
 			public void checkValidity() {
 
 				if (gotElevatorData) {
+					System.out.println("Got Elevator Data");
 					this.kill();
 					return;
 				}

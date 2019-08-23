@@ -185,14 +185,8 @@ public class Connection implements Runnable {
 
 			if (connected) {
 
-				try {
-					Thread.sleep(10);
-					heartbeatCounter += 10;
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					break;
-				}
+				heartbeatCounter += 1;
+
 				while (!inUDPQueue.isEmpty()) {
 
 					LogicController.getInstance().receiveUDP(inUDPQueue.poll());

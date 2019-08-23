@@ -23,6 +23,8 @@ public class Player extends Person {
 
 	ArrayList<Projectile> projectiles;
 
+	private final int updateInterval = 5;
+	private int currentIntervalFrame = 0;
 	final float camspeed = 0.1f, icamspeed = 1.0f - camspeed;
 	BitmapFont font = new BitmapFont();
 
@@ -94,8 +96,16 @@ public class Player extends Person {
 
 		}
 
-		if (!chatbox.isTyping())
-			move();
+		currentIntervalFrame += 1;
+
+		if (currentIntervalFrame >= interval) {
+
+			if (!chatbox.isTyping())
+				move();
+
+			currentIntervalFrame = 0;
+		}
+
 	}
 
 	public String printVector() {
@@ -105,6 +115,8 @@ public class Player extends Person {
 	}
 
 	public void move() {
+
+		currentIntervalFrame += 1;
 
 		if (moveDisabled)
 			return;

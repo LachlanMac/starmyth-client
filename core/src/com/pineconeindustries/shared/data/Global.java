@@ -9,6 +9,8 @@ public class Global {
 	public static String LOGIN_SERVER_IP = remoteHost;
 	public static String GAME_SERVER_IP = remoteHost;
 
+	public static int SERVER_UPDATE_INTERVAL = 5;
+
 	public static RUN_TYPE runType;
 
 	public static enum RUN_TYPE {
