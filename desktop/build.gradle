@@ -62,7 +62,8 @@ task fatJar(type : Jar){
 
 }
 
-dist.dependsOn classes
+buildClient.dependsOn classes
+buildServer.dependsOn classes
 
 eclipse {
     project {
