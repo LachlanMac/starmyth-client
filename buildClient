@@ -1,0 +1,9 @@
+#! /bin/bash
+
+./gradlew clean
+./gradlew buildClient
+rm -rf ../client
+mkdir ../client
+cp /home/lachlan/Starmyth/starmyth-client/desktop/build/libs/desktop-1.0.jar ../client/client.jar
+cp -rf /home/lachlan/Starmyth/starmyth-client/core/assets/* /home/lachlan/Starmyth/client/
+zip /home/lachlan/Starmyth/client/client.zip /home/lachlan/Starmyth/client/*
