@@ -5,6 +5,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.packets.custom.CustomTCPPacket;
 import com.pineconeindustries.server.database.Database;
@@ -319,6 +320,24 @@ public class Sector {
 		}
 
 		return player;
+	}
+
+	public ArrayList<PlayerConnection> getPlayerConnectionsInRange(int structureID, int layer, Vector2 origin,
+			float distance) {
+
+		ArrayList<PlayerConnection> connections = new ArrayList<PlayerConnection>();
+
+		for (PlayerConnection c : players) {
+
+			if (c.getPlayerMP().getStructureID() == structureID && c.getPlayerMP().getLayer() == layer
+					&& origin.dst(c.getPlayerMP().getLoc()) < distance) {
+				connections.add(c);
+			}
+
+		}
+
+		return connections;
+
 	}
 
 	public PacketParser getPacketParser() {

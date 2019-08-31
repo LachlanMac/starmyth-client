@@ -1,6 +1,7 @@
 package com.pineconeindustries.server.net.players;
 
 import com.pineconeindustries.server.galaxy.Sector;
+import com.pineconeindustries.server.net.packets.modules.ChatModule;
 import com.pineconeindustries.server.net.packets.modules.ConnectionModule;
 import com.pineconeindustries.server.net.packets.modules.MoveModule;
 import com.pineconeindustries.server.net.packets.modules.StructureModule;
@@ -50,6 +51,7 @@ public class PacketParser {
 	}
 
 	public void parseTCPPacket(TCPPacket packet) {
+
 		switch (packet.getPacketID()) {
 
 		case Packets.HEART_BEAT_PACKET:
@@ -63,7 +65,18 @@ public class PacketParser {
 		case Packets.STRUCTURE_ELEVATOR_REQUEST_PACKET:
 			StructureModule.rxStructureElevatorRequest(packet.getData(), sector);
 			break;
-
+		case Packets.CHAT_SAY_PACKET:
+			ChatModule.rxChatSayPacket(packet.getData(), sector);
+			break;
+		case Packets.CHAT_TELL_PACKET:
+			ChatModule.rxChatTellPacket(packet.getData(), sector);
+			break;
+		case Packets.CHAT_INTERCOM_PACKET:
+			ChatModule.rxChatIntercomPacket(packet.getData(), sector);
+			break;
+		case Packets.CHAT_GROUP_PACKET:
+			ChatModule.rxChatGroupPacket(packet.getData(), sector);
+			break;
 		default:
 			Log.netTraffic("Packet ID: " + packet.getPacketID(), "Invalid TCP Packet");
 

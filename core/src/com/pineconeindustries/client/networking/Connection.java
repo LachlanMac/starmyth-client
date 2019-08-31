@@ -48,8 +48,8 @@ public class Connection implements Runnable {
 	public Connection(int port) {
 		this.port = port;
 		thread = new Thread(this);
-		inUDPQueue = new ArrayBlockingQueue<String>(128);
-		inTCPQueue = new ArrayBlockingQueue<String>(128);
+		inUDPQueue = new ArrayBlockingQueue<String>(256);
+		inTCPQueue = new ArrayBlockingQueue<String>(256);
 	}
 
 	public void switchSector(int newPort) {

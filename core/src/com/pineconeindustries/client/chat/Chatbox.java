@@ -13,6 +13,8 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Queue;
 import com.pineconeindustries.client.manager.InputManager;
 import com.pineconeindustries.client.manager.InputState;
+import com.pineconeindustries.client.manager.LogicController;
+import com.pineconeindustries.client.networking.packets.PacketFactory;
 
 public class Chatbox extends Table {
 
@@ -51,7 +53,9 @@ public class Chatbox extends Table {
 		chatArea = new Table(skin);
 
 		scroll = new ScrollPane(chatArea, skin);
+
 		scroll.setScrollingDisabled(true, false);
+		scroll.setForceScroll(false, true);
 
 		chatArea.setWidth(chatBoxWidth);
 
@@ -100,7 +104,7 @@ public class Chatbox extends Table {
 
 	public void sendMessage(String msg) {
 
-		// lnet.sendLocalChat(msg);
+		LogicController.getInstance().getConnection().sendTCP(PacketFactory.makeChatSayPacket(msg));
 
 	}
 
@@ -110,7 +114,7 @@ public class Chatbox extends Table {
 
 		Label label = new Label(msg, skin);
 		label.setAlignment(Align.left);
-		label.setWrap(true);
+		label.setWrap(true);	
 		chatArea.add(label).width(getChatboxWidth());
 
 		chatQueue.addLast(label);

@@ -8,6 +8,11 @@ public class Packets {
 	public static final int NPC_MOVE_PACKET = 101;
 	public static final int INPUT_CHANGE_PACKET = 102;
 
+	public static final int CHAT_SAY_PACKET = 200;
+	public static final int CHAT_GROUP_PACKET = 201;
+	public static final int CHAT_INTERCOM_PACKET = 202;
+	public static final int CHAT_TELL_PACKET = 203;
+
 	// start these in the 8000's
 
 	public static final int PLAYER_LIST_PACKET = 8001;

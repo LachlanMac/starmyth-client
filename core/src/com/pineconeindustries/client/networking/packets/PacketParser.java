@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.Net;
+import com.pineconeindustries.client.ui.UserInterface;
 import com.pineconeindustries.server.net.packets.types.Packets;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.log.Log;
@@ -120,6 +121,15 @@ public class PacketParser {
 
 			break;
 
+		case Packets.CHAT_SAY_PACKET:
+
+			String playerName = split[0];
+			String messageData = split[1];
+
+			UserInterface.getInstance().getChat().addMsg(playerName + " : " + messageData);
+
+			break;
+
 		case Packets.NPC_LIST_PACKET:
 
 			ArrayList<Integer> npcIDs = new ArrayList<Integer>();
@@ -213,6 +223,7 @@ public class PacketParser {
 
 			break;
 		default:
+			System.out.println("UNKNOWN PACKET " + packetData);
 		}
 
 	}

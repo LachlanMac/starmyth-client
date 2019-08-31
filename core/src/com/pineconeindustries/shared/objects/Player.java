@@ -60,7 +60,6 @@ public class Player extends Person {
 		} else {
 			b.draw(currentFrame.getKeyFrame(state, true), renderLoc.x, renderLoc.y);
 		}
-		font.draw(b, printVector(), loc.x, loc.y - 15);
 
 		if (renderLoc.dst(loc) > 500) {
 			renderLoc = loc;

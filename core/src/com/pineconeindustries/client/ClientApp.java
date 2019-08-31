@@ -31,18 +31,15 @@ import box2dLight.RayHandler;
 
 public class ClientApp extends ApplicationAdapter {
 
-
 	private float state;
-	
 
 	SpriteBatch batch;
 	ShapeRenderer shapeBatch;
 	Texture img, loadingScreen;
 	LocalPlayerData data;
 
+	UserInterface ui;
 	TextureRegion bg;
-
-	Stage stage, loadingStage;
 
 	public int WORLD_WIDTH = 1920;
 	public int WORLD_HEIGHT = 1080;
@@ -77,9 +74,9 @@ public class ClientApp extends ApplicationAdapter {
 		loadingScreen = new Texture("textures/loadingscreen.png");
 		CameraController cam = new CameraController();
 
-		stage = new Stage();
-		Gdx.input.setInputProcessor(stage);
-		UserInterface ui = new UserInterface(stage);
+		ui = UserInterface.getInstance();
+
+		Gdx.input.setInputProcessor(ui.getStage());
 
 		GameData.getInstance().registerAssetManager(new LAssetManager());
 		GameData.getInstance().loadAssets();
@@ -108,6 +105,7 @@ public class ClientApp extends ApplicationAdapter {
 
 	public void update() {
 		state += Gdx.graphics.getDeltaTime();
+		ui.update();
 		LogicController.getInstance().getSector().update();
 
 	}
@@ -137,8 +135,10 @@ public class ClientApp extends ApplicationAdapter {
 		batch.begin();
 
 		LogicController.getInstance().getSector().render(batch);
+
 		batch.end();
 
+		ui.render();
 		InputManager.updateMouse(LogicController.getInstance().getPlayerCamera());
 
 		// game.render(batch, shapeBatch);
@@ -150,7 +150,7 @@ public class ClientApp extends ApplicationAdapter {
 
 	public void dispose() {
 		batch.dispose();
-		stage.dispose();
+		ui.dispose();
 		rh.dispose();
 		shapeBatch.dispose();
 

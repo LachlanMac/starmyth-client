@@ -26,6 +26,13 @@ public class PacketFactory {
 
 	}
 
+	public static TCPPacket makeChatSayPacket(String msg) {
+
+		String data = Integer.toString(LogicController.getInstance().getPlayer().getID()) + "=" + msg;
+		return new TCPPacket(Packets.CHAT_SAY_PACKET, data);
+
+	}
+
 	public static TCPPacket makeHeartbeatPacket() {
 		String data = Integer.toString(LogicController.getInstance().getPlayer().getID());
 		return new TCPPacket(Packets.HEART_BEAT_PACKET, data);

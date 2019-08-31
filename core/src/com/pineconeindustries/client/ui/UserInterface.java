@@ -18,10 +18,21 @@ public class UserInterface {
 	Table rootTable;
 	Chatbox chatbox;
 	Player player;
-	
-	public UserInterface(Stage stage) {
 
-		this.stage = stage;
+	static UserInterface instance = null;
+
+	public static UserInterface getInstance() {
+
+		if (instance == null) {
+			instance = new UserInterface();
+		}
+		return instance;
+
+	}
+
+	private UserInterface() {
+
+		this.stage = new Stage();
 
 		stage.getRoot().addCaptureListener(new InputListener() {
 
@@ -30,7 +41,6 @@ public class UserInterface {
 					stage.setKeyboardFocus(null);
 				return false;
 			}
-
 		});
 
 		buildInterface();
@@ -49,6 +59,25 @@ public class UserInterface {
 		rootTable.add(chatbox).expand().bottom().left();
 		stage.addActor(rootTable);
 
+	}
+
+	public void update() {
+		
+	}
+
+	public void render() {
+		stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+		stage.draw();
+		chatbox.update();
+		
+	}
+
+	public void dispose() {
+		stage.dispose();
+	}
+
+	public Stage getStage() {
+		return stage;
 	}
 
 	public Chatbox getChat() {
