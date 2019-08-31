@@ -5,7 +5,6 @@ sourceCompatibility = 1.8
 sourceSets.main.java.srcDirs = [ "src/" ]
 version = '1.0'
 
-project.ext.mainClassName = "com.pineconeindustries.client.desktop.ServerLauncher"
 project.ext.assetsDir = new File("../core/assets");
 
 task run(dependsOn: classes, type: JavaExec) {
@@ -25,7 +24,8 @@ task debug(dependsOn: classes, type: JavaExec) {
     debug = true
 }
 
-task dist(type: Jar) {
+task buildServer(type: Jar) {
+	project.ext.mainClassName = "com.pineconeindustries.client.desktop.ServerLauncher"
     from files(sourceSets.main.output.classesDir)
     from files(sourceSets.main.output.resourcesDir)
     from {configurations.compile.collect {zipTree(it)}}
@@ -36,18 +36,19 @@ task dist(type: Jar) {
     }
 }
 
-task fatJar(type : Jar){
 
-	manifest {
-        attributes 'Implementation-Title': 'Starmyth Server',  
-        	'Implementation-Version': version,
-        	'Main-Class': 'com.pineconeindustries.client.desktop.ServerLauncher'
+task buildClient(type: Jar) {
+	project.ext.mainClassName = "com.pineconeindustries.client.desktop.ClientLauncher"
+    from files(sourceSets.main.output.classesDir)
+    from files(sourceSets.main.output.resourcesDir)
+    from {configurations.compile.collect {zipTree(it)}}
+    from files(project.assetsDir);
+ 
+    manifest {
+        attributes 'Main-Class': project.mainClassName
     }
-    baseName = project.name + '-all'
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
-
 }
+
 
 dist.dependsOn classes
 
