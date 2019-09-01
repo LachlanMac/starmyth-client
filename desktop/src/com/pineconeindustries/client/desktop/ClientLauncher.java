@@ -29,12 +29,9 @@ public class ClientLauncher {
 		
 	
 		
-		//new LoginClient();
-		//ArrayList<LocalPlayerData> dataList = new ArrayList<LocalPlayerData>();
-		//new CharacterScreen(dataList);
+		new LoginClient();
 		
-	
-		startTestClient();
+		//startTestClient();
 
 	}
 	

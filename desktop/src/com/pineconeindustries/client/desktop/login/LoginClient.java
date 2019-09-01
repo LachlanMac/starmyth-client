@@ -3,9 +3,11 @@ package com.pineconeindustries.client.desktop.login;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -162,32 +164,27 @@ public class LoginClient extends JFrame {
 
 					Gson g = new Gson();
 
-					CharacterList list = g.fromJson(sb.toString(), CharacterList.class);
+					CharacterData data = g.fromJson(sb.toString(), CharacterData.class);
 
-					System.out.println(list.getName1());
+					LocalPlayerData d = data.getLocalPlayerData();
 
-					ArrayList<LocalPlayerData> dataList = list.getLocalPlayerData();
-
-					if (dataList.size() != 0) {
-
-						ACCOUNT_ID = dataList.get(0).getId();
-
-						System.out.println(ACCOUNT_ID + "    ID???");
-						new CharacterScreen(dataList);
-						frameReference.dispose();
-					} else {
-
-						if (list.getAccountID() != 0) {
-							ACCOUNT_ID = list.getAccountID();
-							new CharacterScreen(dataList);
-							frameReference.dispose();
-
-						} else {
-
-							System.exit(0);
-						}
-
+					try {
+						GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+						ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Sansation-Bold.ttf")));
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
+
+					LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+					config.vSyncEnabled = true;
+					config.width = 1920;
+					config.height = 1080;
+					config.foregroundFPS = 60;
+					config.backgroundFPS = 60;
+					config.samples = 4;
+					// config.fullscreen = true;
+
+					new LwjglApplication(new ClientApp(d), config);
 
 				}
 			}

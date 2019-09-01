@@ -49,18 +49,6 @@ task buildClient(type: Jar) {
         attributes 'Main-Class': "com.pineconeindustries.client.desktop.ClientLauncher"
     }
 }
-task fatJar(type : Jar){
-
-	manifest {
-        attributes 'Implementation-Title': 'Starmyth Server',  
-        	'Implementation-Version': version,
-        	'Main-Class': 'com.pineconeindustries.client.desktop.ServerLauncher'
-    }
-    baseName = project.name + '-all'
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
-
-}
 
 buildClient.dependsOn classes
 buildServer.dependsOn classes
