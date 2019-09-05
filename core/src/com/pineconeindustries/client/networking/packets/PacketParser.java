@@ -12,6 +12,7 @@ import com.pineconeindustries.shared.log.Log;
 import com.pineconeindustries.shared.objects.Elevator;
 import com.pineconeindustries.shared.objects.NPC;
 import com.pineconeindustries.shared.objects.PlayerMP;
+import com.pineconeindustries.shared.objects.Ship;
 import com.pineconeindustries.shared.objects.Station;
 import com.pineconeindustries.shared.objects.Structure;
 
@@ -115,6 +116,7 @@ public class PacketParser {
 
 					}
 				}
+
 			}
 
 			LogicController.getInstance().getSector().cleanPlayerList(ids);
@@ -122,7 +124,7 @@ public class PacketParser {
 			break;
 
 		case Packets.CHAT_SAY_PACKET:
-
+			System.out.println(packetID + "  " + packetData);
 			String playerName = split[0];
 			String messageData = split[1];
 
@@ -156,7 +158,7 @@ public class PacketParser {
 
 			}
 
-			LogicController.getInstance().getSector().cleanPlayerList(npcIDs);
+			LogicController.getInstance().getSector().cleanNPCList(npcIDs);
 
 			break;
 		case Packets.STRUCTURE_LIST_PACKET:
@@ -183,6 +185,12 @@ public class PacketParser {
 								new Station(structureName, structureID, sectorID, factionID, xLoc, yLoc, 0, 0, layers));
 					}
 
+					if (type == 2) {
+
+						LogicController.getInstance().getSector().addStructure(
+								new Ship(structureName, structureID, sectorID, factionID, xLoc, yLoc, 0, 0, layers));
+					}
+
 				}
 
 			}
@@ -203,7 +211,6 @@ public class PacketParser {
 				String wall = elevatorData[4];
 				Structure struct = LogicController.getInstance().getSector().getStructureByID(eStructID);
 				structID = struct.getStructureID();
-
 				Elevator e = new Elevator(elevatorID, tileX, tileY, struct, wall.trim());
 				elevators.add(e);
 
@@ -222,9 +229,53 @@ public class PacketParser {
 					.setLayerData(layoutData);
 
 			break;
+
+		case Packets.SHIP_HIT_PACKET:
+			rxShipHitPacket(split);
+			break;
+		case Packets.SHIP_START_PACKET:
+			rxShipStartPacket(split);
+			break;
+		case Packets.SHIP_STOP_PACKET:
+			rxShipStopPacket(split);
+			break;
+		case Packets.SHIP_EMERGENCY_PACKET:
+			rxShipEmergencyPacket(split);
+			break;
 		default:
 			System.out.println("UNKNOWN PACKET " + packetData);
 		}
 
+	}
+
+	public static void rxShipHitPacket(String[] data) {
+		int structureID = Integer.parseInt(data[0]);
+		float strength = Float.parseFloat(data[1]);
+		int tileX = Integer.parseInt(data[2]);
+		int tileY = Integer.parseInt(data[3]);
+		int layer = Integer.parseInt(data[4]);
+
+		LogicController.getInstance().getSector().getStructureByID(structureID).registerHitEvent(strength, tileX, tileY,
+				layer);
+	}
+
+	public static void rxShipStartPacket(String[] data) {
+		int structureID = Integer.parseInt(data[0]);
+		float strength = Float.parseFloat(data[1]);
+
+		LogicController.getInstance().getSector().getStructureByID(structureID).registerShipStartEvent(strength);
+	}
+
+	public static void rxShipStopPacket(String[] data) {
+		int structureID = Integer.parseInt(data[0]);
+		float strength = Float.parseFloat(data[1]);
+
+		LogicController.getInstance().getSector().getStructureByID(structureID).registerShipStopEvent(strength);
+	}
+
+	public static void rxShipEmergencyPacket(String[] data) {
+		int structureID = Integer.parseInt(data[0]);
+		boolean val = (Integer.parseInt(data[1]) == 1);
+		LogicController.getInstance().getSector().getStructureByID(structureID).registerShipEmergencyEvent(val);
 	}
 }

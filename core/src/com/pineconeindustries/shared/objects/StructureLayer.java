@@ -38,6 +38,8 @@ public class StructureLayer {
 			requestData();
 		}
 
+		
+
 	}
 
 	public void render(SpriteBatch b) {
@@ -57,6 +59,9 @@ public class StructureLayer {
 	}
 
 	public void debugRender(ShapeRenderer debugRenderer) {
+
+		if (true)
+			return;
 
 		for (int y = 0; y < Units.STRUCTURE_SIZE; y++) {
 			for (int x = 0; x < Units.STRUCTURE_SIZE; x++) {
@@ -99,12 +104,14 @@ public class StructureLayer {
 
 			for (int x = 0; x < Units.STRUCTURE_SIZE; x++) {
 
-				tiles[x][y] = new Tile(unpackedData[index], x, y, parent.getRenderX(), parent.getRenderY());
+				tiles[x][y] = new Tile(unpackedData[index], x + (parent.getRenderX() * Units.STRUCTURE_SIZE),
+						y + (parent.getRenderY() * Units.STRUCTURE_SIZE), parent.getRenderX(), parent.getRenderY());
 
 				if (unpackedData[index] == 'p') {
 
 				} else {
-					tiles[x][y] = (new Tile(unpackedData[index], x, y, parent.getRenderX(), parent.getRenderY()));
+					tiles[x][y] = (new Tile(unpackedData[index], x + (parent.getRenderX() * Units.STRUCTURE_SIZE),
+							y + (parent.getRenderY() * Units.STRUCTURE_SIZE), parent.getRenderX(), parent.getRenderY()));
 				}
 				index++;
 			}
@@ -184,7 +191,7 @@ public class StructureLayer {
 				PacketFactory.makeLayerRequestPacket(parent.getStructureID(), parent.getSectorID(), layer), 2, 5) {
 			@Override
 			public void checkValidity() {
-				
+
 				if (gotLayerData) {
 					System.out.println("Got Layer Data");
 					this.kill();

@@ -4,14 +4,18 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ArrayBlockingQueue;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.pineconeindustries.client.manager.LogicController;
+import com.pineconeindustries.client.manager.SoundEffectManager;
 import com.pineconeindustries.client.networking.packets.PacketFactory;
 import com.pineconeindustries.client.networking.packets.PacketRequester;
 import com.pineconeindustries.server.ai.pathfinding.PathNode;
 import com.pineconeindustries.server.net.players.PlayerConnection;
+import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.files.Files;
 import com.pineconeindustries.shared.gameunits.Units;
@@ -23,6 +27,8 @@ public abstract class Structure {
 	protected int width, height, structureID, sectorID, factionID, renderX, renderY, layers, type;
 	protected float globalX, globalY;
 	private String data;
+	private boolean emergency = false;
+	private boolean enginesOn = false;
 	protected long checksum;
 	protected String structureName, packetData;
 	protected boolean render = false, gotElevatorData = false;
@@ -33,6 +39,7 @@ public abstract class Structure {
 	protected GridTile[][] grid;
 	protected Random rn = new Random(System.currentTimeMillis());
 	protected ArrayList<Elevator> elevators;
+	protected Sound engine = GameData.getInstance().Assets().getSoundEffect("shiploop");
 
 	public Structure(String structureName, int structureID, int sectorID, int factionID, int renderX, int renderY,
 			float globalX, float globalY, int layers) {
@@ -45,6 +52,9 @@ public abstract class Structure {
 		this.sectorID = sectorID;
 		this.structureName = structureName;
 		this.layers = layers;
+		this.renderX = renderX;
+		this.renderY = renderY;
+
 		layerList = new ArrayBlockingQueue<StructureLayer>(4);
 		this.type = 0;
 		loadLayers();
@@ -183,6 +193,44 @@ public abstract class Structure {
 
 	public ArrayList<Elevator> getElevators() {
 		return elevators;
+	}
+
+	public void registerHitEvent(float strength, int tileX, int tileY, int layer) {
+		if (LogicController.getInstance().getPlayer().getStructureID() == this.structureID) {
+
+			SoundEffectManager.getInstance()
+					.playSoundEffect(GameData.getInstance().Assets().getSoundEffect("explosion"), 0.5f);
+			LogicController.getInstance().getCameraController().setRumble(strength, 2);
+		}
+	}
+
+	public void registerShipStartEvent(float strength) {
+		if (LogicController.getInstance().getPlayer().getStructureID() == this.structureID) {
+			SoundEffectManager.getInstance()
+					.playSoundEffect(GameData.getInstance().Assets().getSoundEffect("shipstart"), 0.05f);
+			LogicController.getInstance().getCameraController().setRumble(1, 25);
+			enginesOn = true;
+			long id = engine.play(2.0f);
+			engine.setLooping(id, true);
+
+		}
+	}
+
+	public void registerShipStopEvent(float strength) {
+		if (LogicController.getInstance().getPlayer().getStructureID() == this.structureID) {
+			LogicController.getInstance().getCameraController().setRumble(1, 6);
+			SoundEffectManager.getInstance().playSoundEffect(GameData.getInstance().Assets().getSoundEffect("shipstop"),
+					0.05f);
+
+			enginesOn = false;
+			engine.stop();
+			long id = engine.play(2.0f);
+			engine.setLooping(id, false);
+		}
+	}
+
+	public void registerShipEmergencyEvent(boolean emergency) {
+		this.emergency = emergency;
 	}
 
 }

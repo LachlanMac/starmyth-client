@@ -42,12 +42,7 @@ public class AnimationSet {
 
 	public Animation<TextureRegion> getAnimation(Vector2 direction, float velocity) {
 
-		if (velocity == 999) {
-
-			return dead;
-
-		}
-
+		
 		// character is not moving
 		if (velocity == 0) {
 			if (direction.x > 0)

@@ -81,7 +81,8 @@ public class PlayerDAO {
 			Log.dbLog("Error Loading Player From Database: " + e.getMessage());
 		}
 
-		Log.dbLog("Loaded Player [" + player.getID() + ":" + player.getName() + "]");
+		if (player != null)
+			Log.dbLog("Loaded Player [" + player.getID() + ":" + player.getName() + "]");
 
 		return player;
 

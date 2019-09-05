@@ -1,5 +1,6 @@
 package com.pineconeindustries.shared.objects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -10,6 +11,8 @@ import com.pineconeindustries.shared.data.GameData;
 public class Tile {
 
 	public boolean RENDER = true;
+
+	private float state = 0;
 
 	public static final char DOOR_OPEN_EW = 'y';
 	public static final char DOOR_CLOSED_EW = 'm';
@@ -24,6 +27,7 @@ public class Tile {
 	public static final char ZONE_OPEN_N = 'j';
 	public static final char ZONE_OPEN_S = 'k';
 	public static final char ENGINEERING = 'c';
+	public static final char THRUSTER = 'l';
 	public static final char FOYER = 'b';
 	public static final char HALL = 'a';
 	public static final char MEDICAL = 'x';
@@ -119,7 +123,13 @@ public class Tile {
 
 		if (id == 'p') {
 			// donothing
+		} else if (id == 'l') {
+			state += Gdx.graphics.getDeltaTime();
+			b.draw(GameData.getInstance().Assets().getThursterAnimation().getKeyFrame(state * 20, true),
+					(xLoc * TILE_SIZE) + multiplierX, (yLoc * TILE_SIZE) + multiplierY);
+
 		} else {
+		
 			b.draw(GameData.getInstance().Assets().getTileID(id), (xLoc * TILE_SIZE) + multiplierX,
 					(yLoc * TILE_SIZE) + multiplierY);
 		}

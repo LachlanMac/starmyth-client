@@ -20,13 +20,20 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.pineconeindustries.client.manager.LAssetManager;
 import com.pineconeindustries.server.database.Database;
 import com.pineconeindustries.server.galaxy.Galaxy;
+import com.pineconeindustries.server.net.packets.modules.StructureEventsModule;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.data.Global.RUN_TYPE;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+
+import org.luaj.vm2.*;
+import org.luaj.vm2.lib.jse.*;
+
 public class ServerApp extends ApplicationAdapter {
 
-	private int currentInterval = 0;
 	public boolean headless = false;
 	private OrthographicCamera camera, fixedCamera;
 	private GameData gameData;
@@ -45,6 +52,7 @@ public class ServerApp extends ApplicationAdapter {
 
 	public ServerApp(boolean headless) {
 		this.headless = headless;
+
 		if (headless) {
 			Global.runType = RUN_TYPE.headless_server;
 		} else {
@@ -73,6 +81,19 @@ public class ServerApp extends ApplicationAdapter {
 		}
 		galaxy = Galaxy.getInstance();
 		galaxy.loadSectors();
+
+	}
+
+	public void runLua() {
+
+		Globals globals = JsePlatform.standardGlobals();
+		LuaValue instance = CoerceJavaToLua.coerce(Galaxy.getInstance());
+		globals.set("galaxy", instance);
+
+		// LuaValue chunk = globals.load("print( galaxy:toString() );");
+
+		LuaValue chunk = globals.loadfile("lua/test.lua");
+		chunk.call();
 
 	}
 
@@ -117,22 +138,34 @@ public class ServerApp extends ApplicationAdapter {
 		camera.update();
 
 		if (Gdx.input.isKeyPressed(Input.Keys.NUM_8)) {
-			camera.zoom += 0.02;
+			camera.zoom += 0.05;
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.NUM_9)) {
-			camera.zoom -= 0.02;
+			camera.zoom -= 0.05;
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-			camera.position.set(camera.position.x + 10, camera.position.y, 0);
+			camera.position.set(camera.position.x + 50, camera.position.y, 0);
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-			camera.position.set(camera.position.x - 10, camera.position.y, 0);
+			camera.position.set(camera.position.x - 50, camera.position.y, 0);
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-			camera.position.set(camera.position.x, camera.position.y + 10, 0);
+			camera.position.set(camera.position.x, camera.position.y + 50, 0);
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-			camera.position.set(camera.position.x, camera.position.y - 10, 0);
+			camera.position.set(camera.position.x, camera.position.y - 50, 0);
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.NUM_1)) {
+			Galaxy.getInstance().getSectorByID(7780).getPacketWriter()
+					.queueToAll(StructureEventsModule.getShipHitPacket(1001, 5, 4, 5, 1));
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.NUM_2)) {
+			Galaxy.getInstance().getSectorByID(7780).getPacketWriter()
+					.queueToAll(StructureEventsModule.getShipStartPacket(1001, 2));
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.NUM_3)) {
+			Galaxy.getInstance().getSectorByID(7780).getPacketWriter()
+					.queueToAll(StructureEventsModule.getShipStopPacket(1001, 2));
 		}
 
 	}

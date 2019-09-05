@@ -28,8 +28,8 @@ public class ServerLauncher {
 		else {
 			LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 			config.vSyncEnabled = true;
-			config.width = 1920;
-			config.height = 1080;
+			config.width = 200;
+			config.height = 100;
 
 			config.foregroundFPS = 20;
 			config.backgroundFPS = 20;

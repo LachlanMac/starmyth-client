@@ -1,12 +1,10 @@
 package com.pineconeindustries.client.manager;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.pineconeindustries.client.models.AnimationSet;
 import com.pineconeindustries.shared.data.GameData;
@@ -14,14 +12,18 @@ import com.pineconeindustries.shared.data.GameData;
 public class LAssetManager extends AssetManager {
 
 	AnimationSet playerAnimations;
-	Texture shipSS, elevator;
+	Animation<TextureRegion> thrusterAnimation;
+	Texture shipSS, elevator, ionThrusterSS;
 
-	TextureRegion[][] shipTiles;
+	TextureRegion[][] shipTiles, thrusterTiles;
 
 	TextureRegion wall, wallDiagSW, wallDiagNE, wallDiagNW, wallDiagSE, hall, room, doorClosedEW, doorClosedNS,
-			doorOpenEW, doorOpenNS, zoneClosedE, zoneClosedW, zoneOpenE, zoneOpenW;
+			doorOpenEW, doorOpenNS, zoneClosedE, zoneClosedW, zoneOpenE, zoneOpenW, thrusterOff, thruster1, thruster2,
+			thruster3, thruster4;
 	// unassigned
 	TextureRegion zoneClosedN, zoneClosedS, zoneOpenN, zoneOpenS;
+
+	Sound explosion, shipStart, shipStop, shipLoop;
 
 	public LAssetManager() {
 
@@ -31,6 +33,7 @@ public class LAssetManager extends AssetManager {
 		load("textures/galaxybg1.png", Texture.class);
 		load("textures/plasma.png", Texture.class);
 		load("textures/shiptiles/shipSS.png", Texture.class);
+		load("textures/shiptiles/ionthrusterSS.png", Texture.class);
 		load("textures/playerfront.png", Texture.class);
 		load("textures/shiptiles/diagwall.png", Texture.class);
 		load("textures/shiptiles/floor.png", Texture.class);
@@ -38,7 +41,36 @@ public class LAssetManager extends AssetManager {
 		load("textures/shiptiles/wall.png", Texture.class);
 		load("textures/playerSS.png", Texture.class);
 		load("textures/elevator.png", Texture.class);
-		
+
+	}
+
+	public void loadSoundEffects() {
+		explosion = Gdx.audio.newSound(Gdx.files.internal("audio/effects/explosion.mp3"));
+		shipStart = Gdx.audio.newSound(Gdx.files.internal("audio/effects/ship-start.wav"));
+		shipStop = Gdx.audio.newSound(Gdx.files.internal("audio/effects/ship-stop.wav"));
+		shipLoop = Gdx.audio.newSound(Gdx.files.internal("audio/effects/shiploop.wav"));
+	}
+
+	public Sound getSoundEffect(String sound) {
+		Sound s = null;
+		switch (sound) {
+
+		case "explosion":
+			s = explosion;
+			break;
+		case "shipstart":
+			s = shipStart;
+			break;
+		case "shipstop":
+			s = shipStop;
+			break;
+		case "shiploop":
+			s = shipLoop;
+			break;
+
+		}
+		return s;
+
 	}
 
 	public void loadShipTiles() {
@@ -61,6 +93,24 @@ public class LAssetManager extends AssetManager {
 		zoneOpenW = shipTiles[1][2];
 		room = shipTiles[0][3];
 
+		ionThrusterSS = get("textures/shiptiles/ionthrusterSS.png");
+		thrusterTiles = TextureRegion.split(ionThrusterSS, ionThrusterSS.getWidth() / 2, ionThrusterSS.getHeight() / 3);
+
+		thrusterOff = thrusterTiles[0][0];
+		thruster1 = thrusterTiles[1][0];
+		thruster2 = thrusterTiles[0][1];
+		thruster3 = thrusterTiles[1][1];
+
+		thrusterAnimation = new Animation<TextureRegion>(5, new TextureRegion[] { thruster1, thruster2, thruster3 });
+		// CHARACTER_ANIMATION_SPEED, new TextureRegion[] { regions[1][1],
+		// regions[1][2], regions[1][3], regions[1][4]
+
+		// thruster4 = thrusterTiles[0][2];
+
+	}
+
+	public Animation<TextureRegion> getThursterAnimation() {
+		return thrusterAnimation;
 	}
 
 	public TextureRegion debug(char id) {
@@ -158,6 +208,9 @@ public class LAssetManager extends AssetManager {
 			break;
 		case 's':
 			x = wallDiagNW;
+			break;
+		case 'l':
+			x = thrusterOff;
 			break;
 		default:
 			System.out.println("UNRECONGIZED PARAM = " + Character.toString(id));

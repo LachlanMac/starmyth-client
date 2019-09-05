@@ -18,6 +18,7 @@ import com.pineconeindustries.client.data.LocalPlayerData;
 import com.pineconeindustries.client.galaxy.Sector;
 import com.pineconeindustries.client.manager.InputManager;
 import com.pineconeindustries.client.manager.LAssetManager;
+import com.pineconeindustries.client.manager.LightingManager;
 import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.Connection;
 import com.pineconeindustries.client.tests.Test;
@@ -26,7 +27,6 @@ import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.data.Global.RUN_TYPE;
 import com.pineconeindustries.shared.objects.Player;
-
 import box2dLight.RayHandler;
 
 public class ClientApp extends ApplicationAdapter {
@@ -47,14 +47,11 @@ public class ClientApp extends ApplicationAdapter {
 
 	// END TEST
 
-	RayHandler rh;
-	World world;
-
-	// NEW
-
 	public ClientApp(LocalPlayerData data) {
+
 		Global.runType = RUN_TYPE.client;
 		this.data = data;
+
 	}
 
 	public void loadSettings() {
@@ -65,7 +62,6 @@ public class ClientApp extends ApplicationAdapter {
 	public void create() {
 
 		Box2D.init();
-		world = new World(new Vector2(0, 0), true);
 
 		batch = new SpriteBatch();
 
@@ -80,6 +76,7 @@ public class ClientApp extends ApplicationAdapter {
 
 		GameData.getInstance().registerAssetManager(new LAssetManager());
 		GameData.getInstance().loadAssets();
+		
 		Texture temp = GameData.getInstance().Assets().get("textures/galaxybg1.png");
 		bg = new TextureRegion(temp);
 		Player player = new Player(data.getName(), new Vector2(data.getX(), data.getY()), 1, data.getId(),
@@ -95,8 +92,7 @@ public class ClientApp extends ApplicationAdapter {
 		player.enableTickRender();
 
 		// TESTLIGHTING
-		rh = new RayHandler(world);
-		rh.setAmbientLight(0.01f, 0.01f, 0.01f, 0.6f);
+
 		// PointLight p1 = new PointLight(rh, 10, new Color(0.1f, 0, 0, 1), 2000, 4000,
 		// 750);
 		// p1.setSoft(true);
@@ -141,17 +137,14 @@ public class ClientApp extends ApplicationAdapter {
 		ui.render();
 		InputManager.updateMouse(LogicController.getInstance().getPlayerCamera());
 
-		// game.render(batch, shapeBatch);
+		LightingManager.getInstance().render();
 
-		rh.setCombinedMatrix(LogicController.getInstance().getPlayerCamera());
-		rh.updateAndRender();
-		world.step(1 / 60f, 6, 2);
 	}
 
 	public void dispose() {
 		batch.dispose();
 		ui.dispose();
-		rh.dispose();
+		LightingManager.getInstance().dispose();
 		shapeBatch.dispose();
 
 	}

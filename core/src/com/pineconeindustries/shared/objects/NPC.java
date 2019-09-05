@@ -2,13 +2,22 @@ package com.pineconeindustries.shared.objects;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+
+import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaFunction;
+import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.lib.jse.CoerceJavaToLua;
+import org.luaj.vm2.lib.jse.JsePlatform;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.server.ai.FiniteStateMachine;
 import com.pineconeindustries.server.ai.pathfinding.AStarPath;
 import com.pineconeindustries.server.ai.pathfinding.PathNode;
+import com.pineconeindustries.server.galaxy.Galaxy;
 import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.packets.types.Packets;
 import com.pineconeindustries.server.net.packets.types.UDPPacket;
@@ -27,6 +36,12 @@ public class NPC extends Person {
 	private AStarPath pathfinder;
 	private Structure structure;
 	private LinkedList<PathNode> path;
+	private Globals local;
+	private LuaValue script;
+	private boolean hasScript = false;
+
+	private LuaFunction getName, getLocation, getDestination;
+	private LuaFunction _ON_DEATH, _ON_HIT, _ON_NEW_PATH;
 
 	// CLIENT CONSTRUCTOR
 	public NPC(String name, Vector2 loc, int factionID, int structureID, int id, int sectorID, int layer) {
@@ -38,26 +53,23 @@ public class NPC extends Person {
 		super(name, loc, factionID, structureID, id, sector.getPort(), layer);
 
 		if (Global.isServer()) {
+			registerScript();
 			this.sector = sector;
 			this.structure = sector.getStructureByID(structureID);
 			fsm = new FiniteStateMachine(this);
 			speed = Units.NPC_SPEED;
+
 		}
 	}
 
 	@Override
-	public void render(Batch b) {
+	public void render(SpriteBatch b) {
 
 		state += Gdx.graphics.getDeltaTime();
 
-		if (spin == true) {
-			velocity = 999;
-		}
-
 		currentFrame = animSet.getAnimation(lastDirectionFaced, velocity);
 
-		if (velocity == 999) {
-
+		if (velocity == 999 || spin == true) {
 			TextureRegion t = currentFrame.getKeyFrame(state, true);
 
 			b.draw(currentFrame.getKeyFrame(interval, true), renderLoc.x, renderLoc.y, t.getRegionWidth() / 2,
@@ -175,8 +187,57 @@ public class NPC extends Person {
 
 	}
 
-	public void findRandomPath() {
+	public void registerScript() {
+		local = JsePlatform.standardGlobals();
+		hasScript = true;
+		LuaValue instance = CoerceJavaToLua.coerce(this);
+		local.set("npc", instance);
+		try {
+			local.get("dofile").call("lua/npc_" + getID() + ".lua");
 
+		} catch (Exception e) {
+
+		}
+
+		registerScriptFunctions();
+	}
+
+	public void registerScriptFunctions() {
+		try {
+			_ON_DEATH = (LuaFunction) local.get("_ON_DEATH");
+			_ON_HIT = (LuaFunction) local.get("_ON_HIT");
+			_ON_NEW_PATH = (LuaFunction) local.get("_ON_NEW_PATH");
+
+		} catch (Exception e) {
+
+		}
+
+	}
+
+	public void die() {
+		if (_ON_DEATH == null)
+			return;
+		LuaValue returned = _ON_DEATH.call();
+	}
+
+	public void test() {
+
+		try {
+			LuaValue getName = local.get("getName");
+			LuaValue returned = getName.call();
+			System.out.println(returned.tojstring());
+			local.set("xLoc", 4);
+			LuaFunction getX = (LuaFunction) local.get("getX");
+			LuaValue returned2 = getX.call();
+			System.out.println(returned2.tojstring());
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+	}
+
+	public void findRandomPath() {
+		die();
 		PathNode end = structure.getLayerByNumber(layer).getRandomEndNode();
 		pathfinder = new AStarPath(structure.getGridWidth(), structure.getGridHeight(),
 				new PathNode((int) (getLoc().x / Units.GRID_INTERVAL), (int) (getLoc().y / Units.GRID_INTERVAL)), end);

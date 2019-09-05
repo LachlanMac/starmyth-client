@@ -7,9 +7,11 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.pineconeindustries.client.cameras.CameraController;
 import com.pineconeindustries.client.chat.Chatbox;
 import com.pineconeindustries.client.manager.InputManager;
 import com.pineconeindustries.client.manager.InputState;
@@ -44,14 +46,13 @@ public class Player extends Person {
 	}
 
 	@Override
-	public void render(Batch b) {
+	public void render(SpriteBatch b) {
 
 		state += Gdx.graphics.getDeltaTime();
 
 		currentFrame = animSet.getAnimation(lastDirectionFaced, velocity);
 
 		if (velocity == 999) {
-
 			TextureRegion t = currentFrame.getKeyFrame(state, true);
 
 			b.draw(currentFrame.getKeyFrame(state, true), renderLoc.x, renderLoc.y, t.getRegionWidth() / 2,
@@ -76,11 +77,6 @@ public class Player extends Person {
 				velocity = 0;
 		}
 
-		for (Projectile project : projectiles) {
-			project.render(b);
-
-		}
-
 	}
 
 	@Override
@@ -91,11 +87,6 @@ public class Player extends Person {
 	public void update() {
 		InputState.update();
 		hover();
-
-		for (Projectile project : projectiles) {
-			project.update();
-
-		}
 
 		if (!chatbox.isTyping())
 			move();
@@ -115,11 +106,13 @@ public class Player extends Person {
 
 		String currentState = InputState.getState();
 
-		if (!lastState.equals(currentState)) {
+		if (InputState.isPressed(InputState.PLAYER_BUTTON_3)) {
+			LogicController.getInstance().getCameraController().setRumble(2, 0.8f);
+		}
 
+		if (!lastState.equals(currentState)) {
 			LogicController.getInstance().sendUDP(PacketFactory.makeInputChangePacket(currentState));
 			lastState = currentState;
-
 		}
 
 	}

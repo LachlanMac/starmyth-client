@@ -48,10 +48,11 @@ public class Sector {
 			s.render(b);
 
 		Collections.sort(renderList);
-		for (Entity e : renderList) {
 
+		for (Entity e : renderList) {
 			if (e.getLayer() == player.getLayer())
 				e.render(b);
+
 		}
 
 	}
@@ -127,12 +128,14 @@ public class Sector {
 		for (PlayerMP p : players) {
 			boolean playerExists = false;
 			for (Integer i : ids) {
+
 				if (p.getID() == i) {
 					playerExists = true;
 				}
 			}
 
 			if (!playerExists) {
+
 				removePlayer(getPlayerByID(p.getID()));
 			}
 		}
@@ -174,7 +177,6 @@ public class Sector {
 	}
 
 	public void addNPC(NPC npc) {
-		System.out.println("Adding " + npc.getName());
 		npcs.add(npc);
 		renderList.add(npc);
 	}
@@ -199,13 +201,11 @@ public class Sector {
 	public void addPlayer(PlayerMP player) {
 		players.add(player);
 		renderList.add(player);
-
 	}
 
 	public void removePlayer(PlayerMP player) {
 		players.remove(player);
 		renderList.remove(player);
-
 	}
 
 	public void loadSector() {

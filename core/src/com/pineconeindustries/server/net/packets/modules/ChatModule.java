@@ -23,6 +23,34 @@ public class ChatModule {
 
 	}
 
+	public static void rxChatCommandPacket(String data, Sector sector) {
+
+		String[] split = data.split("=");
+		int originPlayerID = Integer.parseInt(split[0]);
+		PlayerConnection pc = Galaxy.getInstance().getPlayerConnectionByID(originPlayerID);
+
+		String[] msg = split[1].split("-");
+
+		switch (msg[0]) {
+		case "!shiphit":
+			pc.getSector().getPacketWriter()
+					.queueToAll(StructureEventsModule.getShipHitPacket(pc.getPlayerMP().getStructureID(), 5, 4, 5, 1));
+			break;
+		case "!shipstart":
+			pc.getSector().getPacketWriter()
+					.queueToAll(StructureEventsModule.getShipStartPacket(pc.getPlayerMP().getStructureID(), 5));
+			break;
+		case "!shipstop":
+			pc.getSector().getPacketWriter()
+					.queueToAll(StructureEventsModule.getShipStopPacket(pc.getPlayerMP().getStructureID(), 5));
+			break;
+		default:
+			break;
+
+		}
+
+	}
+
 	public static void rxChatTellPacket(String data, Sector sector) {
 
 	}

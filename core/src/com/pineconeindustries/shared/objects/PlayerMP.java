@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -20,8 +21,9 @@ public class PlayerMP extends Person {
 
 	int dcCount = 0;
 	boolean setToDisconnect = false;
-	private boolean spin = true;
+	private boolean spin = false;
 
+	private boolean inputChanged = false;
 	private boolean[] inputState = new boolean[10];
 
 	Sector serverSector;
@@ -36,8 +38,13 @@ public class PlayerMP extends Person {
 
 	}
 
+	public boolean[] getInputState() {
+		return inputState;
+	}
+
 	public void setInputState(boolean[] inputState) {
 		this.inputState = inputState;
+		inputChanged = true;
 	}
 
 	public boolean isSetToDisconnect() {
@@ -45,18 +52,27 @@ public class PlayerMP extends Person {
 	}
 
 	@Override
-	public void render(Batch b) {
+	public void render(SpriteBatch b) {
+		state += Gdx.graphics.getDeltaTime();
+
+		currentFrame = animSet.getAnimation(lastDirectionFaced, velocity);
+
+		b.draw(currentFrame.getKeyFrame(state, true), renderLoc.x, renderLoc.y);
+
+	}
+
+	public void renderold(SpriteBatch b) {
 
 		state += Gdx.graphics.getDeltaTime();
 
 		currentFrame = animSet.getAnimation(lastDirectionFaced, velocity);
 
 		if (velocity == 999 || spin == true) {
-
 			TextureRegion t = currentFrame.getKeyFrame(state, true);
 
-			b.draw(currentFrame.getKeyFrame(interval, true), renderLoc.x, renderLoc.y, t.getRegionWidth() / 2,
-					t.getRegionHeight() / 2, t.getRegionWidth(), t.getRegionHeight(), 1, 1, 3f + (state * 100), false);
+			b.draw(currentFrame.getKeyFrame(state, true), renderLoc.x, renderLoc.y, t.getRegionWidth() / 2,
+					t.getRegionHeight() / 2, t.getRegionWidth(), t.getRegionHeight(), 1, 1,
+					3f + (state * Units.SPIN_SPEED), false);
 
 		} else {
 			b.draw(currentFrame.getKeyFrame(state, true), renderLoc.x, renderLoc.y);
@@ -67,16 +83,21 @@ public class PlayerMP extends Person {
 		} else {
 
 			Vector2 position = renderLoc;
-			renderLoc.x += (getLoc().x - position.x) * Units.PLAYER_LERP * Gdx.graphics.getDeltaTime();
-			renderLoc.y += (getLoc().y - position.y) * Units.PLAYER_LERP * Gdx.graphics.getDeltaTime();
+			renderLoc.x += (getLoc().x - position.x) * Units.NPC_LERP * Gdx.graphics.getDeltaTime();
+			renderLoc.y += (getLoc().y - position.y) * Units.NPC_LERP * Gdx.graphics.getDeltaTime();
 			framesSinceLastMove++;
 		}
 
-		if (getFramesSinceLastMove() > 20) {
+		if (getFramesSinceLastMove() > 5) {
 			if (velocity != 999)
-
 				velocity = 0;
 		}
+
+	}
+
+	public void setLocation(Vector2 loc) {
+		this.loc = loc;
+		this.renderLoc = loc;
 
 	}
 
@@ -88,21 +109,38 @@ public class PlayerMP extends Person {
 			setToDisconnect = true;
 		}
 
-		if (Global.isClient())
-			return;
+		if (Global.isServer()) {
 
-		Vector2 dir = VectorMath.getDirectionByInput(inputState);
+			Vector2 dir = VectorMath.getDirectionByInput(inputState).nor();
 
-		float x = dir.x;
-		float y = dir.y;
+			float x = dir.x;
+			float y = dir.y;
 
-		Vector2 adjustedMov = new Vector2(x * Units.PLAYER_MOVE_SPEED, y * Units.PLAYER_MOVE_SPEED);
-		float velocity = (Math.abs(adjustedMov.x) + Math.abs(adjustedMov.y)) / 2;
+			if (x == 0 && y == 0) {
+				return;
+			}
 
-		setLastDirectionFaced(new Vector2(adjustedMov.x, adjustedMov.y));
-		loc.add(new Vector2(adjustedMov.x, adjustedMov.y));
-		serverSector.getPacketWriter()
-				.queueToAll(MoveModule.getMovePacket(getID(), getLoc(), dir, velocity, getLayer()));
+			Vector2 adjustedMov = new Vector2(x * Units.PLAYER_MOVE_SPEED, y * Units.PLAYER_MOVE_SPEED);
+			float velocity = (Math.abs(adjustedMov.x) + Math.abs(adjustedMov.y)) / 2;
+			setLastDirectionFaced(new Vector2(adjustedMov.x, adjustedMov.y));
+
+			Vector2 attemptedMov = new Vector2(loc);
+			attemptedMov.add(new Vector2(adjustedMov.x, adjustedMov.y));
+
+			// check for collision
+
+			boolean canMove = true;
+			for (Tile tile : getBorderTiles()) {
+				if (getProposedBounds(attemptedMov).overlaps(tile.getBounds()) && tile.isCollidable())
+					canMove = false;
+			}
+			if (canMove) {
+				loc.add(new Vector2(adjustedMov.x, adjustedMov.y));
+			}
+			serverSector.getPacketWriter()
+					.queueToAll(MoveModule.getMovePacket(getID(), getLoc(), dir, velocity, getLayer()));
+			inputChanged = false;
+		}
 
 	}
 

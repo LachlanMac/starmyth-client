@@ -56,6 +56,7 @@ public class MoveModule {
 			inputState[9] = true;
 		}
 
+		// if input stte changed....
 		player.setInputState(inputState);
 
 	}
@@ -72,8 +73,6 @@ public class MoveModule {
 			if (player == null) {
 				return;
 			}
-			
-			
 
 			Vector2 adjustedMov = new Vector2(x * Units.PLAYER_MOVE_SPEED, y * Units.PLAYER_MOVE_SPEED);
 			float velocity = (Math.abs(adjustedMov.x) + Math.abs(adjustedMov.y)) / 2;

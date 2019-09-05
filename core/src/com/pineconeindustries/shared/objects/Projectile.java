@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.shared.data.GameData;
@@ -33,7 +34,7 @@ public class Projectile extends GameObject {
 	}
 
 	@Override
-	public void render(Batch b) {
+	public void render(SpriteBatch b) {
 
 		b.draw(pSprite, loc.x, loc.y, 32, 32, plasma.getWidth(), plasma.getHeight(), 1, 1, 3f, false);
 

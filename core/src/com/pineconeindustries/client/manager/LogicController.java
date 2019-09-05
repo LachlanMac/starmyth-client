@@ -15,6 +15,7 @@ import com.pineconeindustries.shared.objects.Player;
 
 public class LogicController {
 
+
 	private static LogicController instance;
 
 	private Sector sector;

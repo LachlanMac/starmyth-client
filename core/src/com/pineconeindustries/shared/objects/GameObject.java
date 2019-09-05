@@ -1,6 +1,7 @@
 package com.pineconeindustries.shared.objects;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
@@ -32,7 +33,7 @@ public abstract class GameObject {
 
 	public abstract void update();
 
-	public abstract void render(Batch b);
+	public abstract void render(SpriteBatch b);
 
 	public abstract void debugRender(ShapeRenderer debugRenderer);
 

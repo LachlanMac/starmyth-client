@@ -1,6 +1,7 @@
 package com.pineconeindustries.shared.objects;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.shared.data.GameData;
@@ -19,7 +20,7 @@ public class GroundObject extends GameObject {
 	}
 
 	@Override
-	public void render(Batch b) {
+	public void render(SpriteBatch b) {
 		// TODO Auto-generated method stub
 
 	}

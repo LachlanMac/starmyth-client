@@ -15,6 +15,7 @@ import com.pineconeindustries.shared.log.Log;
 import com.pineconeindustries.shared.objects.Elevator;
 import com.pineconeindustries.shared.objects.NPC;
 import com.pineconeindustries.shared.objects.PlayerMP;
+import com.pineconeindustries.shared.objects.Ship;
 import com.pineconeindustries.shared.objects.Station;
 import com.pineconeindustries.shared.objects.Structure;
 
@@ -92,6 +93,12 @@ public class StructureDAO {
 					s.loadElevators(loadElevatorsByStructure(s));
 					structures.add(s);
 					Log.dbLog("Adding station : [" + structureID + "]" + name);
+				}
+				if (type == 2) {
+					Ship s = new Ship(name, structureID, id, factionID, localX, localY, globalX, globalY, layers);
+					s.loadElevators(loadElevatorsByStructure(s));
+					structures.add(s);
+					Log.dbLog("Adding Ship : [" + structureID + "]" + name);
 				}
 
 			}

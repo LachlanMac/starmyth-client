@@ -298,6 +298,11 @@ public class Sector {
 		return players;
 	}
 
+	@Override
+	public String toString() {
+		return "Sector : " + name + " [" + globalX + ", " + globalY + "]  on Port: " + port;
+	}
+
 	public PlayerConnection getPlayerConnectionByID(int id) {
 
 		PlayerConnection playerConnection = null;

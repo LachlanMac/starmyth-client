@@ -9,6 +9,7 @@ public class Units {
 	public static final float SPIN_SPEED = 100;
 	public static final float ENTITY_SPEED = 8;
 	public static final float NPC_SPEED = 60;
+	
 	public static final int REGION_SIZE = TILE_SIZE * STRUCTURE_SIZE;
 	public static final float PLAYER_MOVE_SPEED = 10;
 	public static final int GRID_SQUARES_PER_TILE = 4;

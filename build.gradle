@@ -52,6 +52,8 @@ project(":desktop") {
         compile "com.badlogicgames.gdx:gdx-controllers-platform:$gdxVersion:natives-desktop"
         compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
         implementation 'com.google.code.gson:gson:2.8.5'
+        compile group: 'org.luaj', name: 'luaj-jse', version: '3.0-beta2'
+        
         
     }
 }
@@ -69,6 +71,8 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
         compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
         implementation 'com.google.code.gson:gson:2.8.5'
+        compile group: 'org.luaj', name: 'luaj-jse', version: '3.0-beta2'
+        
         
     }
 }

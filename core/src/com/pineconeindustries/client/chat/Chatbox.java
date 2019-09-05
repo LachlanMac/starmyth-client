@@ -15,6 +15,7 @@ import com.pineconeindustries.client.manager.InputManager;
 import com.pineconeindustries.client.manager.InputState;
 import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.packets.PacketFactory;
+import com.pineconeindustries.shared.log.Log;
 
 public class Chatbox extends Table {
 
@@ -97,8 +98,8 @@ public class Chatbox extends Table {
 	}
 
 	public void sendAdminCmd(String msg) {
-
-		// lnet.sendAdminCmd(msg);
+		Log.print("Sending Admin Command");
+		LogicController.getInstance().getConnection().sendTCP(PacketFactory.makeChatCommandPacket(msg));
 
 	}
 
@@ -114,7 +115,7 @@ public class Chatbox extends Table {
 
 		Label label = new Label(msg, skin);
 		label.setAlignment(Align.left);
-		label.setWrap(true);	
+		label.setWrap(true);
 		chatArea.add(label).width(getChatboxWidth());
 
 		chatQueue.addLast(label);

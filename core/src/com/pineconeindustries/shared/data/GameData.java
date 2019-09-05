@@ -35,6 +35,7 @@ public class GameData {
 		Assets().loadTextures();
 		Assets().finishLoading();
 		Assets().loadAnimations();
+		Assets().loadSoundEffects();
 		Assets().finishLoading();
 		Assets().update();
 		Assets().loadShipTiles();

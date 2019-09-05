@@ -29,9 +29,9 @@ public class ClientLauncher {
 		
 	
 		
-		new LoginClient();
+		//new LoginClient();
 		
-		//startTestClient();
+		startTestClient();
 
 	}
 	

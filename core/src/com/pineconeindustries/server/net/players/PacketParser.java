@@ -71,6 +71,9 @@ public class PacketParser {
 		case Packets.CHAT_TELL_PACKET:
 			ChatModule.rxChatTellPacket(packet.getData(), sector);
 			break;
+		case Packets.CHAT_COMMAND_PACKET:
+			ChatModule.rxChatCommandPacket(packet.getData(), sector);
+			break;
 		case Packets.CHAT_INTERCOM_PACKET:
 			ChatModule.rxChatIntercomPacket(packet.getData(), sector);
 			break;
