@@ -34,14 +34,13 @@ public class PacketWriter extends Thread {
 
 	public void run() {
 
-		try {
-			Thread.sleep(10);
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 		while (isRunning) {
-
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			while (!udpSendQueue.isEmpty()) {
 				try {
 					DatagramPacket toSend = udpSendQueue.poll();

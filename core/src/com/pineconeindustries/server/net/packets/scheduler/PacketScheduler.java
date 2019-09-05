@@ -26,7 +26,12 @@ public class PacketScheduler extends Thread {
 	public void run() {
 
 		while (true) {
-
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			try {
 
 				for (CustomPacket p : packets) {
