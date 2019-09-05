@@ -65,7 +65,12 @@ public class PlayerConnection extends Thread {
 		while (running) {
 
 			if (connected) {
-
+				try {
+					Thread.sleep(5);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				timeout++;
 				if (timeout >= MAX_TIMEOUT) {
 					failures++;
