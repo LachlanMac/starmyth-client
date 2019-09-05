@@ -28,7 +28,12 @@ public class PlayerConnectionListener extends Thread {
 		while (!shutdown) {
 
 			if (isRunning) {
-
+				try {
+					Thread.sleep(5);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				try {
 
 					Socket playerSocket = socket.accept();
