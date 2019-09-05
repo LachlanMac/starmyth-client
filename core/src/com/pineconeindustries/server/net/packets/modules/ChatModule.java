@@ -24,7 +24,7 @@ public class ChatModule {
 	}
 
 	public static void rxChatCommandPacket(String data, Sector sector) {
-
+		System.out.println("GOT CHAT COMMAND : " + data);
 		String[] split = data.split("=");
 		int originPlayerID = Integer.parseInt(split[0]);
 		PlayerConnection pc = Galaxy.getInstance().getPlayerConnectionByID(originPlayerID);

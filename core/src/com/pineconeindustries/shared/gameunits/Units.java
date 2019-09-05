@@ -11,7 +11,7 @@ public class Units {
 	public static final float NPC_SPEED = 60;
 	
 	public static final int REGION_SIZE = TILE_SIZE * STRUCTURE_SIZE;
-	public static final float PLAYER_MOVE_SPEED = 3;
+	public static final float PLAYER_MOVE_SPEED = 8;
 	public static final int GRID_SQUARES_PER_TILE = 4;
 	public static final int GRID_INTERVAL = TILE_SIZE / GRID_SQUARES_PER_TILE;
 	public static final int GRID_SIZE = GRID_SQUARES_PER_TILE * STRUCTURE_SIZE;

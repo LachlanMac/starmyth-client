@@ -5,6 +5,7 @@ import java.awt.GraphicsEnvironment;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.pineconeindustries.client.desktop.headless.HeadlessApplication;
+import com.pineconeindustries.client.desktop.headless.HeadlessApplicationConfiguration;
 import com.pineconeindustries.server.ServerApp;
 
 public class ServerLauncher {
@@ -19,20 +20,22 @@ public class ServerLauncher {
 				HEADLESS = true;
 			}
 		}
-
+		HEADLESS = true;
 		ServerLauncher launcher = new ServerLauncher();
 		launcher.registerFonts();
 
-		if (HEADLESS)
-			new HeadlessApplication(new ServerApp(HEADLESS));
-		else {
+		if (HEADLESS) {
+			HeadlessApplicationConfiguration headlessConfig = new HeadlessApplicationConfiguration();
+			headlessConfig.renderInterval = 0.04f;
+			new HeadlessApplication(new ServerApp(HEADLESS), headlessConfig);
+		} else {
 			LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 			config.vSyncEnabled = true;
 			config.width = 200;
 			config.height = 100;
 
-			config.foregroundFPS = 20;
-			config.backgroundFPS = 20;
+			config.foregroundFPS = 60;
+			config.backgroundFPS = 60;
 			config.samples = 4;
 			// config.fullscreen = true;
 			new LwjglApplication(new ServerApp(HEADLESS), config);

@@ -11,8 +11,8 @@ public class Global {
 
 	public static Globals global = JsePlatform.standardGlobals();
 
-	public static String LOGIN_SERVER_IP = remoteHost;
-	public static String GAME_SERVER_IP = remoteHost;
+	public static String LOGIN_SERVER_IP = localHost;
+	public static String GAME_SERVER_IP = localHost;
 
 	public static int SERVER_UPDATE_INTERVAL = 5;
 
