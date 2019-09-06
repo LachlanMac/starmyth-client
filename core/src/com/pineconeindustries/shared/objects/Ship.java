@@ -9,8 +9,8 @@ public class Ship extends Structure {
 	private int renderLayer = 1;
 
 	public Ship(String structureName, int structureID, int sector, int factionID, int renderX, int renderY,
-			float globalX, float globalY, int layers) {
-		super(structureName, structureID, sector, factionID, renderX, renderY, globalX, globalY, layers);
+			float globalX, float globalY, int layers, STRUCTURE_STATE currentState) {
+		super(structureName, structureID, sector, factionID, renderX, renderY, globalX, globalY, layers, currentState);
 		this.type = 2;
 
 		this.render = true;

@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.packets.custom.CustomTCPPacket;
 import com.pineconeindustries.server.database.Database;
+import com.pineconeindustries.server.net.packets.modules.ScheduleModule;
 import com.pineconeindustries.server.net.packets.scheduler.PacketScheduler;
 import com.pineconeindustries.server.net.packets.types.Packets;
 import com.pineconeindustries.server.net.players.PacketListener;
@@ -38,7 +39,6 @@ public class Sector {
 	PacketListener packetListener;
 	PacketWriter packetWriter;
 	PacketParser packetParser;
-
 	PacketScheduler scheduler;
 
 	// Class to send all players UDP packets and TCP packets
@@ -56,7 +56,6 @@ public class Sector {
 		packetListener = new PacketListener(this);
 		packetWriter = new PacketWriter(this);
 		packetParser = new PacketParser(this);
-
 		scheduler = new PacketScheduler(200, this);
 		registerScheduledFunctions();
 		scheduler.start();
@@ -67,92 +66,14 @@ public class Sector {
 
 	public void registerScheduledFunctions() {
 
-		CustomTCPPacket playerList = new CustomTCPPacket(Packets.PLAYER_LIST_PACKET, "TEST DATA") {
-			@Override
-			public void update(Sector sector) {
-
-				StringBuilder sb = new StringBuilder();
-
-				for (PlayerConnection conn : players) {
-					String xLoc = Integer.toString((int) conn.getPlayerMP().getLoc().x);
-					String yLoc = Integer.toString((int) conn.getPlayerMP().getLoc().y);
-					sb.append(conn.getPlayerID() + "#" + conn.getPlayerMP().getName() + "#"
-							+ conn.getPlayerMP().getFactionID() + "#" + conn.getPlayerMP().getSectorID() + "#"
-							+ conn.getPlayerMP().getStructureID() + "#" + xLoc + "#" + yLoc + "#"
-							+ conn.getPlayerMP().getLayer() + "=");
-				}
-
-				String data = sb.toString();
-
-				if (data.length() > 2) {
-					this.data = data.substring(0, data.length() - 1);
-				} else {
-					this.data = "";
-				}
-
-			}
-		};
-
-		CustomTCPPacket npcList = new CustomTCPPacket(Packets.NPC_LIST_PACKET, "TEST DATA") {
-			@Override
-			public void update(Sector sector) {
-
-				StringBuilder sb = new StringBuilder();
-
-				for (NPC npc : npcs) {
-					String xLoc = Integer.toString((int) npc.getLoc().x);
-					String yLoc = Integer.toString((int) npc.getLoc().y);
-					sb.append(npc.getID() + "#" + npc.getName() + "#" + npc.getFactionID() + "#" + npc.getSectorID()
-							+ "#" + npc.getStructureID() + "#" + xLoc + "#" + yLoc + "#" + npc.getLayer() + "=");
-				}
-
-				String data = sb.toString();
-
-				if (data.length() > 2) {
-					this.data = data.substring(0, data.length() - 1);
-				} else {
-					this.data = "";
-				}
-
-			}
-		};
-
-		// structures.add(new Station(name, structureID, id, factionID, localX, localY,
-		// globalX, globalY, 64, 64, layers));
-		CustomTCPPacket structureList = new CustomTCPPacket(Packets.STRUCTURE_LIST_PACKET, "TEST DATA") {
-			@Override
-			public void update(Sector sector) {
-
-				StringBuilder sb = new StringBuilder();
-
-				for (Structure s : structures) {
-
-					sb.append(s.getStructureID() + "#" + s.getStructureName() + "#" + sector.getPort() + "#"
-							+ s.getFactionID() + "#" + s.getLayers() + "#" + s.getRenderX() + "#" + s.getRenderY() + "#"
-							+ s.getType() + "=");
-				}
-
-				String data = sb.toString();
-
-				if (data.length() > 2) {
-					this.data = data.substring(0, data.length() - 1);
-				} else {
-					this.data = "";
-				}
-
-			}
-		};
-
-		scheduler.registerPacket(playerList);
-		scheduler.registerPacket(npcList);
-		scheduler.registerPacket(structureList);
+		scheduler.registerPacket(ScheduleModule.makeNPCListScheduler(this));
+		scheduler.registerPacket(ScheduleModule.makePlayerListScheduler(this));
+		scheduler.registerPacket(ScheduleModule.makeStructureListScheduler(this));
 
 	}
 
 	public void addNPCMovementData(String data) {
-
 		npcMoveList.add(data);
-
 	}
 
 	public void updateAndRender(boolean val) {
@@ -295,27 +216,6 @@ public class Sector {
 		return port;
 	}
 
-	public PacketListener getPacketListener() {
-		return packetListener;
-	}
-
-	public PacketWriter getPacketWriter() {
-		return packetWriter;
-	}
-
-	public ArrayBlockingQueue<NPC> getNPCs() {
-		return npcs;
-	}
-
-	public ArrayBlockingQueue<PlayerConnection> getPlayers() {
-		return players;
-	}
-
-	@Override
-	public String toString() {
-		return "Sector : " + name + " [" + globalX + ", " + globalY + "]  on Port: " + port;
-	}
-
 	public PlayerConnection getPlayerConnectionByID(int id) {
 
 		PlayerConnection playerConnection = null;
@@ -360,6 +260,31 @@ public class Sector {
 
 	public PacketParser getPacketParser() {
 		return packetParser;
+	}
+
+	public PacketListener getPacketListener() {
+		return packetListener;
+	}
+
+	public PacketWriter getPacketWriter() {
+		return packetWriter;
+	}
+
+	public ArrayBlockingQueue<Structure> getStructures() {
+		return structures;
+	}
+
+	public ArrayBlockingQueue<NPC> getNPCs() {
+		return npcs;
+	}
+
+	public ArrayBlockingQueue<PlayerConnection> getPlayers() {
+		return players;
+	}
+
+	@Override
+	public String toString() {
+		return "Sector : " + name + " [" + globalX + ", " + globalY + "]  on Port: " + port;
 	}
 
 }

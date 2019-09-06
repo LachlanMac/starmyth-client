@@ -17,14 +17,15 @@ import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.files.Files;
 import com.pineconeindustries.shared.log.Log;
+import com.pineconeindustries.shared.objects.Structure.STRUCTURE_STATE;
 
 public class Station extends Structure {
 
 	private int renderLayer = 1;
 
 	public Station(String structureName, int structureID, int sector, int factionID, int renderX, int renderY,
-			float globalX, float globalY, int layers) {
-		super(structureName, structureID, sector, factionID, renderX, renderY, globalX, globalY, layers);
+			float globalX, float globalY, int layers, STRUCTURE_STATE currentState) {
+		super(structureName, structureID, sector, factionID, renderX, renderY, globalX, globalY, layers, currentState);
 		this.type = 1;
 		if (structureID == 1001) {
 			render = true;

@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.pineconeindustries.client.lighting.DarkenEffect;
+import com.pineconeindustries.client.manager.LightingManager;
 import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.manager.SoundEffectManager;
 import com.pineconeindustries.client.networking.packets.PacketFactory;
@@ -22,6 +24,9 @@ import com.pineconeindustries.shared.gameunits.Units;
 import com.pineconeindustries.shared.log.Log;
 
 public abstract class Structure {
+	public enum STRUCTURE_STATE {
+		running, off, emergency, none
+	};
 
 	public final static int STRUCTURE_SIZE = 64;
 	protected int width, height, structureID, sectorID, factionID, renderX, renderY, layers, type;
@@ -29,6 +34,7 @@ public abstract class Structure {
 	private String data;
 	private boolean emergency = false;
 	private boolean enginesOn = false;
+	protected STRUCTURE_STATE currentState = STRUCTURE_STATE.none;
 	protected long checksum;
 	protected String structureName, packetData;
 	protected boolean render = false, gotElevatorData = false;
@@ -42,7 +48,7 @@ public abstract class Structure {
 	protected Sound engine = GameData.getInstance().Assets().getSoundEffect("shiploop");
 
 	public Structure(String structureName, int structureID, int sectorID, int factionID, int renderX, int renderY,
-			float globalX, float globalY, int layers) {
+			float globalX, float globalY, int layers, STRUCTURE_STATE currentState) {
 		this.globalX = globalX;
 		this.globalY = globalY;
 		this.width = Units.STRUCTURE_SIZE;
@@ -63,6 +69,7 @@ public abstract class Structure {
 		if (Global.isClient()) {
 			requestData();
 		}
+		setState(currentState);
 
 	}
 
@@ -195,12 +202,42 @@ public abstract class Structure {
 		return elevators;
 	}
 
+	public void setState(STRUCTURE_STATE state) {
+
+		if (state == currentState)
+			return;
+
+		this.currentState = state;
+
+		if (Global.isClient()) {
+
+			switch (currentState) {
+
+			case running:
+				engine.stop();
+				long id1 = engine.play(1.0f);
+				engine.setLooping(id1, true);
+				break;
+			case off:
+				engine.stop();
+				long id2 = engine.play(0.4f);
+				engine.setLooping(id2, false);
+				break;
+			case emergency:
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
 	public void registerHitEvent(float strength, int tileX, int tileY, int layer) {
 		if (LogicController.getInstance().getPlayer().getStructureID() == this.structureID) {
 
 			SoundEffectManager.getInstance()
 					.playSoundEffect(GameData.getInstance().Assets().getSoundEffect("explosion"), 0.5f);
 			LogicController.getInstance().getCameraController().setRumble(strength, 2);
+			new DarkenEffect(0.2f, 5);
 		}
 	}
 
@@ -209,28 +246,55 @@ public abstract class Structure {
 			SoundEffectManager.getInstance()
 					.playSoundEffect(GameData.getInstance().Assets().getSoundEffect("shipstart"), 0.05f);
 			LogicController.getInstance().getCameraController().setRumble(1, 25);
-			enginesOn = true;
-			long id = engine.play(2.0f);
-			engine.setLooping(id, true);
 
 		}
 	}
 
 	public void registerShipStopEvent(float strength) {
+		System.out.println("Registering ship stop event");
 		if (LogicController.getInstance().getPlayer().getStructureID() == this.structureID) {
 			LogicController.getInstance().getCameraController().setRumble(1, 6);
+
 			SoundEffectManager.getInstance().playSoundEffect(GameData.getInstance().Assets().getSoundEffect("shipstop"),
 					0.05f);
 
-			enginesOn = false;
-			engine.stop();
-			long id = engine.play(2.0f);
-			engine.setLooping(id, false);
 		}
 	}
 
 	public void registerShipEmergencyEvent(boolean emergency) {
 		this.emergency = emergency;
+	}
+
+	public String getStructureState() {
+
+		switch (currentState) {
+
+		case running:
+			return "r";
+		case off:
+			return "o";
+		case emergency:
+			return "e";
+		default:
+			return "";
+		}
+
+	}
+
+	public static STRUCTURE_STATE getStateByString(String state) {
+
+		switch (state) {
+
+		case "r":
+			return STRUCTURE_STATE.running;
+		case "o":
+			return STRUCTURE_STATE.off;
+		case "e":
+			return STRUCTURE_STATE.emergency;
+		default:
+			return STRUCTURE_STATE.off;
+		}
+
 	}
 
 }

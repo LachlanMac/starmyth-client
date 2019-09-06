@@ -1,20 +1,18 @@
 package com.pineconeindustries.client.networking.packets;
 
 import java.util.ArrayList;
-
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.Net;
 import com.pineconeindustries.client.ui.UserInterface;
 import com.pineconeindustries.server.net.packets.types.Packets;
-import com.pineconeindustries.shared.data.GameData;
-import com.pineconeindustries.shared.log.Log;
 import com.pineconeindustries.shared.objects.Elevator;
 import com.pineconeindustries.shared.objects.NPC;
 import com.pineconeindustries.shared.objects.PlayerMP;
 import com.pineconeindustries.shared.objects.Ship;
 import com.pineconeindustries.shared.objects.Station;
 import com.pineconeindustries.shared.objects.Structure;
+import com.pineconeindustries.shared.objects.Structure.STRUCTURE_STATE;
 import com.pineconeindustries.shared.utils.VectorMath;
 
 public class PacketParser {
@@ -91,21 +89,6 @@ public class PacketParser {
 					System.out.println("EXCEPTION DATA: " + npcData + "    " + e.getMessage());
 				}
 			}
-
-			/*
-			 * try { int id = Integer.parseInt(split[0]); float x =
-			 * Float.parseFloat(split[1]); float y = Float.parseFloat(split[2]); float dirX
-			 * = Float.parseFloat(split[3]); float dirY = Float.parseFloat(split[4]); float
-			 * velocity = Float.parseFloat(split[5]); int layer =
-			 * Integer.parseInt(split[6].trim());
-			 * 
-			 * NPC n = LogicController.getInstance().getSector().getNPCByID(id); if (n !=
-			 * null) { n.setVelocity(velocity); n.setLastDirectionFaced(new Vector2(dirX,
-			 * dirY)); n.setLoc(new Vector2(x, y)); n.setFramesSinceLastMove(0);
-			 * n.setLayer(layer); }
-			 * 
-			 * } catch (NumberFormatException e) { System.out.println(e.getMessage()); }
-			 */
 
 			break;
 
@@ -197,21 +180,25 @@ public class PacketParser {
 				int xLoc = Integer.parseInt(structureData[5]);
 				int yLoc = Integer.parseInt(structureData[6]);
 				int type = Integer.parseInt(structureData[7]);
+				STRUCTURE_STATE state = Structure.getStateByString(structureData[8]);
 
 				if (!LogicController.getInstance().getSector().structureExists(structureID)) {
 
 					if (type == 1) {
 
-						LogicController.getInstance().getSector().addStructure(
-								new Station(structureName, structureID, sectorID, factionID, xLoc, yLoc, 0, 0, layers));
+						LogicController.getInstance().getSector().addStructure(new Station(structureName, structureID,
+								sectorID, factionID, xLoc, yLoc, 0, 0, layers, state));
+
 					}
 
 					if (type == 2) {
 
-						LogicController.getInstance().getSector().addStructure(
-								new Ship(structureName, structureID, sectorID, factionID, xLoc, yLoc, 0, 0, layers));
+						LogicController.getInstance().getSector().addStructure(new Ship(structureName, structureID,
+								sectorID, factionID, xLoc, yLoc, 0, 0, layers, state));
 					}
 
+				} else {
+					LogicController.getInstance().getSector().getStructureByID(structureID).setState(state);
 				}
 
 			}

@@ -73,7 +73,7 @@ public class StructureDAO {
 		PreparedStatement stmt;
 		try {
 			stmt = conn.prepareStatement(
-					"SELECT structure_id, structure_name, faction_id, local_x, local_y, global_x, global_y, type, layers FROM Structure WHERE sector_id=?");
+					"SELECT structure_id, structure_name, faction_id, local_x, local_y, global_x, global_y, type, layers, state FROM Structure WHERE sector_id=?");
 			stmt.setInt(1, id);
 			ResultSet rs = stmt.executeQuery();
 
@@ -87,15 +87,16 @@ public class StructureDAO {
 				float globalY = rs.getFloat("global_y");
 				int type = rs.getInt("type");
 				int layers = rs.getInt("layers");
+				String state = rs.getString("state");
 
 				if (type == 1) {
-					Station s = new Station(name, structureID, id, factionID, localX, localY, globalX, globalY, layers);
+					Station s = new Station(name, structureID, id, factionID, localX, localY, globalX, globalY, layers, Structure.getStateByString(state));
 					s.loadElevators(loadElevatorsByStructure(s));
 					structures.add(s);
 					Log.dbLog("Adding station : [" + structureID + "]" + name);
 				}
 				if (type == 2) {
-					Ship s = new Ship(name, structureID, id, factionID, localX, localY, globalX, globalY, layers);
+					Ship s = new Ship(name, structureID, id, factionID, localX, localY, globalX, globalY, layers, Structure.getStateByString(state));
 					s.loadElevators(loadElevatorsByStructure(s));
 					structures.add(s);
 					Log.dbLog("Adding Ship : [" + structureID + "]" + name);

@@ -76,7 +76,7 @@ public class ClientApp extends ApplicationAdapter {
 
 		GameData.getInstance().registerAssetManager(new LAssetManager());
 		GameData.getInstance().loadAssets();
-		
+
 		Texture temp = GameData.getInstance().Assets().get("textures/galaxybg1.png");
 		bg = new TextureRegion(temp);
 		Player player = new Player(data.getName(), new Vector2(data.getX(), data.getY()), 1, data.getId(),
@@ -102,6 +102,7 @@ public class ClientApp extends ApplicationAdapter {
 	public void update() {
 		state += Gdx.graphics.getDeltaTime();
 		ui.update();
+		LightingManager.getInstance().update();
 		LogicController.getInstance().getSector().update();
 
 	}
