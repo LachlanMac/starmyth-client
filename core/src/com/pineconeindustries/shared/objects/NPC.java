@@ -1,5 +1,6 @@
 package com.pineconeindustries.shared.objects;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -24,6 +25,7 @@ import com.pineconeindustries.server.net.packets.types.UDPPacket;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.gameunits.Units;
+import com.pineconeindustries.shared.utils.VectorMath;
 
 public class NPC extends Person {
 
@@ -39,6 +41,8 @@ public class NPC extends Person {
 	private Globals local;
 	private LuaValue script;
 	private boolean hasScript = false;
+
+	private DecimalFormat df = new DecimalFormat("#.00");
 
 	private LuaFunction getName, getLocation, getDestination;
 	private LuaFunction _ON_DEATH, _ON_HIT, _ON_NEW_PATH;
@@ -141,11 +145,18 @@ public class NPC extends Person {
 			bounds.x = loc.x;
 			bounds.y = loc.y;
 
-			String packetData = new String(getID() + "=" + getLoc().x + "=" + getLoc().y + "=" + directionX + "="
-					+ directionY + "=" + velocity + "=" + layer);
+			// String packetData = new String(getID() + "=" + getLoc().x + "=" + getLoc().y
+			// + "=" + directionX + "="
+			// + directionY + "=" + velocity + "=" + layer);
 
-			sector.getPacketWriter()
-					.queueToAll(new UDPPacket(Packets.NPC_MOVE_PACKET, packetData, UDPPacket.packetCounter()));
+			// sector.getPacketWriter()
+			// .queueToAll(new UDPPacket(Packets.NPC_MOVE_PACKET, packetData,
+			// UDPPacket.packetCounter()));
+
+			String data = new String(getID() + "x" + df.format(getLoc().x) + "x" + df.format(getLoc().y) + "x"
+					+ VectorMath.getPacketDirection(directionX, directionY) + "x" + layer + "=");
+
+			sector.addNPCMovementData(data);
 
 			if (dest.dst(loc) <= 5) {
 

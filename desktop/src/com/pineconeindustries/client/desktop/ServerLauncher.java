@@ -12,6 +12,8 @@ public class ServerLauncher {
 
 	public static boolean HEADLESS = false;
 
+	public static final float TICK_RATE = 15f;
+
 	public static void main(String[] args) {
 
 		for (String arg : args) {
@@ -26,7 +28,7 @@ public class ServerLauncher {
 
 		if (HEADLESS) {
 			HeadlessApplicationConfiguration headlessConfig = new HeadlessApplicationConfiguration();
-			headlessConfig.renderInterval = 0.04f;
+			headlessConfig.renderInterval = 1f / TICK_RATE;
 			new HeadlessApplication(new ServerApp(HEADLESS), headlessConfig);
 		} else {
 			LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();

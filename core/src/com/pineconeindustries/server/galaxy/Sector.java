@@ -28,6 +28,8 @@ public class Sector {
 	ArrayBlockingQueue<NPC> npcs;
 	ArrayBlockingQueue<Structure> structures;
 
+	ArrayBlockingQueue<String> npcMoveList;
+
 	private int port, globalX, globalY;
 	private String name;
 	private boolean update = false, render = false;
@@ -49,6 +51,7 @@ public class Sector {
 		players = new ArrayBlockingQueue<PlayerConnection>(64);
 		npcs = new ArrayBlockingQueue<NPC>(128);
 		structures = new ArrayBlockingQueue<Structure>(16);
+		npcMoveList = new ArrayBlockingQueue<String>(128);
 		connListener = new PlayerConnectionListener(this);
 		packetListener = new PacketListener(this);
 		packetWriter = new PacketWriter(this);
@@ -146,6 +149,12 @@ public class Sector {
 
 	}
 
+	public void addNPCMovementData(String data) {
+
+		npcMoveList.add(data);
+
+	}
+
 	public void updateAndRender(boolean val) {
 		update = val;
 		render = val;
@@ -198,6 +207,10 @@ public class Sector {
 			if (conn.isVerified()) {
 				conn.getPlayerMP().update();
 			}
+		}
+		if (!npcMoveList.isEmpty()) {
+			packetWriter.sendNPCMoves(npcMoveList);
+			npcMoveList.clear();
 		}
 
 	}

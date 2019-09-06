@@ -15,6 +15,7 @@ import com.pineconeindustries.shared.objects.PlayerMP;
 import com.pineconeindustries.shared.objects.Ship;
 import com.pineconeindustries.shared.objects.Station;
 import com.pineconeindustries.shared.objects.Structure;
+import com.pineconeindustries.shared.utils.VectorMath;
 
 public class PacketParser {
 
@@ -64,27 +65,48 @@ public class PacketParser {
 
 		case Packets.NPC_MOVE_PACKET:
 
-			try {
-				int id = Integer.parseInt(split[0]);
-				float x = Float.parseFloat(split[1]);
-				float y = Float.parseFloat(split[2]);
-				float dirX = Float.parseFloat(split[3]);
-				float dirY = Float.parseFloat(split[4]);
-				float velocity = Float.parseFloat(split[5]);
-				int layer = Integer.parseInt(split[6].trim());
+			for (String npcData : split) {
 
-				NPC n = LogicController.getInstance().getSector().getNPCByID(id);
-				if (n != null) {
-					n.setVelocity(velocity);
-					n.setLastDirectionFaced(new Vector2(dirX, dirY));
-					n.setLoc(new Vector2(x, y));
-					n.setFramesSinceLastMove(0);
-					n.setLayer(layer);
+				if (npcData.trim().length() <= 10) {
+					continue;
 				}
 
-			} catch (NumberFormatException e) {
-				System.out.println(e.getMessage());
+				try {
+
+					String npcSplit[] = npcData.trim().split("x");
+					int id = Integer.parseInt(npcSplit[0]);
+					float x = Float.parseFloat(npcSplit[1]);
+					float y = Float.parseFloat(npcSplit[2]);
+					String dir = npcSplit[3];
+					int layer = Integer.parseInt(npcSplit[4]);
+					NPC n = LogicController.getInstance().getSector().getNPCByID(id);
+					if (n != null) {
+						n.setVelocity(10);
+						n.setLastDirectionFaced(VectorMath.getDirectionByString(dir));
+						n.setLoc(new Vector2(x, y));
+						n.setFramesSinceLastMove(0);
+						n.setLayer(layer);
+					}
+				} catch (Exception e) {
+					System.out.println("DATA: " + npcData + "    " + e.getMessage());
+				}
 			}
+			System.out.println();
+
+			/*
+			 * try { int id = Integer.parseInt(split[0]); float x =
+			 * Float.parseFloat(split[1]); float y = Float.parseFloat(split[2]); float dirX
+			 * = Float.parseFloat(split[3]); float dirY = Float.parseFloat(split[4]); float
+			 * velocity = Float.parseFloat(split[5]); int layer =
+			 * Integer.parseInt(split[6].trim());
+			 * 
+			 * NPC n = LogicController.getInstance().getSector().getNPCByID(id); if (n !=
+			 * null) { n.setVelocity(velocity); n.setLastDirectionFaced(new Vector2(dirX,
+			 * dirY)); n.setLoc(new Vector2(x, y)); n.setFramesSinceLastMove(0);
+			 * n.setLayer(layer); }
+			 * 
+			 * } catch (NumberFormatException e) { System.out.println(e.getMessage()); }
+			 */
 
 			break;
 

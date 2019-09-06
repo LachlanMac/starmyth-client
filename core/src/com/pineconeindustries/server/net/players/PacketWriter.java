@@ -10,6 +10,7 @@ import com.pineconeindustries.server.net.packets.types.Packet;
 import com.pineconeindustries.server.net.packets.types.TCPPacket;
 import com.pineconeindustries.server.net.packets.types.UDPPacket;
 import com.pineconeindustries.server.net.packets.types.Packet.PACKET_TYPE;
+import com.pineconeindustries.server.net.packets.types.Packets;
 import com.pineconeindustries.shared.log.Log;
 
 public class PacketWriter extends Thread {
@@ -17,6 +18,8 @@ public class PacketWriter extends Thread {
 	private Sector sector;
 	private DatagramSocket socket;
 	private boolean isRunning = false;
+
+	public static long packetsSent = 0;
 
 	private ArrayBlockingQueue<DatagramPacket> udpSendQueue;
 	private ArrayBlockingQueue<TCPPacket> tcpSendQueue;
@@ -45,6 +48,11 @@ public class PacketWriter extends Thread {
 				try {
 					DatagramPacket toSend = udpSendQueue.poll();
 					socket.send(toSend);
+					packetsSent++;
+					if (packetsSent >= 1000) {
+						System.out.println("1000 Packets sent: " + packetsSent);
+						packetsSent = 0;
+					}
 
 				} catch (IOException e) {
 					Log.netTraffic("Error sending UDP Packet", "UDP Packet Error");
@@ -59,6 +67,27 @@ public class PacketWriter extends Thread {
 				}
 			}
 		}
+	}
+
+	public void sendNPCMoves(ArrayBlockingQueue<String> moves) {
+		StringBuilder sb = new StringBuilder();
+		int counter = 0;
+
+		for (String move : moves) {
+
+			sb.append(move);
+
+			if (counter >= 10) {
+				queueToAll(new UDPPacket(Packets.NPC_MOVE_PACKET, sb.toString(), UDPPacket.packetCounter()));
+				counter = 0;
+				sb = new StringBuilder();
+			}
+
+		}
+		if (sb.toString().equals(""))
+			return;
+		queueToAll(new UDPPacket(Packets.NPC_MOVE_PACKET, sb.toString(), UDPPacket.packetCounter()));
+
 	}
 
 	public void queueToAll(Packet packet) {

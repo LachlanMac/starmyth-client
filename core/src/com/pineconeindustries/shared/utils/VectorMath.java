@@ -21,4 +21,65 @@ public class VectorMath {
 
 	}
 
+	public static String getPacketDirection(float x, float y) {
+
+		String dir = "";
+
+		if (y > 0) {
+			dir += "n";
+		}
+		if (y < 0) {
+			dir += "s";
+		}
+		if (x > 0) {
+			dir += "w";
+		}
+		if (x < 0) {
+			dir += "e";
+		}
+
+		return dir;
+
+	}
+
+	public static Vector2 getDirectionByString(String dir) {
+
+		float x = 0, y = 0;
+
+		switch (dir) {
+		case "n":
+			y = 1;
+			break;
+		case "e":
+			x = -1;
+			break;
+		case "w":
+			x = 1;
+			break;
+		case "s":
+			y = -1;
+			break;
+		case "ne":
+			y = 1;
+			x = -1;
+			break;
+		case "nw":
+			y = 1;
+			x = 1;
+			break;
+		case "se":
+			y = -1;
+			x = -1;
+			break;
+		case "sw":
+			y = -1;
+			x = 1;
+			break;
+
+		}
+
+		return new Vector2(x, y).nor();
+
+	}
+
 }

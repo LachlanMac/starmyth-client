@@ -15,7 +15,6 @@ import com.pineconeindustries.shared.objects.Player;
 
 public class LogicController {
 
-
 	private static LogicController instance;
 
 	private Sector sector;
@@ -71,8 +70,8 @@ public class LogicController {
 			long packetNumber = Long.parseLong(split[1]);
 			String packetData = split[2];
 			PacketParser.parsePacket(packetID, packetData);
-		} catch (NumberFormatException e) {
-			Log.print("Invalid TCP Packet");
+		} catch (Exception e) {
+			Log.print("Invalid UDP Packet " + data + "     " + e.getMessage());
 		}
 
 	}
