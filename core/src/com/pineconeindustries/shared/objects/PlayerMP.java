@@ -51,8 +51,7 @@ public class PlayerMP extends Person {
 		return setToDisconnect;
 	}
 
-	@Override
-	public void render(SpriteBatch b) {
+	public void renderold(SpriteBatch b) {
 		state += Gdx.graphics.getDeltaTime();
 
 		currentFrame = animSet.getAnimation(lastDirectionFaced, velocity);
@@ -61,7 +60,8 @@ public class PlayerMP extends Person {
 
 	}
 
-	public void renderold(SpriteBatch b) {
+	@Override
+	public void render(SpriteBatch b) {
 
 		state += Gdx.graphics.getDeltaTime();
 

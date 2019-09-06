@@ -88,10 +88,9 @@ public class PacketParser {
 						n.setLayer(layer);
 					}
 				} catch (Exception e) {
-					System.out.println("DATA: " + npcData + "    " + e.getMessage());
+					System.out.println("EXCEPTION DATA: " + npcData + "    " + e.getMessage());
 				}
 			}
-			System.out.println();
 
 			/*
 			 * try { int id = Integer.parseInt(split[0]); float x =
