@@ -22,13 +22,14 @@ public class ServerLauncher {
 				HEADLESS = true;
 			}
 		}
-		//HEADLESS = true;
+		HEADLESS = true;
 		ServerLauncher launcher = new ServerLauncher();
 		launcher.registerFonts();
 
 		if (HEADLESS) {
 			HeadlessApplicationConfiguration headlessConfig = new HeadlessApplicationConfiguration();
 			headlessConfig.renderInterval = 1f / TICK_RATE;
+			System.out.println("INTERVAL = " + headlessConfig.renderInterval);
 			new HeadlessApplication(new ServerApp(HEADLESS), headlessConfig);
 		} else {
 			LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();

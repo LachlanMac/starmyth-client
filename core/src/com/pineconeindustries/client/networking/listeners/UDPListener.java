@@ -13,7 +13,7 @@ public class UDPListener extends Thread {
 
 	private ArrayBlockingQueue<String> udpQueue;
 
-	private final int PACKET_SIZE = 512;
+	private final int PACKET_SIZE = 1024;
 	private DatagramSocket socket;
 	private boolean isRunning = false;
 	private DatagramPacket packet;

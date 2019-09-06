@@ -27,6 +27,8 @@ import com.pineconeindustries.shared.log.Log;
 
 public class Connection implements Runnable {
 
+	public static final int NET_RECEIVE_DELAY = 10;
+
 	Socket tcpSocket;
 	DatagramSocket udpSocket;
 	PrintWriter out;
@@ -183,7 +185,12 @@ public class Connection implements Runnable {
 		int heartbeatCounter = 0;
 
 		while (running) {
+			try {
+				Thread.sleep(NET_RECEIVE_DELAY);
+			} catch (InterruptedException e1) {
 
+				e1.printStackTrace();
+			}
 			if (connected) {
 
 				heartbeatCounter += 1;
@@ -199,7 +206,7 @@ public class Connection implements Runnable {
 
 				}
 
-				if (heartbeatCounter >= 600) {
+				if (heartbeatCounter >= 1200) {
 					heartbeatCounter = 0;
 					sendTCP(PacketFactory.makeHeartbeatPacket());
 				}
@@ -207,7 +214,7 @@ public class Connection implements Runnable {
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
+
 					e.printStackTrace();
 				}
 			}
