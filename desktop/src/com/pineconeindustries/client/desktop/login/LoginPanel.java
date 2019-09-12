@@ -9,27 +9,25 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-public class LoginPanel extends JPanel{
+public class LoginPanel extends JPanel {
 
 	Image image;
 
-	
-
 	public LoginPanel() {
-		
+
 		try {
-			image = ImageIO.read(new File("textures/lachlangalaxydark.png"));
+			image = ImageIO.read(new File("textures/lachlangalaxy.jpg"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
-	@Override
-	  protected void paintComponent(Graphics g) {
 
-	    super.paintComponent(g);
-	        g.drawImage(image, 0, 0, null);
+	@Override
+	protected void paintComponent(Graphics g) {
+
+		super.paintComponent(g);
+		g.drawImage(image, 0, 0, null);
 	}
-	
+
 }
