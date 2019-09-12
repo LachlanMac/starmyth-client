@@ -5,20 +5,19 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.server.galaxy.Galaxy;
+import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.gameunits.Units;
 
-public class Person extends Entity {
+public abstract class Person extends Entity {
 
 	protected float state = 0f;
-	private int id, sectorID;
 	private boolean tickrender = false;
 	private boolean spin = false;
 
 	public Person(String name, Vector2 loc, int factionID, int structureID, int id, int sectorID, int layer) {
-		super(name, loc, factionID, structureID, layer);
-		this.id = id;
-		this.sectorID = sectorID;
+		super(name, loc, factionID, structureID, layer, id, sectorID);
+
 		if (!GameData.getInstance().isHeadless()) {
 			setAnimations();
 		}
@@ -35,14 +34,6 @@ public class Person extends Entity {
 
 	public void setID(int playerID) {
 		this.id = playerID;
-	}
-
-	public int getSectorID() {
-		return sectorID;
-	}
-
-	public void setSectorID(int sectorID) {
-		this.sectorID = sectorID;
 	}
 
 	public boolean shouldTickRender() {
@@ -67,6 +58,8 @@ public class Person extends Entity {
 	public ArrayList<Tile> getBorderTiles() {
 
 		ArrayList<Tile> tiles = new ArrayList<Tile>();
+
+		Sector s = Galaxy.getInstance().getSectorByID(sectorID);
 
 		StructureLayer l = Galaxy.getInstance().getSectorByID(sectorID).getStructureByID(structureID)
 				.getLayerByNumber(layer);

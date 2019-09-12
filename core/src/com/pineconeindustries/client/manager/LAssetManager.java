@@ -8,14 +8,15 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.pineconeindustries.client.models.AnimationSet;
 import com.pineconeindustries.shared.data.GameData;
+import com.pineconeindustries.shared.log.Log;
 
 public class LAssetManager extends AssetManager {
 
 	AnimationSet playerAnimations;
-	Animation<TextureRegion> thrusterAnimation;
-	Texture shipSS, elevator, ionThrusterSS;
+	Animation<TextureRegion> thrusterAnimation, targetAnimation, shotAnimation, shot2Animation;
+	Texture shipSS, elevator, ionThrusterSS, targetSS, shotSS, shot2SS;
 
-	TextureRegion[][] shipTiles, thrusterTiles;
+	TextureRegion[][] shipTiles, thrusterTiles, targetTiles, shotTiles, shot2Tiles;
 
 	TextureRegion wall, wallDiagSW, wallDiagNE, wallDiagNW, wallDiagSE, hall, room, doorClosedEW, doorClosedNS,
 			doorOpenEW, doorOpenNS, zoneClosedE, zoneClosedW, zoneOpenE, zoneOpenW, thrusterOff, thruster1, thruster2,
@@ -30,6 +31,9 @@ public class LAssetManager extends AssetManager {
 	}
 
 	public void loadTextures() {
+		load("textures/targetSS.png", Texture.class);
+		load("textures/shotSS.png", Texture.class);
+		load("textures/shot2SS.png", Texture.class);
 		load("textures/galaxybg1.png", Texture.class);
 		load("textures/plasma.png", Texture.class);
 		load("textures/shiptiles/shipSS.png", Texture.class);
@@ -73,6 +77,40 @@ public class LAssetManager extends AssetManager {
 
 	}
 
+	public Animation<TextureRegion> getTargetAnimation() {
+		return targetAnimation;
+	}
+
+	public Animation<TextureRegion> getShotAnimation() {
+		return shotAnimation;
+	}
+
+	public Animation<TextureRegion> getShot2Animation() {
+		return shot2Animation;
+	}
+
+	public void loadTarget() {
+
+		targetSS = get("textures/targetSS.png");
+		targetTiles = TextureRegion.split(targetSS, targetSS.getWidth() / 2, targetSS.getHeight() / 2);
+		targetAnimation = new Animation<TextureRegion>(5,
+				new TextureRegion[] { targetTiles[0][0], targetTiles[0][1], targetTiles[1][0], targetTiles[1][1] });
+
+	}
+
+	public void loadShot() {
+
+		shotSS = get("textures/shotSS.png");
+		shotTiles = TextureRegion.split(shotSS, shotSS.getWidth() / 2, shotSS.getHeight() / 2);
+		shotAnimation = new Animation<TextureRegion>(5,
+				new TextureRegion[] { shotTiles[0][0], shotTiles[0][1], shotTiles[1][0], shotTiles[1][1] });
+
+		shot2SS = get("textures/shot2SS.png");
+		shot2Tiles = TextureRegion.split(shot2SS, shot2SS.getWidth() / 1, shot2SS.getHeight() / 2);
+		shot2Animation = new Animation<TextureRegion>(5, new TextureRegion[] { shot2Tiles[0][0], shot2Tiles[1][0] });
+
+	}
+
 	public void loadShipTiles() {
 
 		shipSS = get("textures/shiptiles/shipSS.png");
@@ -102,10 +140,10 @@ public class LAssetManager extends AssetManager {
 		thruster3 = thrusterTiles[1][1];
 
 		thrusterAnimation = new Animation<TextureRegion>(5, new TextureRegion[] { thruster1, thruster2, thruster3 });
-		// CHARACTER_ANIMATION_SPEED, new TextureRegion[] { regions[1][1],
-		// regions[1][2], regions[1][3], regions[1][4]
 
-		// thruster4 = thrusterTiles[0][2];
+		loadShot();
+
+		loadTarget();
 
 	}
 
@@ -217,7 +255,7 @@ public class LAssetManager extends AssetManager {
 			break;
 		}
 		if (x == null)
-			System.out.println("DLKSFLDF  " + Character.toString(id));
+			Log.print("Could not find Tile with id " + id);
 		return x;
 	}
 

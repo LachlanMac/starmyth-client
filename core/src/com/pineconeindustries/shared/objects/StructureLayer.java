@@ -186,14 +186,12 @@ public class StructureLayer {
 	}
 
 	public void requestData() {
-		System.out.println("Requesting Layer Data");
 		PacketRequester requester = new PacketRequester(
 				PacketFactory.makeLayerRequestPacket(parent.getStructureID(), parent.getSectorID(), layer), 2, 5) {
 			@Override
 			public void checkValidity() {
 
 				if (gotLayerData) {
-					System.out.println("Got Layer Data");
 					this.kill();
 					return;
 				}

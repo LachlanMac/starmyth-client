@@ -6,6 +6,7 @@ public class Packets {
 
 	public static final int MOVE_PACKET = 100;
 	public static final int NPC_MOVE_PACKET = 101;
+	public static final int PROJECTILE_MOVE_PACKET = 104;
 	public static final int INPUT_CHANGE_PACKET = 102;
 
 	public static final int SHIP_HIT_PACKET = 110;

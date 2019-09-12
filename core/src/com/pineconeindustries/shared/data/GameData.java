@@ -2,17 +2,19 @@ package com.pineconeindustries.shared.data;
 
 import com.pineconeindustries.client.manager.LAssetManager;
 import com.pineconeindustries.server.ServerApp;
+import com.pineconeindustries.shared.actions.ActionManager;
 
 public class GameData {
 
 	private static GameData instance;
 
 	private LAssetManager assetManager;
+	private ActionManager actionManager;
 
 	private boolean headless;
 
 	private GameData() {
-
+		actionManager = ActionManager.getInstance();
 	}
 
 	public static GameData getInstance() {

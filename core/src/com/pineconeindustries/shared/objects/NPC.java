@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.server.ai.FiniteStateMachine;
 import com.pineconeindustries.server.ai.pathfinding.AStarPath;
 import com.pineconeindustries.server.ai.pathfinding.PathNode;
@@ -81,7 +82,17 @@ public class NPC extends Person {
 					3f + (state * Units.SPIN_SPEED), false);
 
 		} else {
+
+			if (Global.isClient()) {
+				if (LogicController.getInstance().getPlayer().isPlayerTarget(this)) {
+					b.draw(GameData.getInstance().Assets().getTargetAnimation().getKeyFrame(state * 50, true),
+							renderLoc.x, renderLoc.y);
+
+				}
+			}
+
 			b.draw(currentFrame.getKeyFrame(state, true), renderLoc.x, renderLoc.y);
+
 		}
 
 		if (renderLoc.dst(loc) > 500) {
@@ -144,14 +155,6 @@ public class NPC extends Person {
 			setVelocity(velocity);
 			bounds.x = loc.x;
 			bounds.y = loc.y;
-
-			// String packetData = new String(getID() + "=" + getLoc().x + "=" + getLoc().y
-			// + "=" + directionX + "="
-			// + directionY + "=" + velocity + "=" + layer);
-
-			// sector.getPacketWriter()
-			// .queueToAll(new UDPPacket(Packets.NPC_MOVE_PACKET, packetData,
-			// UDPPacket.packetCounter()));
 
 			String data = new String(getID() + "x" + df.format(getLoc().x) + "x" + df.format(getLoc().y) + "x"
 					+ VectorMath.getPacketDirection(directionX, directionY) + "x" + layer + "=");
@@ -233,22 +236,10 @@ public class NPC extends Person {
 
 	public void test() {
 
-		try {
-			LuaValue getName = local.get("getName");
-			LuaValue returned = getName.call();
-			System.out.println(returned.tojstring());
-			local.set("xLoc", 4);
-			LuaFunction getX = (LuaFunction) local.get("getX");
-			LuaValue returned2 = getX.call();
-			System.out.println(returned2.tojstring());
-
-		} catch (Exception e) {
-			System.out.println(e);
-		}
 	}
 
 	public void findRandomPath() {
-		die();
+		
 		PathNode end = structure.getLayerByNumber(layer).getRandomEndNode();
 		pathfinder = new AStarPath(structure.getGridWidth(), structure.getGridHeight(),
 				new PathNode((int) (getLoc().x / Units.GRID_INTERVAL), (int) (getLoc().y / Units.GRID_INTERVAL)), end);
@@ -300,8 +291,15 @@ public class NPC extends Person {
 
 		if (Global.isServer()) {
 			fsm.performAction();
-
 		}
+		if (Global.isClient()) {
+			onClick();
+		}
+	}
+
+	@Override
+	public String getType() {
+		return "n";
 	}
 
 }

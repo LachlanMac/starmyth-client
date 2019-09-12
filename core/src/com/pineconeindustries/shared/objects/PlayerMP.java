@@ -12,6 +12,8 @@ import com.pineconeindustries.client.models.AnimationSet;
 import com.pineconeindustries.server.galaxy.Galaxy;
 import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.packets.modules.MoveModule;
+import com.pineconeindustries.shared.actions.Action;
+import com.pineconeindustries.shared.actions.ActionManager;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.gameunits.Units;
@@ -26,7 +28,13 @@ public class PlayerMP extends Person {
 	private boolean inputChanged = false;
 	private boolean[] inputState = new boolean[10];
 
+	private GameObject target = null;
+
 	Sector serverSector;
+
+	// test
+
+	Action a;
 
 	public PlayerMP(String name, Vector2 loc, int factionID, int structureID, int playerID, int sectorID, int layer) {
 		super(name, loc, factionID, structureID, playerID, sectorID, layer);
@@ -34,6 +42,7 @@ public class PlayerMP extends Person {
 
 		if (Global.isServer()) {
 			serverSector = Galaxy.getInstance().getSectorByID(sectorID);
+			a = ActionManager.getInstance().getActionByID(1);
 		}
 
 	}
@@ -116,6 +125,11 @@ public class PlayerMP extends Person {
 			float x = dir.x;
 			float y = dir.y;
 
+			if (inputState[5]) {
+
+				a.castDirect(this, target);
+			}
+
 			if (x == 0 && y == 0) {
 				return;
 			}
@@ -144,8 +158,21 @@ public class PlayerMP extends Person {
 
 	}
 
+	public GameObject getTarget() {
+		return target;
+	}
+
+	public void setTarget(GameObject target) {
+		this.target = target;
+	}
+
 	public void refresh() {
 		dcCount = 0;
+	}
+
+	@Override
+	public String getType() {
+		return "p";
 	}
 
 }

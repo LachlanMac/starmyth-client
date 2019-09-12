@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.pineconeindustries.client.chat.Chatbox;
+import com.pineconeindustries.client.manager.InputState;
 import com.pineconeindustries.shared.objects.Player;
 
 public class UserInterface {
@@ -37,14 +38,20 @@ public class UserInterface {
 		stage.getRoot().addCaptureListener(new InputListener() {
 
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				if (!(event.getTarget() instanceof TextField))
+
+				if (button == 0)
+					InputState.LEFT_MOUSE_DOWN = true;
+				if (button == 1)
+					InputState.RIGHT_MOUSE_DOWN = true;
+				if (!(event.getTarget() instanceof TextField)) {
 					stage.setKeyboardFocus(null);
+				}
 				return false;
+
 			}
 		});
 
 		buildInterface();
-
 	}
 
 	public void buildInterface() {
@@ -62,14 +69,14 @@ public class UserInterface {
 	}
 
 	public void update() {
-		
+
 	}
 
 	public void render() {
 		stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
 		stage.draw();
 		chatbox.update();
-		
+
 	}
 
 	public void dispose() {

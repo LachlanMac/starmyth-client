@@ -34,11 +34,11 @@ public class ServerLauncher {
 		} else {
 			LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 			config.vSyncEnabled = true;
-			config.width = 200;
-			config.height = 100;
+			config.width = 1900;
+			config.height = 1200;
 
-			config.foregroundFPS = 60;
-			config.backgroundFPS = 60;
+			config.foregroundFPS = 15;
+			config.backgroundFPS = 15;
 			config.samples = 4;
 			// config.fullscreen = true;
 			new LwjglApplication(new ServerApp(HEADLESS), config);

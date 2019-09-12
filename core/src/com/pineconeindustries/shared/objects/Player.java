@@ -27,11 +27,13 @@ public class Player extends Person {
 
 	ArrayList<Projectile> projectiles;
 
+	public Entity target = null;
 	final float camspeed = 0.1f, icamspeed = 1.0f - camspeed;
 	BitmapFont font = new BitmapFont();
 
 	private String lastState;
 	private boolean moveDisabled = false;
+	private boolean targetChanged = false;
 
 	Chatbox chatbox;
 	Camera camera;
@@ -106,13 +108,11 @@ public class Player extends Person {
 
 		String currentState = InputState.getState();
 
-		if (InputState.isPressed(InputState.PLAYER_BUTTON_3)) {
-			LogicController.getInstance().getCameraController().setRumble(2, 0.8f);
-		}
+		if (!lastState.equals(currentState) || targetChanged) {
 
-		if (!lastState.equals(currentState)) {
-			LogicController.getInstance().sendUDP(PacketFactory.makeInputChangePacket(currentState));
+			LogicController.getInstance().sendUDP(PacketFactory.makeInputChangePacket(currentState, target));
 			lastState = currentState;
+			targetChanged = false;
 		}
 
 	}
@@ -131,6 +131,24 @@ public class Player extends Person {
 
 	public Camera getCamera() {
 		return camera;
+	}
+
+	public boolean isPlayerTarget(GameObject obj) {
+		if (obj.equals(target)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public void setTarget(Entity obj) {
+		this.target = obj;
+		targetChanged = true;
+	}
+
+	@Override
+	public String getType() {
+		return "p";
 	}
 
 }

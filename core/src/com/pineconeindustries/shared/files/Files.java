@@ -4,13 +4,41 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.pineconeindustries.shared.actions.Action;
 import com.pineconeindustries.shared.data.Global;
 
 public class Files {
 
+	public static ArrayList<Action> loadActions() {
+
+		ArrayList<Action> actions = new ArrayList<Action>();
+
+		File f;
+
+		f = Gdx.files.internal("actions/actionlist.txt").file();
+
+		try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+
+			String sCurrentLine;
+			while ((sCurrentLine = br.readLine()) != null) {
+
+				String data[] = sCurrentLine.split("-");
+				Action a = new Action(Integer.parseInt(data[0].trim()), data[1].trim());
+				actions.add(a);
+
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return actions;
+
+	}
+	
 	public static String loadShipLayout(String path) {
 
 		StringBuilder dataBuilder = new StringBuilder();

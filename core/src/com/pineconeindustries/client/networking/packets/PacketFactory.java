@@ -5,6 +5,7 @@ import com.pineconeindustries.client.networking.Net;
 import com.pineconeindustries.server.net.packets.types.Packets;
 import com.pineconeindustries.server.net.packets.types.TCPPacket;
 import com.pineconeindustries.server.net.packets.types.UDPPacket;
+import com.pineconeindustries.shared.objects.GameObject;
 
 public class PacketFactory {
 
@@ -18,8 +19,15 @@ public class PacketFactory {
 
 	}
 
-	public static UDPPacket makeInputChangePacket(String state) {
-		String data = Integer.toString(LogicController.getInstance().getPlayer().getID()) + "=" + state;
+	public static UDPPacket makeInputChangePacket(String state, GameObject target) {
+		int targetID = 0;
+		String targetType = "0";
+		if (target != null) {
+			targetID = target.getID();
+			targetType = target.getType();
+		}
+		String data = Integer.toString(LogicController.getInstance().getPlayer().getID()) + "=" + state + "=" + targetID
+				+ "=" + targetType;
 
 		packetNumber++;
 		return new UDPPacket(Packets.INPUT_CHANGE_PACKET, data, packetNumber);
@@ -59,7 +67,6 @@ public class PacketFactory {
 	}
 
 	public static TCPPacket makeElevatorRequestPacket(int structureID, int sectorID) {
-		System.out.println("REQUESTIN ELEVATOR");
 		String data = new String(
 				structureID + "=" + sectorID + "=" + LogicController.getInstance().getPlayer().getID());
 		return new TCPPacket(Packets.STRUCTURE_ELEVATOR_REQUEST_PACKET, data);

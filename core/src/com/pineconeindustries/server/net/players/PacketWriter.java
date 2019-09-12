@@ -49,10 +49,6 @@ public class PacketWriter extends Thread {
 					DatagramPacket toSend = udpSendQueue.poll();
 					socket.send(toSend);
 					packetsSent++;
-					if (packetsSent >= 1000) {
-						System.out.println("1000 Packets sent: " + packetsSent);
-						packetsSent = 0;
-					}
 
 				} catch (IOException e) {
 					Log.netTraffic("Error sending UDP Packet", "UDP Packet Error");
@@ -87,6 +83,28 @@ public class PacketWriter extends Thread {
 		if (sb.toString().equals(""))
 			return;
 		queueToAll(new UDPPacket(Packets.NPC_MOVE_PACKET, sb.toString(), UDPPacket.packetCounter()));
+
+	}
+
+	public void sendProjectileMoves(ArrayBlockingQueue<String> moves) {
+
+		StringBuilder sb = new StringBuilder();
+		int counter = 0;
+
+		for (String move : moves) {
+
+			sb.append(move);
+
+			if (counter >= 10) {
+				queueToAll(new UDPPacket(Packets.PROJECTILE_MOVE_PACKET, sb.toString(), UDPPacket.packetCounter()));
+				counter = 0;
+				sb = new StringBuilder();
+			}
+
+		}
+		if (sb.toString().equals(""))
+			return;
+		queueToAll(new UDPPacket(Packets.PROJECTILE_MOVE_PACKET, sb.toString(), UDPPacket.packetCounter()));
 
 	}
 

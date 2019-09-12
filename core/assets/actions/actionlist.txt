@@ -1,0 +1,4 @@
+1-shoot
+2-powerblast
+3-guard
+4-heal

@@ -6,6 +6,7 @@ import com.pineconeindustries.server.net.packets.types.Packets;
 import com.pineconeindustries.server.net.packets.types.UDPPacket;
 import com.pineconeindustries.shared.gameunits.Units;
 import com.pineconeindustries.shared.log.Log;
+import com.pineconeindustries.shared.objects.GameObject;
 import com.pineconeindustries.shared.objects.PlayerMP;
 import com.pineconeindustries.shared.objects.Tile;
 import com.pineconeindustries.shared.utils.VectorMath;
@@ -17,11 +18,16 @@ public class MoveModule {
 		String[] split = data.split("=");
 		int playerID = Integer.parseInt(split[0]);
 		String state = split[1];
+		int targetID = Integer.parseInt(split[2]);
+		String targetType = split[3];
 
 		PlayerMP player = sector.getPlayerByID(playerID);
 		if (player == null) {
 			return;
 		}
+
+		GameObject obj = sector.getGameObectByTypeAndID(targetType, targetID);
+		player.setTarget(obj);
 
 		boolean inputState[] = new boolean[10];
 
@@ -99,6 +105,16 @@ public class MoveModule {
 			Log.netTraffic(e.getMessage(), "Invalid Packet");
 			return;
 		}
+
+	}
+	
+	
+	public static UDPPacket getProjectilePacket(int playerID, Vector2 playerLoc, Vector2 movement, float velocity,
+			int layer) {
+		String packetData = new String(playerID + "=" + playerLoc.x + "=" + playerLoc.y + "=" + movement.x + "="
+				+ movement.y + "=" + velocity + "=" + layer + "=");
+
+		return new UDPPacket(Packets.MOVE_PACKET, packetData, UDPPacket.packetCounter());
 
 	}
 

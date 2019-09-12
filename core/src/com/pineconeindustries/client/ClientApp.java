@@ -17,6 +17,7 @@ import com.pineconeindustries.client.config.NetworkConfiguration;
 import com.pineconeindustries.client.data.LocalPlayerData;
 import com.pineconeindustries.client.galaxy.Sector;
 import com.pineconeindustries.client.manager.InputManager;
+import com.pineconeindustries.client.manager.InputState;
 import com.pineconeindustries.client.manager.LAssetManager;
 import com.pineconeindustries.client.manager.LightingManager;
 import com.pineconeindustries.client.manager.LogicController;
@@ -73,6 +74,7 @@ public class ClientApp extends ApplicationAdapter {
 		ui = UserInterface.getInstance();
 
 		Gdx.input.setInputProcessor(ui.getStage());
+		// Gdx.input.setInputProcessor(InputState.getInstance());
 
 		GameData.getInstance().registerAssetManager(new LAssetManager());
 		GameData.getInstance().loadAssets();
@@ -104,6 +106,7 @@ public class ClientApp extends ApplicationAdapter {
 		ui.update();
 		LightingManager.getInstance().update();
 		LogicController.getInstance().getSector().update();
+		InputState.resetInput();
 
 	}
 

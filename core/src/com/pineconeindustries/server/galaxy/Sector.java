@@ -18,8 +18,10 @@ import com.pineconeindustries.server.net.players.PacketWriter;
 import com.pineconeindustries.server.net.players.PlayerConnection;
 import com.pineconeindustries.server.net.players.PlayerConnectionListener;
 import com.pineconeindustries.shared.log.Log;
+import com.pineconeindustries.shared.objects.GameObject;
 import com.pineconeindustries.shared.objects.NPC;
 import com.pineconeindustries.shared.objects.PlayerMP;
+import com.pineconeindustries.shared.objects.Projectile;
 import com.pineconeindustries.shared.objects.Station;
 import com.pineconeindustries.shared.objects.Structure;
 
@@ -28,8 +30,9 @@ public class Sector {
 	ArrayBlockingQueue<PlayerConnection> players;
 	ArrayBlockingQueue<NPC> npcs;
 	ArrayBlockingQueue<Structure> structures;
-
+	ArrayBlockingQueue<Projectile> projectiles;
 	ArrayBlockingQueue<String> npcMoveList;
+	ArrayBlockingQueue<String> projectileMoveList;
 
 	private int port, globalX, globalY;
 	private String name;
@@ -41,7 +44,7 @@ public class Sector {
 	PacketParser packetParser;
 	PacketScheduler scheduler;
 
-	// Class to send all players UDP packets and TCP packets
+	// Class to sed all players UDP packets and TCP packets
 
 	public Sector(int port, int globalX, int globalY, String name) {
 		this.port = port;
@@ -52,6 +55,8 @@ public class Sector {
 		npcs = new ArrayBlockingQueue<NPC>(128);
 		structures = new ArrayBlockingQueue<Structure>(16);
 		npcMoveList = new ArrayBlockingQueue<String>(128);
+		projectileMoveList = new ArrayBlockingQueue<String>(128);
+		projectiles = new ArrayBlockingQueue<Projectile>(256);
 		connListener = new PlayerConnectionListener(this);
 		packetListener = new PacketListener(this);
 		packetWriter = new PacketWriter(this);
@@ -76,6 +81,10 @@ public class Sector {
 		npcMoveList.add(data);
 	}
 
+	public void addProjectileMovementData(String data) {
+		projectileMoveList.add(data);
+	}
+
 	public void updateAndRender(boolean val) {
 		update = val;
 		render = val;
@@ -89,6 +98,10 @@ public class Sector {
 
 		for (Structure structure : structures) {
 			structure.render(b);
+		}
+
+		for (Projectile p : projectiles) {
+			p.render(b);
 		}
 
 		for (PlayerConnection conn : players) {
@@ -124,6 +137,10 @@ public class Sector {
 			npc.update();
 		}
 
+		for (Projectile p : projectiles) {
+			p.update();
+		}
+
 		for (PlayerConnection conn : players) {
 			if (conn.isVerified()) {
 				conn.getPlayerMP().update();
@@ -132,6 +149,10 @@ public class Sector {
 		if (!npcMoveList.isEmpty()) {
 			packetWriter.sendNPCMoves(npcMoveList);
 			npcMoveList.clear();
+		}
+		if (!projectileMoveList.isEmpty()) {
+			packetWriter.sendProjectileMoves(projectileMoveList);
+			projectileMoveList.clear();
 		}
 
 	}
@@ -168,6 +189,15 @@ public class Sector {
 		players.add(player);
 		Galaxy.getInstance().addPlayerToGlobal(player);
 
+	}
+
+	public void addProjectile(Projectile p) {
+		projectiles.add(p);
+
+	}
+
+	public void removeProjectile(Projectile p) {
+		projectiles.remove(p);
 	}
 
 	public void addStructures() {
@@ -226,6 +256,33 @@ public class Sector {
 		}
 
 		return playerConnection;
+	}
+
+	public GameObject getGameObectByTypeAndID(String type, int id) {
+
+		GameObject g = null;
+
+		if (type.trim().equals("n")) {
+
+			g = getNPCByID(id);
+		} else if (type.trim().equals("p")) {
+			g = getPlayerByID(id);
+		}
+
+		return g;
+
+	}
+
+	public NPC getNPCByID(int id) {
+
+		NPC npc = null;
+
+		for (NPC n : npcs) {
+			if (n.getID() == id)
+				npc = n;
+		}
+
+		return npc;
 	}
 
 	public PlayerMP getPlayerByID(int id) {

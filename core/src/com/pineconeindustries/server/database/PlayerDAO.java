@@ -73,6 +73,7 @@ public class PlayerDAO {
 				float localX = rs.getFloat("local_x");
 				float localY = rs.getFloat("local_y");
 				int layer = rs.getInt("layer");
+
 				player = new PlayerMP(name, new Vector2(localX, localY), factionID, structureID, id, sectorID, layer);
 
 			}

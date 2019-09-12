@@ -9,6 +9,7 @@ import com.pineconeindustries.server.net.packets.types.Packets;
 import com.pineconeindustries.shared.objects.Elevator;
 import com.pineconeindustries.shared.objects.NPC;
 import com.pineconeindustries.shared.objects.PlayerMP;
+import com.pineconeindustries.shared.objects.Projectile;
 import com.pineconeindustries.shared.objects.Ship;
 import com.pineconeindustries.shared.objects.Station;
 import com.pineconeindustries.shared.objects.Structure;
@@ -238,6 +239,9 @@ public class PacketParser {
 
 			break;
 
+		case Packets.PROJECTILE_MOVE_PACKET:
+			rxProjectileMovePacket(split);
+			break;
 		case Packets.SHIP_HIT_PACKET:
 			rxShipHitPacket(split);
 			break;
@@ -252,6 +256,41 @@ public class PacketParser {
 			break;
 		default:
 			System.out.println("UNKNOWN PACKET " + packetData);
+		}
+
+	}
+
+	public static void rxProjectileMovePacket(String[] data) {
+		for (String projectileData : data) {
+
+			if (projectileData.trim().length() <= 10) {
+				continue;
+			}
+
+			try {
+
+				String npcSplit[] = projectileData.trim().split("x");
+				int id = Integer.parseInt(npcSplit[0]);
+				float x = Float.parseFloat(npcSplit[1]);
+				float y = Float.parseFloat(npcSplit[2]);
+				String name = new String("proj" + id);
+				int layer = Integer.parseInt(npcSplit[3]);
+				float dirX = Float.parseFloat(npcSplit[4]);
+				float dirY = Float.parseFloat(npcSplit[5]);
+				Projectile p = LogicController.getInstance().getSector().getProjectileByID(id);
+				if (p != null) {
+					p.setLoc(new Vector2(x, y));
+					p.setLayer(layer);
+				} else {
+
+					LogicController.getInstance().getSector()
+							.addProjectile(new Projectile(name, new Vector2(x, y), new Vector2(dirX, dirY).nor(), layer,
+									id, 200, LogicController.getInstance().getSector().getPort(), 100));
+				}
+
+			} catch (Exception e) {
+				System.out.println("EXCEPTION DATA: " + projectileData + "    " + e.getMessage());
+			}
 		}
 
 	}

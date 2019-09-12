@@ -6,24 +6,30 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.pineconeindustries.client.manager.InputManager;
+import com.pineconeindustries.client.manager.InputState;
+import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.models.AnimationSet;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.gameunits.Units;
+import com.pineconeindustries.shared.log.Log;
 
 public abstract class Entity extends GameObject implements Comparable<Entity> {
 
 	protected final int MAX_FRAMES_SINCE_LAST_MOVE = 6;
 	protected float interval, velocity, speed;
+
 	protected int framesSinceLastMove, factionID, structureID;
 
 	AnimationSet animSet;
 	Animation<TextureRegion> currentFrame;
 	Vector2 renderLoc, lastDirectionFaced;
 
-	public Entity(String name, Vector2 loc, int factionID, int structureID, int layer) {
-		super(name, loc, layer);
-
+	public Entity(String name, Vector2 loc, int factionID, int structureID, int layer, int id, int sectorID) {
+		super(name, loc, layer, id, sectorID);
 		interval = 0;
 		velocity = 0;
 		framesSinceLastMove = 0;
@@ -54,6 +60,17 @@ public abstract class Entity extends GameObject implements Comparable<Entity> {
 	@Override
 	public void render(SpriteBatch b) {
 		b.draw(currentFrame.getKeyFrame(interval, true), renderLoc.x, renderLoc.y);
+	}
+
+	@Override
+	public void onClick() {
+
+		if (InputState.leftClick()) {
+			if (Intersector.overlaps(new Rectangle(InputManager.mouseX, InputManager.mouseY, 1, 1), this.bounds)) {
+				Log.debug("Object: " + name + "[" + loc.x + "," + loc.y + "]");
+				LogicController.getInstance().getPlayer().setTarget(this);
+			}
+		}
 	}
 
 	@Override

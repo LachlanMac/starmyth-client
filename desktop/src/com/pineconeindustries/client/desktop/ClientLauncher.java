@@ -26,15 +26,13 @@ public class ClientLauncher {
 	public static boolean useLocalServer = true;
 
 	public static void main(String[] arg) {
-		
-	
-		
-		new LoginClient();
-		
-		//startTestClient();
+
+		// new LoginClient();
+
+		startTestClient();
 
 	}
-	
+
 	public static void startTestClient() {
 		try {
 			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -51,9 +49,9 @@ public class ClientLauncher {
 		config.backgroundFPS = 60;
 		config.samples = 4;
 		// config.fullscreen = true;
-		
+
 		LocalPlayerData data = Debug.getTestClient(3);
-		
+
 		new LwjglApplication(new ClientApp(data), config);
 	}
 }

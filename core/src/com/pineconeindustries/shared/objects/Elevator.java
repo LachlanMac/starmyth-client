@@ -11,7 +11,7 @@ import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.gameunits.Units;
 
-public class Elevator implements Clickable {
+public class Elevator implements Targetable {
 
 	private Structure structure;
 	private int tileX, tileY, id;
@@ -140,6 +140,18 @@ public class Elevator implements Clickable {
 
 	public String getData() {
 		return new String(id + "#" + tileX + "#" + tileY + "#" + structure.getStructureID() + "#" + wall);
+	}
+
+	@Override
+	public void setTarget(boolean target) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public boolean isTarget() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

@@ -16,7 +16,7 @@ public abstract class Packet {
 	protected int restrictedStructure = 0;
 
 	protected PACKET_TYPE type;
-
+	
 	public enum PACKET_TYPE {
 		UDP, TCP;
 	}

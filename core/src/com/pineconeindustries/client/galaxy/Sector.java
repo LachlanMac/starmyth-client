@@ -16,6 +16,7 @@ import com.pineconeindustries.shared.objects.NPC;
 import com.pineconeindustries.shared.objects.Person;
 import com.pineconeindustries.shared.objects.Player;
 import com.pineconeindustries.shared.objects.PlayerMP;
+import com.pineconeindustries.shared.objects.Projectile;
 import com.pineconeindustries.shared.objects.Station;
 import com.pineconeindustries.shared.objects.Structure;
 
@@ -26,6 +27,7 @@ public class Sector {
 	private ArrayBlockingQueue<NPC> npcs;
 	private ArrayBlockingQueue<PlayerMP> players;
 	private ArrayBlockingQueue<Structure> structures;
+	private ArrayBlockingQueue<Projectile> projectiles;
 	private Player player;
 
 	private CopyOnWriteArrayList<Person> renderList;
@@ -34,6 +36,7 @@ public class Sector {
 		this.port = player.getSectorID();
 		players = new ArrayBlockingQueue<PlayerMP>(64);
 		npcs = new ArrayBlockingQueue<NPC>(128);
+		projectiles = new ArrayBlockingQueue<Projectile>(256);
 		structures = new ArrayBlockingQueue<Structure>(16);
 		renderList = new CopyOnWriteArrayList<Person>();
 		this.player = player;
@@ -55,6 +58,10 @@ public class Sector {
 
 		}
 
+		for (Projectile p : projectiles) {
+			p.render(b);
+		}
+
 	}
 
 	public void update() {
@@ -67,6 +74,11 @@ public class Sector {
 		for (NPC n : npcs) {
 			n.update();
 		}
+		for (Projectile p : projectiles) {
+			p.update();
+
+		}
+
 	}
 
 	public Player getPlayer() {
@@ -174,6 +186,27 @@ public class Sector {
 			}
 		}
 
+	}
+
+	public Projectile getProjectileByID(int id) {
+
+		Projectile projectile = null;
+		for (Projectile p : projectiles) {
+			if (p.getID() == id) {
+				projectile = p;
+			}
+		}
+
+		return projectile;
+
+	}
+
+	public void addProjectile(Projectile projectile) {
+		projectiles.add(projectile);
+	}
+
+	public void removeProjectile(Projectile projectile) {
+		projectiles.remove(projectile);
 	}
 
 	public void addNPC(NPC npc) {
