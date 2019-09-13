@@ -64,6 +64,8 @@ public class PlayerDAO {
 			pstmt.setInt(6, 5);
 			pstmt.setInt(7, 5);
 			pstmt.setInt(8, 5);
+			
+			player.setStats(new Stats(100, 100, 5,5,5,5,5));
 
 			pstmt.execute();
 
