@@ -130,7 +130,7 @@ public class PlayerMP extends Person {
 					a.castDirect(this, target);
 				}
 			}
-
+			
 			if (x == 0 && y == 0) {
 				return;
 			}

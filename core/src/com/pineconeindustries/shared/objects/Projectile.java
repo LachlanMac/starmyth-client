@@ -1,7 +1,8 @@
 package com.pineconeindustries.shared.objects;
 
+import java.awt.Shape;
+import java.awt.geom.Line2D;
 import java.text.DecimalFormat;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -71,12 +72,11 @@ public class Projectile extends GameObject {
 
 			if (setToBounce) {
 				direction = bounceDir;
-				loc.add(direction.x * 3, direction.y * 3);
 				setToBounce = false;
 			}
 			life -= speedTho;
 
-			Vector2 dirNew = new Vector2(direction.x * speed * speedTho * 2, direction.y * speed * speedTho * 2);
+			Vector2 dirNew = new Vector2(direction.x * speed * speedTho, direction.y * speed * speedTho);
 
 			Vector2 proposedVector = new Vector2(loc.x, loc.y).add(dirNew);
 
@@ -94,7 +94,8 @@ public class Projectile extends GameObject {
 					.getPlayerConnectionsInRange(structureID, layer, proposedVector, 100)) {
 				if (mp.getPlayerMP().getBounds().contains(proposedVector)) {
 					if (mp.getPlayerMP().equals(caster)) {
-						System.out.println("HIT SELF?!?!?");
+						
+						
 					} else {
 						action.ON_HIT();
 						setToRemove = true;
@@ -105,27 +106,35 @@ public class Projectile extends GameObject {
 			}
 
 			for (Tile tile : getBorderTiles()) {
-				if (getProposedPoint(proposedVector).overlaps(tile.getBounds()) && tile.isCollidable()) {
 
-					String dirString = VectorMath.getDirectionLetter(direction.x, direction.y);
+				if (tile.isCollidable()) {
+					Vector2 collide = VectorMath.getIntersectionPoint(tile.getBounds(), this.loc, proposedVector);
+					if (collide.x != 0 || collide.y != 0) {
 
-					if (dirString.equals("n") || dirString.equals("s")) {
+			
+						String dirString = VectorMath.getDirectionLetter(collide.x, collide.y);
+						if (dirString.equals("n") || dirString.equals("s")) {
 
-						bounceDir = new Vector2(direction.x, -direction.y);
-						setToBounce = true;
+							bounceDir = new Vector2(direction.x, -direction.y);
+							setToBounce = true;
 
-					} else {
+						} else {
 
-						bounceDir = new Vector2(-direction.x, direction.y);
-						setToBounce = true;
+							bounceDir = new Vector2(-direction.x, direction.y);
+							setToBounce = true;
+
+						}
+
+						this.loc = collide;
 
 					}
-
 				}
-
 			}
-			if (!setToBounce)
+
+			if (!setToBounce) {
 				this.loc = proposedVector;
+			}
+	
 			String data = new String(getID() + "x" + df.format(getLoc().x) + "x" + df.format(getLoc().y) + "x" + layer
 					+ "x" + df.format(direction.x) + "x" + df.format(direction.y) + "x" + structureID + "=");
 			serverSector.addProjectileMovementData(data);

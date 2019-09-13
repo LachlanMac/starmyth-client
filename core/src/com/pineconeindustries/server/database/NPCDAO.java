@@ -28,7 +28,7 @@ public class NPCDAO {
 		if (!Global.useDatabase) {
 			return;
 		}
-
+		
 		Log.dbLog("Saving NPC [" + npc.getID() + ":" + npc.getName() + "]");
 
 		String savePlayerSQL = "UPDATE PlayerCharacter SET sector_id=?, faction_id=?, structure_id=?, local_x=?, local_y=?, layer=?";

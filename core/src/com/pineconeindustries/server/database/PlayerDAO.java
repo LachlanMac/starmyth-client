@@ -59,6 +59,7 @@ public class PlayerDAO {
 			stmt.setInt(1, player.getID());
 			ResultSet rs = stmt.executeQuery();
 
+			System.out.println("Loading stats for player " + player.getID());
 			while (rs.next()) {
 
 				float hp = rs.getFloat("hp");
@@ -113,7 +114,6 @@ public class PlayerDAO {
 
 		if (player != null) {
 			Log.dbLog("Loaded Player [" + player.getID() + ":" + player.getName() + "]");
-		} else {
 			loadStats(player);
 		}
 		return player;

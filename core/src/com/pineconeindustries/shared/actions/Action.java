@@ -1,5 +1,7 @@
 package com.pineconeindustries.shared.actions;
 
+import java.util.Random;
+
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
@@ -22,10 +24,13 @@ public class Action {
 	LuaValue actionInstance, sectorInstance, script, call;
 	private boolean ready = false;
 
+	private Random random;
+
 	public enum type {
 		direct, aoe, buff, heal, item
 	};
 
+	private float _accuracy = 0;
 	private float timePassed = 0;
 	private float _speed = 0;
 	private float _damage = 0;
@@ -37,6 +42,7 @@ public class Action {
 	LuaFunction _ON_CAST, _ON_HIT, _ON_END, _ON_MISS;
 
 	public Action(int id, String name) {
+		random = new Random(System.currentTimeMillis());
 		this.id = id;
 		this.name = name;
 		instance = JsePlatform.standardGlobals();
@@ -49,6 +55,7 @@ public class Action {
 			_ON_MISS = (LuaFunction) instance.get("_ON_MISS");
 			_type = parseType(instance.get("type").tojstring());
 			_cooldown = instance.get("cooldown").tofloat();
+			_accuracy = instance.get("accuracy").tofloat();
 			_life = instance.get("life").tofloat();
 			_range = instance.get("range").tofloat();
 			_damage = instance.get("damage").tofloat();
@@ -90,8 +97,23 @@ public class Action {
 			ON_CAST();
 			projectileID++;
 
+			float accuracyX = (100 - _accuracy);
+			float accuracyY = (100 - _accuracy);
+			float accuracy = caster.getStats().getAccuracy();
+			float xOff = accuracy + random.nextFloat() * (accuracyX - accuracy);
+			float yOff = accuracy + random.nextFloat() * (accuracyY - accuracy);
+			int flipX = random.nextInt(2);
+			int flipY = random.nextInt(2);
+
+			if (flipX == 1) {
+				xOff = -xOff;
+			}
+			if (flipY == 1) {
+				yOff = -yOff;
+			}
+
 			Vector2 tmpLoc = new Vector2(caster.getCenter().x, caster.getCenter().y);
-			Vector2 tmpDest = new Vector2(target.getCenter().x, target.getCenter().y);
+			Vector2 tmpDest = new Vector2(target.getCenter().x + xOff, target.getCenter().y + yOff);
 			Vector2 dir = new Vector2(tmpDest.sub(tmpLoc)).nor();
 			Projectile p = new Projectile("pew", new Vector2(caster.getCenter().x, caster.getCenter().y),
 					new Vector2(dir.x, dir.y), caster.getLayer(), projectileID, _speed, caster.getSectorID(),

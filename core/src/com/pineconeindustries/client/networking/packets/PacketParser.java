@@ -27,7 +27,7 @@ public class PacketParser {
 		case Packets.MOVE_PACKET:
 
 			try {
-
+				
 				int playerID = Integer.parseInt(split[0]);
 				float x = Float.parseFloat(split[1]);
 				float y = Float.parseFloat(split[2]);

@@ -21,7 +21,6 @@ public class Database {
 			if (Global.useDatabase) {
 				Class.forName("com.mysql.jdbc.Driver");
 				conn = DriverManager.getConnection("jdbc:mysql://localhost/starmyth?" + "user=root&password=Movingon1");
-
 			}
 			playerDAO = new PlayerDAO(conn);
 			npcDAO = new NPCDAO(conn);

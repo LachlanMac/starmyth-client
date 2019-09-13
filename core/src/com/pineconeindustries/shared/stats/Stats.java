@@ -25,7 +25,7 @@ public class Stats {
 		this.accuracy = accuracy;
 		this.reflexes = reflexes;
 	}
-
+	
 	public void setStats(float hp, float energy, int strength, int stamina, int logic, int accuracy, int reflexes) {
 		this.hp = hp;
 		this.energy = energy;

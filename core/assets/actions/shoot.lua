@@ -1,7 +1,8 @@
 type = "direct"
 damage = 10
-cooldown = 1
-range = 500
+cooldown = 0.1
+accuracy = 50
+range = 700
 speed = 400
 life = 2
 

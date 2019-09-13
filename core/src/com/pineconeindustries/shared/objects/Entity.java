@@ -165,7 +165,7 @@ public abstract class Entity extends GameObject implements Comparable<Entity> {
 		return -loc.y;
 
 	}
-
+	
 	@Override
 	public int compareTo(Entity o) {
 
