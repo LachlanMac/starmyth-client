@@ -20,11 +20,13 @@ public class Action {
 	private String name;
 	private Globals instance;
 	LuaValue actionInstance, sectorInstance, script, call;
+	private boolean ready = false;
 
 	public enum type {
 		direct, aoe, buff, heal, item
 	};
 
+	private float timePassed = 0;
 	private float _speed = 0;
 	private float _damage = 0;
 	private float _cooldown = 0;
@@ -92,11 +94,23 @@ public class Action {
 			Vector2 tmpDest = new Vector2(target.getCenter().x, target.getCenter().y);
 			Vector2 dir = new Vector2(tmpDest.sub(tmpLoc)).nor();
 			Projectile p = new Projectile("pew", new Vector2(caster.getCenter().x, caster.getCenter().y),
-					new Vector2(dir.x, dir.y), caster.getLayer(), projectileID, _speed, caster.getSectorID(), _life);
+					new Vector2(dir.x, dir.y), caster.getLayer(), projectileID, _speed, caster.getSectorID(),
+					caster.getStructureID(), _life, this, caster);
 			Galaxy.getInstance().getSectorByID(caster.getSectorID()).addProjectile(p);
-
+			ready = false;
 		} else {
 			//
+		}
+	}
+
+	public void update(float delta) {
+		if (!ready) {
+			this.timePassed += delta;
+		}
+
+		if (timePassed >= _cooldown) {
+			timePassed = 0;
+			ready = true;
 		}
 	}
 
@@ -124,4 +138,7 @@ public class Action {
 
 	}
 
+	public boolean isReady() {
+		return ready;
+	}
 }

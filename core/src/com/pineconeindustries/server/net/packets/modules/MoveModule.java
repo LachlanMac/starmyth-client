@@ -61,7 +61,7 @@ public class MoveModule {
 		if (state.charAt(9) == '1') {
 			inputState[9] = true;
 		}
-
+		
 		// if input stte changed....
 		player.setInputState(inputState);
 
@@ -107,12 +107,11 @@ public class MoveModule {
 		}
 
 	}
-	
-	
-	public static UDPPacket getProjectilePacket(int playerID, Vector2 playerLoc, Vector2 movement, float velocity,
-			int layer) {
+
+	public static UDPPacket ds(int playerID, Vector2 playerLoc, Vector2 movement, float velocity,
+			int layer, int structureID) {
 		String packetData = new String(playerID + "=" + playerLoc.x + "=" + playerLoc.y + "=" + movement.x + "="
-				+ movement.y + "=" + velocity + "=" + layer + "=");
+				+ movement.y + "=" + velocity + "=" + layer + "=" + structureID + "=");
 
 		return new UDPPacket(Packets.MOVE_PACKET, packetData, UDPPacket.packetCounter());
 

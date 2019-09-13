@@ -1,9 +1,15 @@
 package com.pineconeindustries.shared.objects;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.pineconeindustries.server.galaxy.Galaxy;
+import com.pineconeindustries.server.galaxy.Sector;
+import com.pineconeindustries.shared.gameunits.Units;
+import com.pineconeindustries.shared.stats.Stats;
 
 public abstract class GameObject implements Targetable {
 
@@ -22,16 +28,20 @@ public abstract class GameObject implements Targetable {
 	private int boundsHeight = DEFAULT_BOUNDS_HEIGHT;
 	protected Rectangle bounds;
 	protected int sectorID;
+	protected int structureID;
+	protected Stats stats;
 
 	protected String name;
 
-	public GameObject(String name, Vector2 loc, int layer, int id, int sectorID) {
+	public GameObject(String name, Vector2 loc, int layer, int id, int sectorID, int structureID) {
 		this.name = name;
 		this.sectorID = sectorID;
+		this.structureID = structureID;
 		this.loc = loc;
 		this.layer = layer;
 		this.id = id;
 		bounds = new Rectangle(loc.x, loc.y, boundsWidth, boundsHeight);
+
 	}
 
 	public abstract String getType();
@@ -46,6 +56,10 @@ public abstract class GameObject implements Targetable {
 
 	public Vector2 getLoc() {
 		return loc;
+	}
+
+	public Rectangle getProposedPoint(Vector2 vec) {
+		return new Rectangle(vec.x - 1, vec.y - 1, 3, 3);
 	}
 
 	public Rectangle getProposedBounds(Vector2 vec) {
@@ -134,6 +148,37 @@ public abstract class GameObject implements Targetable {
 
 	}
 
+	public ArrayList<Tile> getBorderTiles() {
+
+		ArrayList<Tile> tiles = new ArrayList<Tile>();
+
+		Sector s = Galaxy.getInstance().getSectorByID(sectorID);
+
+		StructureLayer l = Galaxy.getInstance().getSectorByID(sectorID).getStructureByID(structureID)
+				.getLayerByNumber(layer);
+
+		Vector2 localVector = getLocalVector();
+
+		tiles.add(l.getTileAt(localVector.x, localVector.y));
+		tiles.add(l.getTileAt(localVector.x - Units.TILE_SIZE, localVector.y));
+		tiles.add(l.getTileAt(localVector.x + Units.TILE_SIZE, localVector.y));
+		tiles.add(l.getTileAt(localVector.x, localVector.y - Units.TILE_SIZE));
+		tiles.add(l.getTileAt(localVector.x, localVector.y + Units.TILE_SIZE));
+		tiles.add(l.getTileAt(localVector.x - Units.TILE_SIZE, localVector.y - Units.TILE_SIZE));
+		tiles.add(l.getTileAt(localVector.x + Units.TILE_SIZE, localVector.y - Units.TILE_SIZE));
+		tiles.add(l.getTileAt(localVector.x + Units.TILE_SIZE, localVector.y + Units.TILE_SIZE));
+		tiles.add(l.getTileAt(localVector.x - Units.TILE_SIZE, localVector.y + Units.TILE_SIZE));
+
+		return tiles;
+
+	}
+
+	public Vector2 getLocalVector() {
+
+		return Galaxy.getInstance().getSectorByID(sectorID).getStructureByID(structureID).getLocalVector(loc);
+
+	}
+
 	public int getSectorID() {
 		return sectorID;
 	}
@@ -144,6 +189,14 @@ public abstract class GameObject implements Targetable {
 
 	public boolean isInLineOfSight(GameObject target) {
 		return true;
+	}
+
+	public void setStats(Stats stats) {
+		this.stats = stats;
+	}
+
+	public Stats getStats() {
+		return stats;
 	}
 
 }

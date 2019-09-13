@@ -15,6 +15,8 @@ import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.server.galaxy.Galaxy;
 import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.packets.modules.MoveModule;
+import com.pineconeindustries.server.net.players.PlayerConnection;
+import com.pineconeindustries.shared.actions.Action;
 import com.pineconeindustries.shared.actions.ActionManager;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
@@ -23,37 +25,32 @@ import com.pineconeindustries.shared.utils.VectorMath;
 
 public class Projectile extends GameObject {
 
-	Vector2 direction;
-	Vector2 start;
-
-	Texture plasma;
-	Sprite pSprite;
+	private Vector2 direction;
 	private DecimalFormat df = new DecimalFormat("#.00");
 	private float speed;
 	private float state = 0;
 	private float life;
 	private float speedTho = 0;
-
 	private int framesSinceUpdate = 0;
-	private float captureX, captureY;
 	private Sector serverSector;
-
 	private Vector2 renderLoc;
-
 	private Animation<TextureRegion> currentFrame;
-
-	private Vector2 startingDirection;
+	private Action action;
+	private boolean setToBounce = false;
+	private boolean setToRemove = false;
+	private Vector2 bounceDir = new Vector2(0, 0);
+	private Entity caster;
 
 	public Projectile(String name, Vector2 loc, Vector2 direction, int layer, int id, float speed, int sectorID,
-			float life) {
-		super(name, loc, layer, id, sectorID);
+			int structureID, float life, Action action, Entity caster) {
+		super(name, loc, layer, id, sectorID, structureID);
+		this.action = action;
 		this.direction = direction;
 		this.speed = speed;
-		this.start = loc;
 		this.life = life;
 		renderLoc = loc;
+		this.caster = caster;
 
-		startingDirection = new Vector2(direction);
 		if (Global.isServer()) {
 			serverSector = Galaxy.getInstance().getSectorByID(sectorID);
 		} else {
@@ -65,22 +62,77 @@ public class Projectile extends GameObject {
 	public void update() {
 		speedTho = Gdx.graphics.getDeltaTime();
 		if (Global.isServer()) {
+
+			if (setToRemove) {
+				action.ON_END();
+				serverSector.removeProjectile(this);
+				return;
+			}
+
+			if (setToBounce) {
+				direction = bounceDir;
+				loc.add(direction.x * 3, direction.y * 3);
+				setToBounce = false;
+			}
 			life -= speedTho;
 
-			// setLoc(new Vector2(this.getLoc().x + (direction.x *
-			// Gdx.graphics.getDeltaTime() * speed),this.getLoc().y + (direction.y *
-			// Gdx.graphics.getDeltaTime() * speed)));
-			// System.out.println(direction.x + ", " + direction.y);
-			// this.loc.x += 2 * speedTho * speed * direction.x;
-			// this.loc.y += 2 * speedTho * speed * direction.y;
 			Vector2 dirNew = new Vector2(direction.x * speed * speedTho * 2, direction.y * speed * speedTho * 2);
-			this.loc.add(dirNew);
 
+			Vector2 proposedVector = new Vector2(loc.x, loc.y).add(dirNew);
+
+			for (NPC n : Galaxy.getInstance().getSectorByID(sectorID).getNPCsInRange(structureID, layer, proposedVector,
+					100)) {
+
+				if (n.getBounds().contains(proposedVector)) {
+					action.ON_HIT();
+					setToRemove = true;
+				}
+
+			}
+
+			for (PlayerConnection mp : Galaxy.getInstance().getSectorByID(sectorID)
+					.getPlayerConnectionsInRange(structureID, layer, proposedVector, 100)) {
+				if (mp.getPlayerMP().getBounds().contains(proposedVector)) {
+					if (mp.getPlayerMP().equals(caster)) {
+						System.out.println("HIT SELF?!?!?");
+					} else {
+						action.ON_HIT();
+						setToRemove = true;
+					}
+
+				}
+
+			}
+
+			for (Tile tile : getBorderTiles()) {
+				if (getProposedPoint(proposedVector).overlaps(tile.getBounds()) && tile.isCollidable()) {
+
+					String dirString = VectorMath.getDirectionLetter(direction.x, direction.y);
+
+					if (dirString.equals("n") || dirString.equals("s")) {
+
+						bounceDir = new Vector2(direction.x, -direction.y);
+						setToBounce = true;
+
+					} else {
+
+						bounceDir = new Vector2(-direction.x, direction.y);
+						setToBounce = true;
+
+					}
+
+				}
+
+			}
+			if (!setToBounce)
+				this.loc = proposedVector;
 			String data = new String(getID() + "x" + df.format(getLoc().x) + "x" + df.format(getLoc().y) + "x" + layer
-					+ "x" + df.format(direction.x) + "x" + df.format(direction.y) + "=");
+					+ "x" + df.format(direction.x) + "x" + df.format(direction.y) + "x" + structureID + "=");
 			serverSector.addProjectileMovementData(data);
 			if (life <= 0) {
-				serverSector.removeProjectile(this);
+
+				setToRemove = true;
+
 				return;
 			}
 		}
@@ -121,6 +173,10 @@ public class Projectile extends GameObject {
 		this.loc = loc;
 		updateBounds();
 
+	}
+
+	public void setDirection(Vector2 direction) {
+		this.direction = direction;
 	}
 
 	@Override

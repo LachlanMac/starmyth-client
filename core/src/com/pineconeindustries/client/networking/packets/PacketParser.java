@@ -277,19 +277,23 @@ public class PacketParser {
 				int layer = Integer.parseInt(npcSplit[3]);
 				float dirX = Float.parseFloat(npcSplit[4]);
 				float dirY = Float.parseFloat(npcSplit[5]);
+				int structureID = Integer.parseInt(npcSplit[6]);
 				Projectile p = LogicController.getInstance().getSector().getProjectileByID(id);
 				if (p != null) {
 					p.setLoc(new Vector2(x, y));
+					p.setDirection(new Vector2(dirX, dirY));
 					p.setLayer(layer);
 				} else {
 
 					LogicController.getInstance().getSector()
 							.addProjectile(new Projectile(name, new Vector2(x, y), new Vector2(dirX, dirY).nor(), layer,
-									id, 200, LogicController.getInstance().getSector().getPort(), 100));
+									id, 200, LogicController.getInstance().getSector().getPort(), structureID, 100,
+									null, null));
 				}
 
 			} catch (Exception e) {
-				System.out.println("EXCEPTION DATA: " + projectileData + "    " + e.getMessage());
+				System.out.println("EXCEPTION DATA: " + projectileData + ":");
+				e.printStackTrace();
 			}
 		}
 

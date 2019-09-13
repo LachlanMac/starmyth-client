@@ -1,6 +1,6 @@
 type = "direct"
 damage = 10
-cooldown = 3.0
+cooldown = 1
 range = 500
 speed = 400
 life = 2

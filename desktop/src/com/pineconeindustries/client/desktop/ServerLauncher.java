@@ -25,7 +25,7 @@ public class ServerLauncher {
 		HEADLESS = true;
 		ServerLauncher launcher = new ServerLauncher();
 		launcher.registerFonts();
-
+		
 		if (HEADLESS) {
 			HeadlessApplicationConfiguration headlessConfig = new HeadlessApplicationConfiguration();
 			headlessConfig.renderInterval = 1f / TICK_RATE;
@@ -37,8 +37,8 @@ public class ServerLauncher {
 			config.width = 1900;
 			config.height = 1200;
 
-			config.foregroundFPS = 15;
-			config.backgroundFPS = 15;
+			config.foregroundFPS = 30;
+			config.backgroundFPS = 30;
 			config.samples = 4;
 			// config.fullscreen = true;
 			new LwjglApplication(new ServerApp(HEADLESS), config);

@@ -11,6 +11,7 @@ import com.pineconeindustries.shared.gameunits.Units;
 
 public abstract class Person extends Entity {
 
+	
 	protected float state = 0f;
 	private boolean tickrender = false;
 	private boolean spin = false;
@@ -48,38 +49,7 @@ public abstract class Person extends Entity {
 
 		tickrender = true;
 	}
-
-	public Vector2 getLocalVector() {
-
-		return Galaxy.getInstance().getSectorByID(sectorID).getStructureByID(structureID).getLocalVector(loc);
-
-	}
-
-	public ArrayList<Tile> getBorderTiles() {
-
-		ArrayList<Tile> tiles = new ArrayList<Tile>();
-
-		Sector s = Galaxy.getInstance().getSectorByID(sectorID);
-
-		StructureLayer l = Galaxy.getInstance().getSectorByID(sectorID).getStructureByID(structureID)
-				.getLayerByNumber(layer);
-
-		Vector2 localVector = getLocalVector();
-
-		tiles.add(l.getTileAt(localVector.x, localVector.y));
-		tiles.add(l.getTileAt(localVector.x - Units.TILE_SIZE, localVector.y));
-		tiles.add(l.getTileAt(localVector.x + Units.TILE_SIZE, localVector.y));
-		tiles.add(l.getTileAt(localVector.x, localVector.y - Units.TILE_SIZE));
-		tiles.add(l.getTileAt(localVector.x, localVector.y + Units.TILE_SIZE));
-		tiles.add(l.getTileAt(localVector.x - Units.TILE_SIZE, localVector.y - Units.TILE_SIZE));
-		tiles.add(l.getTileAt(localVector.x + Units.TILE_SIZE, localVector.y - Units.TILE_SIZE));
-		tiles.add(l.getTileAt(localVector.x + Units.TILE_SIZE, localVector.y + Units.TILE_SIZE));
-		tiles.add(l.getTileAt(localVector.x - Units.TILE_SIZE, localVector.y + Units.TILE_SIZE));
-
-		return tiles;
-
-	}
-
+	
 	public void setSpin(boolean spin) {
 		this.spin = spin;
 	}

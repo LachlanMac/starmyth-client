@@ -11,6 +11,7 @@ import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.log.Log;
 import com.pineconeindustries.shared.objects.PlayerMP;
+import com.pineconeindustries.shared.stats.Stats;
 
 public class PlayerDAO {
 
@@ -49,6 +50,34 @@ public class PlayerDAO {
 
 	}
 
+	public void loadStats(PlayerMP player) {
+
+		PreparedStatement stmt;
+		try {
+			stmt = conn.prepareStatement(
+					"SELECT hp, energy, strength, stamina, accuracy, reflexes, logic FROM PlayerCharacterStats WHERE character_id=?");
+			stmt.setInt(1, player.getID());
+			ResultSet rs = stmt.executeQuery();
+
+			while (rs.next()) {
+
+				float hp = rs.getFloat("hp");
+				float energy = rs.getFloat("energy");
+				int strength = rs.getInt("strength");
+				int stamina = rs.getInt("stamina");
+				int accuracy = rs.getInt("accuracy");
+				int reflexes = rs.getInt("reflexes");
+				int logic = rs.getInt("logic");
+
+				player.setStats(new Stats(hp, energy, strength, stamina, accuracy, reflexes, logic));
+			}
+
+		} catch (SQLException e) {
+			Log.dbLog("Error Loading Player From Database: " + e.getMessage());
+		}
+
+	}
+
 	public PlayerMP loadPlayerByID(int id) {
 		if (!Global.useDatabase) {
 			Log.debug("Loading Default Player");
@@ -82,9 +111,11 @@ public class PlayerDAO {
 			Log.dbLog("Error Loading Player From Database: " + e.getMessage());
 		}
 
-		if (player != null)
+		if (player != null) {
 			Log.dbLog("Loaded Player [" + player.getID() + ":" + player.getName() + "]");
-
+		} else {
+			loadStats(player);
+		}
 		return player;
 
 	}

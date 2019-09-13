@@ -21,6 +21,40 @@ public class VectorMath {
 
 	}
 
+	public static String getDirectionLetter(float x, float y) {
+
+		String dir = "";
+		if (y > 0) {
+			if (Math.abs(x) > Math.abs(y) && x < 0) {
+				dir = "w";
+			} else if (Math.abs(x) > Math.abs(y) && x > 0) {
+				dir = "e";
+			} else {
+				dir = "n";
+			}
+		} else if (y < 0) {
+			if (Math.abs(x) > Math.abs(y) && x < 0) {
+				dir = "w";
+			} else if (Math.abs(x) > Math.abs(y) && x > 0) {
+				dir = "e";
+			} else {
+				dir = "s";
+			}
+		} else {
+
+			if (x < 0) {
+				dir = "w";
+			} else if (x > 0) {
+				dir = "e";
+			} else {
+				dir = "s";
+			}
+		}
+
+		return dir;
+
+	}
+
 	public static String getPacketDirection(float x, float y) {
 
 		String dir = "";

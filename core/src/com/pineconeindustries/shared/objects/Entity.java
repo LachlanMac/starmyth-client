@@ -22,14 +22,14 @@ public abstract class Entity extends GameObject implements Comparable<Entity> {
 	protected final int MAX_FRAMES_SINCE_LAST_MOVE = 6;
 	protected float interval, velocity, speed;
 
-	protected int framesSinceLastMove, factionID, structureID;
+	protected int framesSinceLastMove, factionID;
 
 	AnimationSet animSet;
 	Animation<TextureRegion> currentFrame;
 	Vector2 renderLoc, lastDirectionFaced;
 
 	public Entity(String name, Vector2 loc, int factionID, int structureID, int layer, int id, int sectorID) {
-		super(name, loc, layer, id, sectorID);
+		super(name, loc, layer, id, sectorID, structureID);
 		interval = 0;
 		velocity = 0;
 		framesSinceLastMove = 0;
@@ -37,7 +37,6 @@ public abstract class Entity extends GameObject implements Comparable<Entity> {
 		renderLoc = loc;
 		lastDirectionFaced = loc;
 		this.factionID = factionID;
-		this.structureID = structureID;
 
 		if (!GameData.getInstance().isHeadless()) {
 			animSet = GameData.getInstance().Assets().getDefaultAnimations();

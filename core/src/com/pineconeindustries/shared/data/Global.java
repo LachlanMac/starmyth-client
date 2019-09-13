@@ -5,7 +5,7 @@ import org.luaj.vm2.lib.jse.JsePlatform;
 
 public class Global {
 
-	public static final int TEST_PLAYER_ID = 1;
+	public static final int TEST_PLAYER_ID = 2;
 	public static final String localHost = "127.0.0.1";
 	public static final String remoteHost = "73.230.126.75";
 

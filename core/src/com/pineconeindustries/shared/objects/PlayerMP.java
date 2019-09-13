@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.models.AnimationSet;
 import com.pineconeindustries.server.galaxy.Galaxy;
 import com.pineconeindustries.server.galaxy.Sector;
@@ -17,6 +18,7 @@ import com.pineconeindustries.shared.actions.ActionManager;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.gameunits.Units;
+import com.pineconeindustries.shared.stats.Stats;
 import com.pineconeindustries.shared.utils.VectorMath;
 
 public class PlayerMP extends Person {
@@ -24,17 +26,14 @@ public class PlayerMP extends Person {
 	int dcCount = 0;
 	boolean setToDisconnect = false;
 	private boolean spin = false;
-
 	private boolean inputChanged = false;
 	private boolean[] inputState = new boolean[10];
 
 	private GameObject target = null;
 
 	Sector serverSector;
-
-	// test
-
 	Action a;
+	private Stats stats;
 
 	public PlayerMP(String name, Vector2 loc, int factionID, int structureID, int playerID, int sectorID, int layer) {
 		super(name, loc, factionID, structureID, playerID, sectorID, layer);
@@ -58,15 +57,6 @@ public class PlayerMP extends Person {
 
 	public boolean isSetToDisconnect() {
 		return setToDisconnect;
-	}
-
-	public void renderold(SpriteBatch b) {
-		state += Gdx.graphics.getDeltaTime();
-
-		currentFrame = animSet.getAnimation(lastDirectionFaced, velocity);
-
-		b.draw(currentFrame.getKeyFrame(state, true), renderLoc.x, renderLoc.y);
-
 	}
 
 	@Override
@@ -96,6 +86,13 @@ public class PlayerMP extends Person {
 			renderLoc.y += (getLoc().y - position.y) * Units.NPC_LERP * Gdx.graphics.getDeltaTime();
 			framesSinceLastMove++;
 		}
+		if (Global.isClient()) {
+			if (LogicController.getInstance().getPlayer().isPlayerTarget(this)) {
+				b.draw(GameData.getInstance().Assets().getTargetAnimation().getKeyFrame(state * 50, true), renderLoc.x,
+						renderLoc.y);
+
+			}
+		}
 
 		if (getFramesSinceLastMove() > 5) {
 			if (velocity != 999)
@@ -117,17 +114,21 @@ public class PlayerMP extends Person {
 		if (dcCount > 600) {
 			setToDisconnect = true;
 		}
+		if (Global.isClient()) {
+			onClick();
+		}
 
 		if (Global.isServer()) {
-
+			a.update(Gdx.graphics.getDeltaTime());
 			Vector2 dir = VectorMath.getDirectionByInput(inputState).nor();
 
 			float x = dir.x;
 			float y = dir.y;
 
 			if (inputState[5]) {
-
-				a.castDirect(this, target);
+				if (a.isReady()) {
+					a.castDirect(this, target);
+				}
 			}
 
 			if (x == 0 && y == 0) {
@@ -149,7 +150,7 @@ public class PlayerMP extends Person {
 					canMove = false;
 			}
 			if (canMove) {
-				loc.add(new Vector2(adjustedMov.x, adjustedMov.y));
+				setLoc(loc.add(new Vector2(adjustedMov.x, adjustedMov.y)));
 			}
 			serverSector.getPacketWriter()
 					.queueToAll(MoveModule.getMovePacket(getID(), getLoc(), dir, velocity, getLayer()));

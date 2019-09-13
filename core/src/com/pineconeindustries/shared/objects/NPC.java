@@ -239,7 +239,7 @@ public class NPC extends Person {
 	}
 
 	public void findRandomPath() {
-		
+
 		PathNode end = structure.getLayerByNumber(layer).getRandomEndNode();
 		pathfinder = new AStarPath(structure.getGridWidth(), structure.getGridHeight(),
 				new PathNode((int) (getLoc().x / Units.GRID_INTERVAL), (int) (getLoc().y / Units.GRID_INTERVAL)), end);

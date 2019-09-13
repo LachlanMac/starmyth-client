@@ -14,6 +14,7 @@ import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.log.Log;
 import com.pineconeindustries.shared.objects.NPC;
 import com.pineconeindustries.shared.objects.PlayerMP;
+import com.pineconeindustries.shared.stats.Stats;
 
 public class NPCDAO {
 	Connection conn;
@@ -72,8 +73,10 @@ public class NPCDAO {
 				float localX = rs.getFloat("local_x");
 				float localY = rs.getFloat("local_y");
 				int layer = rs.getInt("layer");
-				npcs.add(new NPC(name, new Vector2(localX, localY), factionID, structureID, npcID,
-						Galaxy.getInstance().getSectorByID(id), layer));
+				NPC n = new NPC(name, new Vector2(localX, localY), factionID, structureID, npcID,
+						Galaxy.getInstance().getSectorByID(id), layer);
+				n.setStats(new Stats());
+				npcs.add(n);
 				Log.dbLog("Loaded NPC [" + npcID + ":" + name + "]");
 			}
 

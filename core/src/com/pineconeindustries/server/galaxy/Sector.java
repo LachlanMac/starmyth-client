@@ -315,6 +315,22 @@ public class Sector {
 
 	}
 
+	public ArrayList<NPC> getNPCsInRange(int structureID, int layer, Vector2 origin, float distance) {
+
+		ArrayList<NPC> n = new ArrayList<NPC>();
+
+		for (NPC npc : npcs) {
+
+			if (npc.getStructureID() == structureID && npc.getLayer() == layer && origin.dst(npc.getLoc()) < distance) {
+				n.add(npc);
+			}
+
+		}
+
+		return n;
+
+	}
+
 	public PacketParser getPacketParser() {
 		return packetParser;
 	}
