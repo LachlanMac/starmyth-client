@@ -40,9 +40,32 @@ public class PlayerDAO {
 			pstmt.setFloat(4, player.getLoc().x);
 			pstmt.setFloat(5, player.getLoc().y);
 			pstmt.setInt(6, player.getLayer());
-
 			pstmt.executeUpdate();
 			pstmt.close();
+
+		} catch (SQLException e) {
+			Log.dbLog("Error Saving Player to Database: " + e.getMessage());
+		}
+
+	}
+
+	public void createStats(PlayerMP player) {
+
+		String createStats = "INSERT INTO PlayerCharacterStats (character_id, hp, energy, strength, stamina, accuracy, reflexes, logic) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(createStats);
+
+			pstmt.setInt(1, player.getID());
+			pstmt.setFloat(2, 100.0f);
+			pstmt.setFloat(3, 100.0f);
+			pstmt.setInt(4, 5);
+			pstmt.setInt(5, 5);
+			pstmt.setInt(6, 5);
+			pstmt.setInt(7, 5);
+			pstmt.setInt(8, 5);
+
+			pstmt.execute();
 
 		} catch (SQLException e) {
 			Log.dbLog("Error Saving Player to Database: " + e.getMessage());
@@ -60,8 +83,11 @@ public class PlayerDAO {
 			ResultSet rs = stmt.executeQuery();
 
 			System.out.println("Loading stats for player " + player.getID());
-			while (rs.next()) {
 
+			int rows = 0;
+
+			while (rs.next()) {
+				rows++;
 				float hp = rs.getFloat("hp");
 				float energy = rs.getFloat("energy");
 				int strength = rs.getInt("strength");
@@ -71,6 +97,12 @@ public class PlayerDAO {
 				int logic = rs.getInt("logic");
 
 				player.setStats(new Stats(hp, energy, strength, stamina, accuracy, reflexes, logic));
+			}
+
+			if (rows == 0) {
+
+				createStats(player);
+
 			}
 
 		} catch (SQLException e) {
