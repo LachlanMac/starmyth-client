@@ -78,6 +78,9 @@ public class Sector {
 			p.update();
 
 		}
+		for (Structure s : structures) {
+			s.update();
+		}
 
 	}
 

@@ -39,7 +39,9 @@ public class Station extends Structure {
 
 	@Override
 	public void update() {
-
+		for (Elevator e : elevators) {
+			e.update();
+		}
 	}
 
 	@Override

@@ -5,8 +5,13 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.pineconeindustries.client.manager.InputManager;
+import com.pineconeindustries.client.manager.InputState;
 import com.pineconeindustries.client.manager.LogicController;
+import com.pineconeindustries.client.ui.UserInterface;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.gameunits.Units;
@@ -17,7 +22,8 @@ public class Elevator implements Targetable {
 	private int tileX, tileY, id;
 	private String wall;
 
-	private float renderX, renderY, rotation;
+	private float rotation;
+	private Rectangle bounds;
 
 	private Vector2 loc;
 
@@ -30,62 +36,18 @@ public class Elevator implements Targetable {
 		this.structure = structure;
 		this.wall = wall;
 
-		loc = structure.getGlobalVector(
-				new Vector2((tileX * Units.TILE_SIZE) + getXOffset(), (tileY * Units.TILE_SIZE) + getYOffset()));
+		loc = structure.getGlobalVector(new Vector2(tileX * Units.TILE_SIZE, tileY * Units.TILE_SIZE));
+
+		this.bounds = new Rectangle(loc.x, loc.y, Units.TILE_SIZE, Units.TILE_SIZE);
 
 		if (!Global.isHeadlessServer()) {
-			Texture text = GameData.getInstance().Assets().get("textures/elevator.png");
-			t = new Sprite(text);
+
+			TextureRegion elevatorText = GameData.getInstance().Assets().getElevatorTile();
+			t = new Sprite(elevatorText);
 			this.rotation = getRotation();
 			t.setRotation(rotation);
 			t.setPosition(loc.x, loc.y);
 		}
-	}
-
-	public int getXOffset() {
-		int x;
-		switch (wall) {
-		case "North":
-			x = (Units.TILE_SIZE / 4);
-			break;
-		case "South":
-			x = (Units.TILE_SIZE / 4);
-			break;
-		case "East":
-			x = 0;
-			break;
-		case "West":
-			x = 0;
-			break;
-		default:
-			x = 0;
-		}
-
-		return x;
-
-	}
-
-	public int getYOffset() {
-		int y;
-		switch (wall) {
-		case "North":
-			y = -(Units.TILE_SIZE / 2);
-			break;
-		case "South":
-			y = +(Units.TILE_SIZE / 2);
-			break;
-		case "East":
-			y = 0;
-			break;
-		case "West":
-			y = 0;
-			break;
-		default:
-			y = 0;
-		}
-
-		return y;
-
 	}
 
 	public float getRotation() {
@@ -112,7 +74,10 @@ public class Elevator implements Targetable {
 	}
 
 	public void update() {
-		// TODO Auto-generated method stub
+
+		if (Global.isClient()) {
+			onClick();
+		}
 
 	}
 
@@ -130,8 +95,14 @@ public class Elevator implements Targetable {
 	public void onClick() {
 		if (Global.isClient()) {
 
-			if (LogicController.getInstance().getPlayer().getLoc().dst(loc) < 100) {
-				System.out.println("CLICKO!");
+			if (InputState.leftClick()) {
+				System.out.println(this.bounds);
+				if (Intersector.overlaps(new Rectangle(InputManager.mouseX, InputManager.mouseY, 1, 1), this.bounds)) {
+					if (LogicController.getInstance().getPlayer().getLoc().dst(loc) < 200) {
+						System.out.println("ELEVATOR LCICKED");
+						UserInterface.getInstance().adddSelectBox();
+					}
+				}
 			}
 
 		}
