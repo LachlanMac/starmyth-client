@@ -1,7 +1,7 @@
 type = "direct"
 damage = 10
 cooldown = 0.1
-accuracy = 50
+accuracy = 90
 range = 700
 speed = 400
 life = 2

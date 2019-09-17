@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
@@ -19,6 +20,9 @@ public class UserInterface {
 	Table rootTable;
 	Chatbox chatbox;
 	Player player;
+	Skin skin;
+
+	LSelectBox selectBox;
 
 	static UserInterface instance = null;
 
@@ -35,6 +39,9 @@ public class UserInterface {
 
 		this.stage = new Stage();
 
+		buildInterface();
+		//this.selectBox = new LSelectBox(getSkin());
+
 		stage.getRoot().addCaptureListener(new InputListener() {
 
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -46,17 +53,21 @@ public class UserInterface {
 				if (!(event.getTarget() instanceof TextField)) {
 					stage.setKeyboardFocus(null);
 				}
+				/*
+				if (!(event.getTarget() instanceof LSelectBox)) {
+					selectBox.clearItems();
+				}
+				*/
 				return false;
 
 			}
 		});
 
-		buildInterface();
 	}
 
 	public void buildInterface() {
 
-		Skin skin = new Skin(Gdx.files.internal("ui/quantum-horizon-ui.json"));
+		skin = new Skin(Gdx.files.internal("ui/quantum-horizon-ui.json"));
 
 		rootTable = new Table(skin);
 		rootTable.setFillParent(true);
@@ -64,8 +75,17 @@ public class UserInterface {
 		chatbox = new Chatbox(.36f, .28f, skin, stage);
 
 		rootTable.add(chatbox).expand().bottom().left();
+		//rootTable.add(selectBox).expand().center();
 		stage.addActor(rootTable);
 
+	}
+
+	public void adddSelectBox() {
+		//selectBox.test();
+	}
+
+	public Skin getSkin() {
+		return skin;
 	}
 
 	public void update() {

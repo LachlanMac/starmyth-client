@@ -54,6 +54,9 @@ public class Projectile extends GameObject {
 		this.caster = caster;
 
 		if (Global.isServer()) {
+			if (!Global.isHeadlessServer()) {
+				currentFrame = GameData.getInstance().Assets().getShot2Animation();
+			}
 			serverSector = Galaxy.getInstance().getSectorByID(sectorID);
 		} else {
 			currentFrame = GameData.getInstance().Assets().getShot2Animation();

@@ -20,7 +20,7 @@ public class LAssetManager extends AssetManager {
 
 	TextureRegion wall, wallDiagSW, wallDiagNE, wallDiagNW, wallDiagSE, hall, room, doorClosedEW, doorClosedNS,
 			doorOpenEW, doorOpenNS, zoneClosedE, zoneClosedW, zoneOpenE, zoneOpenW, thrusterOff, thruster1, thruster2,
-			thruster3, thruster4;
+			thruster3, thruster4, elevatorTile;
 	// unassigned
 	TextureRegion zoneClosedN, zoneClosedS, zoneOpenN, zoneOpenS;
 
@@ -37,6 +37,7 @@ public class LAssetManager extends AssetManager {
 		load("textures/galaxybg1.png", Texture.class);
 		load("textures/plasma.png", Texture.class);
 		load("textures/shiptiles/shipSS.png", Texture.class);
+		load("textures/shiptiles/shipSS2.png", Texture.class);
 		load("textures/shiptiles/ionthrusterSS.png", Texture.class);
 		load("textures/playerfront.png", Texture.class);
 		load("textures/shiptiles/diagwall.png", Texture.class);
@@ -121,6 +122,7 @@ public class LAssetManager extends AssetManager {
 		wallDiagNE = shipTiles[2][2];
 		wallDiagNW = shipTiles[2][1];
 		hall = shipTiles[0][2];
+		elevatorTile = shipTiles[2][3];
 		doorOpenEW = shipTiles[3][2];
 		doorClosedEW = shipTiles[3][0];
 		doorOpenNS = shipTiles[3][3];
@@ -160,6 +162,10 @@ public class LAssetManager extends AssetManager {
 			return wall;
 		}
 
+	}
+
+	public TextureRegion getElevatorTile() {
+		return elevatorTile;
 	}
 
 	public TextureRegion getTileID(char id) {
