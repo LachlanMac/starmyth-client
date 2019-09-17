@@ -1,4 +1,4 @@
-package com.pineconeindustries.shared.objects;
+package com.pineconeindustries.shared.components.behaviors;
 
 public interface Targetable {
 

@@ -6,14 +6,14 @@ import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.Net;
 import com.pineconeindustries.client.ui.UserInterface;
 import com.pineconeindustries.server.net.packets.types.Packets;
-import com.pineconeindustries.shared.objects.Elevator;
-import com.pineconeindustries.shared.objects.NPC;
-import com.pineconeindustries.shared.objects.PlayerMP;
-import com.pineconeindustries.shared.objects.Projectile;
-import com.pineconeindustries.shared.objects.Ship;
-import com.pineconeindustries.shared.objects.Station;
-import com.pineconeindustries.shared.objects.Structure;
-import com.pineconeindustries.shared.objects.Structure.STRUCTURE_STATE;
+import com.pineconeindustries.shared.components.gameobjects.Elevator;
+import com.pineconeindustries.shared.components.gameobjects.NPC;
+import com.pineconeindustries.shared.components.gameobjects.PlayerMP;
+import com.pineconeindustries.shared.components.gameobjects.Projectile;
+import com.pineconeindustries.shared.components.structures.Ship;
+import com.pineconeindustries.shared.components.structures.Station;
+import com.pineconeindustries.shared.components.structures.Structure;
+import com.pineconeindustries.shared.components.structures.Structure.STRUCTURE_STATE;
 import com.pineconeindustries.shared.utils.VectorMath;
 
 public class PacketParser {
@@ -27,7 +27,7 @@ public class PacketParser {
 		case Packets.MOVE_PACKET:
 
 			try {
-				
+
 				int playerID = Integer.parseInt(split[0]);
 				float x = Float.parseFloat(split[1]);
 				float y = Float.parseFloat(split[2]);
@@ -116,8 +116,8 @@ public class PacketParser {
 					ids.add(playerID);
 					if (LogicController.getInstance().getSector().getPlayerByID(playerID) == null) {
 
-						LogicController.getInstance().getSector().addPlayer(new PlayerMP(name, new Vector2(xLoc, yLoc),
-								factionID, structureID, playerID, sectorID, layer));
+						LogicController.getInstance().getSector().addPlayer(new PlayerMP(playerID, name,
+								new Vector2(xLoc, yLoc), sectorID, structureID, layer, factionID));
 
 					}
 				}
@@ -158,7 +158,7 @@ public class PacketParser {
 				if (!LogicController.getInstance().getSector().npcExists(npcID)) {
 
 					LogicController.getInstance().getSector().addNPC(
-							new NPC(name, new Vector2(xLoc, yLoc), factionID, structureID, npcID, sectorID, layer));
+							new NPC(npcID, name, new Vector2(xLoc, yLoc), sectorID, structureID, layer, factionID));
 				}
 
 			}

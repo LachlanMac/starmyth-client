@@ -1,4 +1,4 @@
-package com.pineconeindustries.shared.objects;
+package com.pineconeindustries.shared.components.gameobjects;
 
 import java.util.ArrayList;
 
@@ -19,7 +19,7 @@ import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.Net;
 import com.pineconeindustries.client.networking.packets.PacketFactory;
 import com.pineconeindustries.shared.data.GameData;
-import com.pineconeindustries.shared.gameunits.Units;
+import com.pineconeindustries.shared.units.Units;
 
 public class Player extends Person {
 
@@ -38,9 +38,9 @@ public class Player extends Person {
 	Chatbox chatbox;
 	Camera camera;
 
-	public Player(String name, Vector2 loc, int factionID, int structureID, int id, int sectorID, Camera camera,
-			int layer) {
-		super(name, loc, factionID, structureID, id, sectorID, layer);
+	public Player(int id, String name, Vector2 loc, int sectorID, int structureID, int factionID, int layer,
+			Camera camera) {
+		super(id, name, loc, sectorID, structureID, layer, factionID);
 		this.camera = camera;
 		projectiles = new ArrayList<Projectile>();
 		lastState = InputState.getDefaultState();

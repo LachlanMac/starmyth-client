@@ -1,4 +1,4 @@
-package com.pineconeindustries.shared.objects;
+package com.pineconeindustries.shared.components.structures;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -129,7 +129,7 @@ public class Tile {
 					(xLoc * TILE_SIZE) + multiplierX, (yLoc * TILE_SIZE) + multiplierY);
 
 		} else {
-		
+
 			b.draw(GameData.getInstance().Assets().getTileID(id), (xLoc * TILE_SIZE) + multiplierX,
 					(yLoc * TILE_SIZE) + multiplierY);
 		}

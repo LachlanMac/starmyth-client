@@ -1,4 +1,4 @@
-package com.pineconeindustries.shared.objects;
+package com.pineconeindustries.shared.components.gameobjects;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -23,9 +23,10 @@ import com.pineconeindustries.server.galaxy.Galaxy;
 import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.packets.types.Packets;
 import com.pineconeindustries.server.net.packets.types.UDPPacket;
+import com.pineconeindustries.shared.components.structures.Structure;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
-import com.pineconeindustries.shared.gameunits.Units;
+import com.pineconeindustries.shared.units.Units;
 import com.pineconeindustries.shared.utils.VectorMath;
 
 public class NPC extends Person {
@@ -49,22 +50,20 @@ public class NPC extends Person {
 	private LuaFunction _ON_DEATH, _ON_HIT, _ON_NEW_PATH;
 
 	// CLIENT CONSTRUCTOR
-	public NPC(String name, Vector2 loc, int factionID, int structureID, int id, int sectorID, int layer) {
-		super(name, loc, factionID, structureID, id, sectorID, layer);
+	public NPC(int id, String name, Vector2 loc, int sectorID, int structureID, int layer, int factionID) {
+		super(id, name, loc, sectorID, structureID, layer, factionID);
 	}
 
 	// SERVER CONSTRUCTOR
-	public NPC(String name, Vector2 loc, int factionID, int structureID, int id, Sector sector, int layer) {
-		super(name, loc, factionID, structureID, id, sector.getPort(), layer);
+	public NPC(int id, String name, Vector2 loc, Sector sector, int structureID, int layer, int factionID) {
+		super(id, name, loc, sector.getPort(), structureID, layer, factionID);
 
-		if (Global.isServer()) {
-			registerScript();
-			this.sector = sector;
-			this.structure = sector.getStructureByID(structureID);
-			fsm = new FiniteStateMachine(this);
-			speed = Units.NPC_SPEED;
+		registerScript();
+		this.sector = sector;
+		this.structure = sector.getStructureByID(structureID);
+		fsm = new FiniteStateMachine(this);
+		speed = Units.NPC_SPEED;
 
-		}
 	}
 
 	@Override

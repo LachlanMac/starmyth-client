@@ -10,8 +10,8 @@ import com.pineconeindustries.client.networking.Connection;
 import com.pineconeindustries.client.networking.packets.PacketParser;
 import com.pineconeindustries.client.networking.packets.PacketRequester;
 import com.pineconeindustries.server.net.packets.types.UDPPacket;
+import com.pineconeindustries.shared.components.gameobjects.Player;
 import com.pineconeindustries.shared.log.Log;
-import com.pineconeindustries.shared.objects.Player;
 
 public class LogicController {
 

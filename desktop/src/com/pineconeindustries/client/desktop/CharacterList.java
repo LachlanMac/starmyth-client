@@ -370,28 +370,7 @@ public class CharacterList {
 
 		ArrayList<LocalPlayerData> list = new ArrayList<LocalPlayerData>();
 
-		if (name1 == null) {
-			return list;
-		} else if (name2 == null) {
-
-			list.add(new LocalPlayerData(charID1, id1, model1, name1, sector1, status1, user1, x1, y1, layerID1));
-			return list;
-		} else if (name3 == null) {
-			list.add(new LocalPlayerData(charID1, id1, model1, name1, sector1, status1, user1, x1, y1, layerID1));
-			list.add(new LocalPlayerData(charID2, id2, model2, name2, sector2, status2, user2, x2, y2, layerID2));
-			return list;
-		} else if (name4 == null) {
-			list.add(new LocalPlayerData(charID1, id1, model1, name1, sector1, status1, user1, x1, y1, layerID1));
-			list.add(new LocalPlayerData(charID2, id2, model2, name2, sector2, status2, user2, x2, y2, layerID2));
-			list.add(new LocalPlayerData(charID3, id3, model3, name3, sector3, status3, user3, x3, y3, layerID3));
-			return list;
-		} else {
-			list.add(new LocalPlayerData(charID1, id1, model1, name1, sector1, status1, user1, x1, y1, layerID1));
-			list.add(new LocalPlayerData(charID2, id2, model2, name2, sector2, status2, user2, x2, y2, layerID2));
-			list.add(new LocalPlayerData(charID3, id3, model3, name3, sector3, status3, user3, x3, y3, layerID3));
-			list.add(new LocalPlayerData(charID4, id4, model4, name4, sector4, status4, user4, x4, y4, layerID4));
-			return list;
-		}
+		return list;
 
 	}
 

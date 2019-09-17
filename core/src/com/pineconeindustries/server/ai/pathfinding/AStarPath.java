@@ -8,8 +8,8 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 
-import com.pineconeindustries.shared.objects.GridTile;
-import com.pineconeindustries.shared.objects.Tile;
+import com.pineconeindustries.shared.components.gameobjects.GridTile;
+import com.pineconeindustries.shared.components.structures.Tile;
 
 /**
  * A Star Algorithm

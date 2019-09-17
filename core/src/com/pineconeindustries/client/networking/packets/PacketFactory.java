@@ -5,7 +5,7 @@ import com.pineconeindustries.client.networking.Net;
 import com.pineconeindustries.server.net.packets.types.Packets;
 import com.pineconeindustries.server.net.packets.types.TCPPacket;
 import com.pineconeindustries.server.net.packets.types.UDPPacket;
-import com.pineconeindustries.shared.objects.GameObject;
+import com.pineconeindustries.shared.components.gameobjects.GameObject;
 
 public class PacketFactory {
 

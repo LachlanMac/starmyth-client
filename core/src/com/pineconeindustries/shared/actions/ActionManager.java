@@ -18,7 +18,7 @@ public class ActionManager {
 	public static ActionManager getInstance() {
 		if (instance == null)
 			instance = new ActionManager();
-
+		
 		return instance;
 
 	}

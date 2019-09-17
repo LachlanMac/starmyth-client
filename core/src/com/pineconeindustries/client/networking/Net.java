@@ -1,8 +1,8 @@
 package com.pineconeindustries.client.networking;
 
 import com.pineconeindustries.client.manager.LogicController;
-import com.pineconeindustries.shared.objects.Player;
-import com.pineconeindustries.shared.objects.PlayerMP;
+import com.pineconeindustries.shared.components.gameobjects.Player;
+import com.pineconeindustries.shared.components.gameobjects.PlayerMP;
 
 public class Net {
 

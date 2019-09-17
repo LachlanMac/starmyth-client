@@ -1,4 +1,4 @@
-package com.pineconeindustries.shared.objects;
+package com.pineconeindustries.shared.components.gameobjects;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -7,9 +7,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.manager.LogicController;
+import com.pineconeindustries.shared.components.behaviors.Targetable;
+import com.pineconeindustries.shared.components.structures.Structure;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
-import com.pineconeindustries.shared.gameunits.Units;
+import com.pineconeindustries.shared.units.Units;
 
 public class Elevator implements Targetable {
 

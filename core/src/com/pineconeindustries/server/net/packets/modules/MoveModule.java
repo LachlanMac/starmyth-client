@@ -4,11 +4,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.packets.types.Packets;
 import com.pineconeindustries.server.net.packets.types.UDPPacket;
-import com.pineconeindustries.shared.gameunits.Units;
+import com.pineconeindustries.shared.components.gameobjects.GameObject;
+import com.pineconeindustries.shared.components.gameobjects.PlayerMP;
+import com.pineconeindustries.shared.components.structures.Tile;
 import com.pineconeindustries.shared.log.Log;
-import com.pineconeindustries.shared.objects.GameObject;
-import com.pineconeindustries.shared.objects.PlayerMP;
-import com.pineconeindustries.shared.objects.Tile;
+import com.pineconeindustries.shared.units.Units;
 import com.pineconeindustries.shared.utils.VectorMath;
 
 public class MoveModule {

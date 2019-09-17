@@ -10,10 +10,10 @@ import org.luaj.vm2.lib.jse.JsePlatform;
 
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.server.galaxy.Galaxy;
+import com.pineconeindustries.shared.components.gameobjects.Entity;
+import com.pineconeindustries.shared.components.gameobjects.GameObject;
+import com.pineconeindustries.shared.components.gameobjects.Projectile;
 import com.pineconeindustries.shared.log.Log;
-import com.pineconeindustries.shared.objects.Entity;
-import com.pineconeindustries.shared.objects.GameObject;
-import com.pineconeindustries.shared.objects.Projectile;
 
 public class Action {
 

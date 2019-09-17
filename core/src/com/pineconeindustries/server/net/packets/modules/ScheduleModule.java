@@ -4,8 +4,8 @@ import com.pineconeindustries.client.networking.packets.custom.CustomTCPPacket;
 import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.packets.types.Packets;
 import com.pineconeindustries.server.net.players.PlayerConnection;
-import com.pineconeindustries.shared.objects.NPC;
-import com.pineconeindustries.shared.objects.Structure;
+import com.pineconeindustries.shared.components.gameobjects.NPC;
+import com.pineconeindustries.shared.components.structures.Structure;
 
 public class ScheduleModule {
 

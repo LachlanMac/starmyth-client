@@ -5,9 +5,9 @@ import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.packets.types.Packets;
 import com.pineconeindustries.server.net.packets.types.UDPPacket;
 import com.pineconeindustries.server.net.players.PlayerConnection;
-import com.pineconeindustries.shared.gameunits.Units;
+import com.pineconeindustries.shared.components.gameobjects.PlayerMP;
 import com.pineconeindustries.shared.log.Log;
-import com.pineconeindustries.shared.objects.PlayerMP;
+import com.pineconeindustries.shared.units.Units;
 
 public class ConnectionModule {
 

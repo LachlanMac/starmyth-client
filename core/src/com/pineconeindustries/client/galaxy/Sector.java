@@ -10,15 +10,15 @@ import java.util.concurrent.PriorityBlockingQueue;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.pineconeindustries.shared.components.gameobjects.Entity;
+import com.pineconeindustries.shared.components.gameobjects.NPC;
+import com.pineconeindustries.shared.components.gameobjects.Person;
+import com.pineconeindustries.shared.components.gameobjects.Player;
+import com.pineconeindustries.shared.components.gameobjects.PlayerMP;
+import com.pineconeindustries.shared.components.gameobjects.Projectile;
+import com.pineconeindustries.shared.components.structures.Station;
+import com.pineconeindustries.shared.components.structures.Structure;
 import com.pineconeindustries.shared.log.Log;
-import com.pineconeindustries.shared.objects.Entity;
-import com.pineconeindustries.shared.objects.NPC;
-import com.pineconeindustries.shared.objects.Person;
-import com.pineconeindustries.shared.objects.Player;
-import com.pineconeindustries.shared.objects.PlayerMP;
-import com.pineconeindustries.shared.objects.Projectile;
-import com.pineconeindustries.shared.objects.Station;
-import com.pineconeindustries.shared.objects.Structure;
 
 public class Sector {
 

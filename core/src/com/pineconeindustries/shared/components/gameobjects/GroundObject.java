@@ -1,15 +1,17 @@
-package com.pineconeindustries.shared.objects;
+package com.pineconeindustries.shared.components.gameobjects;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.pineconeindustries.shared.data.GameData;
 
 public class GroundObject extends GameObject {
 
+	// OLD String name, Vector2 loc, int layer, int id, int sectorID, int
+	// structureID
+	// NEW int id, String name, Vector2 loc, int sectorID, int structureID, int
+	// layer
 	public GroundObject(String name, Vector2 loc, int layer, int id, int sectorID, int structureID) {
-		super(name, loc, layer, id, sectorID, structureID);
+		super(id, name, loc, sectorID, structureID, layer);
 		// TODO Auto-generated constructor stub
 	}
 

@@ -12,11 +12,11 @@ import com.pineconeindustries.server.ai.states.WanderState;
 import com.pineconeindustries.server.ai.states.WorkState;
 import com.pineconeindustries.server.clock.Clock;
 import com.pineconeindustries.server.galaxy.Galaxy;
+import com.pineconeindustries.shared.components.gameobjects.NPC;
+import com.pineconeindustries.shared.components.structures.Station;
+import com.pineconeindustries.shared.components.structures.Structure;
 import com.pineconeindustries.shared.files.Files;
 import com.pineconeindustries.shared.log.Log;
-import com.pineconeindustries.shared.objects.NPC;
-import com.pineconeindustries.shared.objects.Station;
-import com.pineconeindustries.shared.objects.Structure;
 
 public class FiniteStateMachine {
 

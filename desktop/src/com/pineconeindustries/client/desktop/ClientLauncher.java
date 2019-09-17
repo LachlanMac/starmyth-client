@@ -18,6 +18,7 @@ import com.pineconeindustries.client.desktop.character.CharacterScreen;
 import com.pineconeindustries.client.desktop.debug.Debug;
 import com.pineconeindustries.client.desktop.login.LoginClient;
 import com.pineconeindustries.server.ServerApp;
+import com.pineconeindustries.shared.log.Log;
 
 public class ClientLauncher {
 
@@ -27,9 +28,9 @@ public class ClientLauncher {
 
 	public static void main(String[] arg) {
 
-		new LoginClient();
+		// new LoginClient();
 
-		//startTestClient();
+		startTestClient();
 
 	}
 
@@ -51,6 +52,7 @@ public class ClientLauncher {
 		// config.fullscreen = true;
 
 		LocalPlayerData data = Debug.getTestClient(3);
+		Log.debug("Creating Test Client ");
 
 		new LwjglApplication(new ClientApp(data), config);
 	}

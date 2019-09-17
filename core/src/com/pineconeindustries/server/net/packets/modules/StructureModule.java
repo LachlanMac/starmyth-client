@@ -6,9 +6,9 @@ import com.pineconeindustries.server.galaxy.Galaxy;
 import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.packets.types.Packets;
 import com.pineconeindustries.server.net.packets.types.TCPPacket;
+import com.pineconeindustries.shared.components.gameobjects.Elevator;
+import com.pineconeindustries.shared.components.structures.Structure;
 import com.pineconeindustries.shared.log.Log;
-import com.pineconeindustries.shared.objects.Elevator;
-import com.pineconeindustries.shared.objects.Structure;
 
 public class StructureModule {
 

@@ -9,8 +9,8 @@ import com.badlogic.gdx.utils.Queue;
 import com.pineconeindustries.server.ai.FiniteStateMachine;
 import com.pineconeindustries.server.ai.pathfinding.AStarPath;
 import com.pineconeindustries.server.ai.pathfinding.PathNode;
-import com.pineconeindustries.shared.objects.Station;
-import com.pineconeindustries.shared.objects.Structure;
+import com.pineconeindustries.shared.components.structures.Station;
+import com.pineconeindustries.shared.components.structures.Structure;
 
 public class WanderState extends State {
 

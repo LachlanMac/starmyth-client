@@ -7,10 +7,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import com.badlogic.gdx.math.Vector2;
+import com.pineconeindustries.shared.components.gameobjects.PlayerMP;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.log.Log;
-import com.pineconeindustries.shared.objects.PlayerMP;
 import com.pineconeindustries.shared.stats.Stats;
 
 public class PlayerDAO {
@@ -64,8 +64,8 @@ public class PlayerDAO {
 			pstmt.setInt(6, 5);
 			pstmt.setInt(7, 5);
 			pstmt.setInt(8, 5);
-			
-			player.setStats(new Stats(100, 100, 5,5,5,5,5));
+
+			player.setStats(new Stats(100, 100, 5, 5, 5, 5, 5));
 
 			pstmt.execute();
 
@@ -114,10 +114,6 @@ public class PlayerDAO {
 	}
 
 	public PlayerMP loadPlayerByID(int id) {
-		if (!Global.useDatabase) {
-			Log.debug("Loading Default Player");
-			return getDefaultPlayer(id);
-		}
 
 		PlayerMP player = null;
 
@@ -138,7 +134,7 @@ public class PlayerDAO {
 				float localY = rs.getFloat("local_y");
 				int layer = rs.getInt("layer");
 
-				player = new PlayerMP(name, new Vector2(localX, localY), factionID, structureID, id, sectorID, layer);
+				player = new PlayerMP(id, name, new Vector2(localX, localY), sectorID, structureID, layer, factionID);
 
 			}
 
@@ -152,10 +148,6 @@ public class PlayerDAO {
 		}
 		return player;
 
-	}
-
-	public PlayerMP getDefaultPlayer(int id) {
-		return new PlayerMP("Default Player", new Vector2(100, 100), 0, 0, id, 7780, 1);
 	}
 
 }

@@ -1,4 +1,4 @@
-package com.pineconeindustries.shared.objects;
+package com.pineconeindustries.shared.components.gameobjects;
 
 import java.util.ArrayList;
 
@@ -8,8 +8,11 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.server.galaxy.Galaxy;
 import com.pineconeindustries.server.galaxy.Sector;
-import com.pineconeindustries.shared.gameunits.Units;
+import com.pineconeindustries.shared.components.behaviors.Targetable;
+import com.pineconeindustries.shared.components.structures.StructureLayer;
+import com.pineconeindustries.shared.components.structures.Tile;
 import com.pineconeindustries.shared.stats.Stats;
+import com.pineconeindustries.shared.units.Units;
 
 public abstract class GameObject implements Targetable {
 
@@ -33,7 +36,10 @@ public abstract class GameObject implements Targetable {
 
 	protected String name;
 
-	public GameObject(String name, Vector2 loc, int layer, int id, int sectorID, int structureID) {
+	// OLD String name, Vector2 loc, int layer, int id, int sectorID, int structureID
+	// NEW int id, String name, Vector2 loc, int sectorID, int structureID, int layer
+
+	public GameObject(int id, String name, Vector2 loc, int sectorID, int structureID, int layer) {
 		this.name = name;
 		this.sectorID = sectorID;
 		this.structureID = structureID;

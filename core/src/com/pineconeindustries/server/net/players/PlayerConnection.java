@@ -14,9 +14,9 @@ import com.pineconeindustries.server.net.packets.modules.ConnectionModule;
 import com.pineconeindustries.server.net.packets.types.Packets;
 import com.pineconeindustries.server.net.packets.types.TCPPacket;
 import com.pineconeindustries.server.net.packets.types.UDPPacket;
+import com.pineconeindustries.shared.components.gameobjects.PlayerMP;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.log.Log;
-import com.pineconeindustries.shared.objects.PlayerMP;
 
 public class PlayerConnection extends Thread {
 

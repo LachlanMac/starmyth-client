@@ -1,4 +1,4 @@
-package com.pineconeindustries.shared.objects;
+package com.pineconeindustries.shared.components.gameobjects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -15,10 +15,11 @@ import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.packets.modules.MoveModule;
 import com.pineconeindustries.shared.actions.Action;
 import com.pineconeindustries.shared.actions.ActionManager;
+import com.pineconeindustries.shared.components.structures.Tile;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
-import com.pineconeindustries.shared.gameunits.Units;
 import com.pineconeindustries.shared.stats.Stats;
+import com.pineconeindustries.shared.units.Units;
 import com.pineconeindustries.shared.utils.VectorMath;
 
 public class PlayerMP extends Person {
@@ -35,8 +36,8 @@ public class PlayerMP extends Person {
 	Action a;
 	private Stats stats;
 
-	public PlayerMP(String name, Vector2 loc, int factionID, int structureID, int playerID, int sectorID, int layer) {
-		super(name, loc, factionID, structureID, playerID, sectorID, layer);
+	public PlayerMP(int id, String name, Vector2 loc, int sectorID, int structureID, int layer, int factionID) {
+		super(id, name, loc, sectorID, structureID, layer, factionID);
 		speed = Units.PLAYER_MOVE_SPEED;
 
 		if (Global.isServer()) {
@@ -130,7 +131,7 @@ public class PlayerMP extends Person {
 					a.castDirect(this, target);
 				}
 			}
-			
+
 			if (x == 0 && y == 0) {
 				return;
 			}

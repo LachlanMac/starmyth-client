@@ -1,4 +1,4 @@
-package com.pineconeindustries.shared.objects;
+package com.pineconeindustries.shared.components.gameobjects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.pineconeindustries.server.ai.pathfinding.PathNode;

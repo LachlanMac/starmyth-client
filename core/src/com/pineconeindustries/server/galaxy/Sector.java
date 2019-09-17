@@ -17,13 +17,13 @@ import com.pineconeindustries.server.net.players.PacketParser;
 import com.pineconeindustries.server.net.players.PacketWriter;
 import com.pineconeindustries.server.net.players.PlayerConnection;
 import com.pineconeindustries.server.net.players.PlayerConnectionListener;
+import com.pineconeindustries.shared.components.gameobjects.GameObject;
+import com.pineconeindustries.shared.components.gameobjects.NPC;
+import com.pineconeindustries.shared.components.gameobjects.PlayerMP;
+import com.pineconeindustries.shared.components.gameobjects.Projectile;
+import com.pineconeindustries.shared.components.structures.Station;
+import com.pineconeindustries.shared.components.structures.Structure;
 import com.pineconeindustries.shared.log.Log;
-import com.pineconeindustries.shared.objects.GameObject;
-import com.pineconeindustries.shared.objects.NPC;
-import com.pineconeindustries.shared.objects.PlayerMP;
-import com.pineconeindustries.shared.objects.Projectile;
-import com.pineconeindustries.shared.objects.Station;
-import com.pineconeindustries.shared.objects.Structure;
 
 public class Sector {
 

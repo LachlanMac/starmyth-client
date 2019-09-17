@@ -9,11 +9,11 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.server.galaxy.Galaxy;
+import com.pineconeindustries.shared.components.gameobjects.NPC;
+import com.pineconeindustries.shared.components.gameobjects.PlayerMP;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.log.Log;
-import com.pineconeindustries.shared.objects.NPC;
-import com.pineconeindustries.shared.objects.PlayerMP;
 import com.pineconeindustries.shared.stats.Stats;
 
 public class NPCDAO {
@@ -28,7 +28,7 @@ public class NPCDAO {
 		if (!Global.useDatabase) {
 			return;
 		}
-		
+
 		Log.dbLog("Saving NPC [" + npc.getID() + ":" + npc.getName() + "]");
 
 		String savePlayerSQL = "UPDATE PlayerCharacter SET sector_id=?, faction_id=?, structure_id=?, local_x=?, local_y=?, layer=?";
@@ -53,10 +53,7 @@ public class NPCDAO {
 	}
 
 	public ArrayList<NPC> loadNPCsBySectorID(int id) {
-		if (!Global.useDatabase) {
-			Log.debug("Loading Default Player");
-			return getDefaultNPCs(id);
-		}
+
 		ArrayList<NPC> npcs = new ArrayList<NPC>();
 
 		PreparedStatement stmt;
@@ -73,8 +70,9 @@ public class NPCDAO {
 				float localX = rs.getFloat("local_x");
 				float localY = rs.getFloat("local_y");
 				int layer = rs.getInt("layer");
-				NPC n = new NPC(name, new Vector2(localX, localY), factionID, structureID, npcID,
-						Galaxy.getInstance().getSectorByID(id), layer);
+				NPC n = new NPC(npcID, name, new Vector2(localX, localY), Galaxy.getInstance().getSectorByID(id),
+						structureID, layer, factionID);
+
 				n.setStats(new Stats());
 				npcs.add(n);
 				Log.dbLog("Loaded NPC [" + npcID + ":" + name + "]");
@@ -86,21 +84,6 @@ public class NPCDAO {
 
 		return npcs;
 
-	}
-
-	public ArrayList<NPC> getDefaultNPCs(int sectorID) {
-
-		ArrayList<NPC> npcs = new ArrayList<NPC>();
-
-		npcs.add(new NPC("NPC1", new Vector2(300, 200), 0, 0, 444, Galaxy.getInstance().getSectorByID(sectorID), 1));
-		npcs.add(new NPC("NPC2", new Vector2(600, 800), 0, 0, 455, Galaxy.getInstance().getSectorByID(sectorID), 1));
-
-		return npcs;
-
-	}
-
-	public PlayerMP getDefaultPlayer(int id) {
-		return new PlayerMP("Default Player", new Vector2(100, 100), 0, 0, id, 7780, 1);
 	}
 
 }

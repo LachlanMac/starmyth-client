@@ -7,7 +7,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.pineconeindustries.shared.objects.Projectile;
+import com.pineconeindustries.shared.components.gameobjects.Projectile;
 
 public class InputManager {
 

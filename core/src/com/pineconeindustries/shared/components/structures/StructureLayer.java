@@ -1,4 +1,4 @@
-package com.pineconeindustries.shared.objects;
+package com.pineconeindustries.shared.components.structures;
 
 import java.util.Random;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -7,9 +7,11 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.pineconeindustries.client.networking.packets.PacketFactory;
 import com.pineconeindustries.client.networking.packets.PacketRequester;
 import com.pineconeindustries.server.ai.pathfinding.PathNode;
+import com.pineconeindustries.shared.components.gameobjects.Elevator;
+import com.pineconeindustries.shared.components.gameobjects.GridTile;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.files.Files;
-import com.pineconeindustries.shared.gameunits.Units;
+import com.pineconeindustries.shared.units.Units;
 
 public class StructureLayer {
 

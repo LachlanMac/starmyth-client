@@ -24,10 +24,11 @@ import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.Connection;
 import com.pineconeindustries.client.tests.Test;
 import com.pineconeindustries.client.ui.UserInterface;
+import com.pineconeindustries.shared.components.gameobjects.Player;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.data.Global.RUN_TYPE;
-import com.pineconeindustries.shared.objects.Player;
+
 import box2dLight.RayHandler;
 
 public class ClientApp extends ApplicationAdapter {
@@ -81,8 +82,9 @@ public class ClientApp extends ApplicationAdapter {
 
 		Texture temp = GameData.getInstance().Assets().get("textures/galaxybg1.png");
 		bg = new TextureRegion(temp);
-		Player player = new Player(data.getName(), new Vector2(data.getX(), data.getY()), 1, data.getId(),
-				data.getCharID(), data.getSector(), cam.getPlayerCamera(), data.getLayer());
+		
+		Player player = new Player(data.getCharID(), data.getName(), new Vector2(data.getX(), data.getY()),
+				data.getSector(), data.getStructure(), data.getLayer(), data.getFaction(), cam.getPlayerCamera());
 
 		player.connectToChat(ui.getChat());
 

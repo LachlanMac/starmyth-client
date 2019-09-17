@@ -23,7 +23,7 @@ public class Debug {
 		LocalPlayerData data = new LocalPlayerData();
 
 		switch (client) {
-
+		
 		case 1:
 			data.setCharID(998);
 			data.setId(1001);

@@ -11,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.pineconeindustries.client.chat.Chatbox;
 import com.pineconeindustries.client.manager.InputState;
-import com.pineconeindustries.shared.objects.Player;
+import com.pineconeindustries.shared.components.gameobjects.Player;
 
 public class UserInterface {
 

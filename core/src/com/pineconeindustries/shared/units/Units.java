@@ -1,4 +1,4 @@
-package com.pineconeindustries.shared.gameunits;
+package com.pineconeindustries.shared.units;
 
 public class Units {
 

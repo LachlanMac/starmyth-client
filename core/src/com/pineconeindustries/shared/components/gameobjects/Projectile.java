@@ -1,4 +1,4 @@
-package com.pineconeindustries.shared.objects;
+package com.pineconeindustries.shared.components.gameobjects;
 
 import java.awt.Shape;
 import java.awt.geom.Line2D;
@@ -19,9 +19,10 @@ import com.pineconeindustries.server.net.packets.modules.MoveModule;
 import com.pineconeindustries.server.net.players.PlayerConnection;
 import com.pineconeindustries.shared.actions.Action;
 import com.pineconeindustries.shared.actions.ActionManager;
+import com.pineconeindustries.shared.components.structures.Tile;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
-import com.pineconeindustries.shared.gameunits.Units;
+import com.pineconeindustries.shared.units.Units;
 import com.pineconeindustries.shared.utils.VectorMath;
 
 public class Projectile extends GameObject {
@@ -44,7 +45,7 @@ public class Projectile extends GameObject {
 
 	public Projectile(String name, Vector2 loc, Vector2 direction, int layer, int id, float speed, int sectorID,
 			int structureID, float life, Action action, Entity caster) {
-		super(name, loc, layer, id, sectorID, structureID);
+		super(id, name, loc, sectorID, structureID, layer);
 		this.action = action;
 		this.direction = direction;
 		this.speed = speed;
@@ -94,8 +95,7 @@ public class Projectile extends GameObject {
 					.getPlayerConnectionsInRange(structureID, layer, proposedVector, 100)) {
 				if (mp.getPlayerMP().getBounds().contains(proposedVector)) {
 					if (mp.getPlayerMP().equals(caster)) {
-						
-						
+
 					} else {
 						action.ON_HIT();
 						setToRemove = true;
@@ -111,7 +111,6 @@ public class Projectile extends GameObject {
 					Vector2 collide = VectorMath.getIntersectionPoint(tile.getBounds(), this.loc, proposedVector);
 					if (collide.x != 0 || collide.y != 0) {
 
-			
 						String dirString = VectorMath.getDirectionLetter(collide.x, collide.y);
 						if (dirString.equals("n") || dirString.equals("s")) {
 
@@ -134,7 +133,7 @@ public class Projectile extends GameObject {
 			if (!setToBounce) {
 				this.loc = proposedVector;
 			}
-	
+
 			String data = new String(getID() + "x" + df.format(getLoc().x) + "x" + df.format(getLoc().y) + "x" + layer
 					+ "x" + df.format(direction.x) + "x" + df.format(direction.y) + "x" + structureID + "=");
 			serverSector.addProjectileMovementData(data);

@@ -1,4 +1,4 @@
-package com.pineconeindustries.shared.objects;
+package com.pineconeindustries.shared.components.gameobjects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -14,8 +14,8 @@ import com.pineconeindustries.client.manager.InputState;
 import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.models.AnimationSet;
 import com.pineconeindustries.shared.data.GameData;
-import com.pineconeindustries.shared.gameunits.Units;
 import com.pineconeindustries.shared.log.Log;
+import com.pineconeindustries.shared.units.Units;
 
 public abstract class Entity extends GameObject implements Comparable<Entity> {
 
@@ -28,8 +28,8 @@ public abstract class Entity extends GameObject implements Comparable<Entity> {
 	Animation<TextureRegion> currentFrame;
 	Vector2 renderLoc, lastDirectionFaced;
 
-	public Entity(String name, Vector2 loc, int factionID, int structureID, int layer, int id, int sectorID) {
-		super(name, loc, layer, id, sectorID, structureID);
+	public Entity(int id, String name, Vector2 loc, int sectorID, int structureID, int layer, int factionID) {
+		super(id, name, loc, sectorID, structureID, layer);
 		interval = 0;
 		velocity = 0;
 		framesSinceLastMove = 0;
@@ -165,7 +165,7 @@ public abstract class Entity extends GameObject implements Comparable<Entity> {
 		return -loc.y;
 
 	}
-	
+
 	@Override
 	public int compareTo(Entity o) {
 

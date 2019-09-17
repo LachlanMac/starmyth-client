@@ -1,4 +1,4 @@
-package com.pineconeindustries.shared.objects;
+package com.pineconeindustries.shared.components.structures;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -17,11 +17,13 @@ import com.pineconeindustries.client.networking.packets.PacketFactory;
 import com.pineconeindustries.client.networking.packets.PacketRequester;
 import com.pineconeindustries.server.ai.pathfinding.PathNode;
 import com.pineconeindustries.server.net.players.PlayerConnection;
+import com.pineconeindustries.shared.components.gameobjects.Elevator;
+import com.pineconeindustries.shared.components.gameobjects.GridTile;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.files.Files;
-import com.pineconeindustries.shared.gameunits.Units;
 import com.pineconeindustries.shared.log.Log;
+import com.pineconeindustries.shared.units.Units;
 
 public abstract class Structure {
 	public enum STRUCTURE_STATE {

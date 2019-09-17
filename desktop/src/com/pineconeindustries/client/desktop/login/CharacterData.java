@@ -24,7 +24,7 @@ public class CharacterData {
 	}
 
 	public LocalPlayerData getLocalPlayerData() {
-		return new LocalPlayerData(charid, structure, model, name, sector, "good", name, x, y, layer);
+		return new LocalPlayerData(charid, charid, model, name, sector, faction, structure, "good", name, x, y, layer);
 	}
 
 }
