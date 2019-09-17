@@ -2,6 +2,7 @@ package com.pineconeindustries.shared.components.structures;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.pineconeindustries.shared.components.gameobjects.Elevator;
 import com.pineconeindustries.shared.data.Global;
 
 public class Ship extends Structure {

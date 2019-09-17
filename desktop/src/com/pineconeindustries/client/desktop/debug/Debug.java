@@ -12,8 +12,6 @@ public class Debug {
 	public static boolean TEST_CLIENT_2 = false;
 	public static int TEST_CLIENT_1_ID = 998;
 	public static int TEST_CLIENT_2_ID = 998;
-	
-	
 
 	public static String DEBUG_USER_1 = "1";
 	public static String DEBUG_USER_2 = "2";
@@ -23,10 +21,10 @@ public class Debug {
 		LocalPlayerData data = new LocalPlayerData();
 
 		switch (client) {
-		
+
 		case 1:
 			data.setCharID(998);
-			data.setId(1001);
+			data.setStructure(1001);
 			data.setModel("1");
 			data.setSector(27422);
 			data.setStatus("ok");
@@ -35,10 +33,9 @@ public class Debug {
 			data.setY(0);
 			data.setLayer(1);
 			break;
-
 		case 2:
 			data.setCharID(999);
-			data.setId(1002);
+			data.setStructure(1001);
 			data.setModel("1");
 			data.setSector(27422);
 			data.setStatus("ok");
@@ -51,7 +48,7 @@ public class Debug {
 		case 3:
 
 			data.setCharID(Global.TEST_PLAYER_ID);
-			data.setId(1001);
+			data.setStructure(1001);
 			data.setModel("1");
 			data.setSector(7780);
 			data.setStatus("ok");

@@ -11,12 +11,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.manager.InputManager;
 import com.pineconeindustries.client.manager.InputState;
 import com.pineconeindustries.client.manager.LogicController;
-<<<<<<< HEAD:core/src/com/pineconeindustries/shared/components/gameobjects/Elevator.java
 import com.pineconeindustries.shared.components.behaviors.Targetable;
 import com.pineconeindustries.shared.components.structures.Structure;
-=======
 import com.pineconeindustries.client.ui.UserInterface;
->>>>>>> de4be88b61aa17dfcced60c42f1802cf099a07ce:core/src/com/pineconeindustries/shared/objects/Elevator.java
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.units.Units;

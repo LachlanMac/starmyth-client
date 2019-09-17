@@ -29,7 +29,7 @@ public class LAssetManager extends AssetManager {
 	public LAssetManager() {
 
 	}
-
+	
 	public void loadTextures() {
 		load("textures/targetSS.png", Texture.class);
 		load("textures/shotSS.png", Texture.class);
@@ -37,7 +37,6 @@ public class LAssetManager extends AssetManager {
 		load("textures/galaxybg1.png", Texture.class);
 		load("textures/plasma.png", Texture.class);
 		load("textures/shiptiles/shipSS.png", Texture.class);
-		load("textures/shiptiles/shipSS2.png", Texture.class);
 		load("textures/shiptiles/ionthrusterSS.png", Texture.class);
 		load("textures/playerfront.png", Texture.class);
 		load("textures/shiptiles/diagwall.png", Texture.class);

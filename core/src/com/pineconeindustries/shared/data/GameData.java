@@ -33,7 +33,7 @@ public class GameData {
 		if (headless) {
 			return;
 		}
-
+		
 		Assets().loadTextures();
 		Assets().finishLoading();
 		Assets().loadAnimations();
