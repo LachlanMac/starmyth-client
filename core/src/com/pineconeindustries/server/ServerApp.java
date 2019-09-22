@@ -47,10 +47,6 @@ public class ServerApp extends ApplicationAdapter {
 	public float aspectRatio = 1;
 	double delta = 0;
 	private Galaxy galaxy;
-
-	private int interval = 3;
-	private int counter = 0;
-
 	Sprite bg;
 
 	public ServerApp(boolean headless) {

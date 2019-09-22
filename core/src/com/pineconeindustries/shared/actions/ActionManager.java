@@ -2,13 +2,14 @@ package com.pineconeindustries.shared.actions;
 
 import java.util.ArrayList;
 
+import com.pineconeindustries.shared.actions.types.ActionBase;
 import com.pineconeindustries.shared.files.Files;
 
 public class ActionManager {
 
 	private static ActionManager instance = null;
 
-	private ArrayList<Action> actions;
+	private ArrayList<ActionBase> actions;
 
 	private ActionManager() {
 		actions = Files.loadActions();
@@ -18,16 +19,16 @@ public class ActionManager {
 	public static ActionManager getInstance() {
 		if (instance == null)
 			instance = new ActionManager();
-		
+
 		return instance;
 
 	}
 
-	public Action getActionByID(int id) {
+	public ActionBase getActionByID(int id) {
 
-		Action action = null;
+		ActionBase action = null;
 
-		for (Action a : actions) {
+		for (ActionBase a : actions) {
 			if (a.getID() == id) {
 				action = a;
 			}

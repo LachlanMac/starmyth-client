@@ -44,8 +44,6 @@ public class Sector {
 	PacketParser packetParser;
 	PacketScheduler scheduler;
 
-	// Class to sed all players UDP packets and TCP packets
-
 	public Sector(int port, int globalX, int globalY, String name) {
 		this.port = port;
 		this.globalX = globalX;
@@ -61,7 +59,7 @@ public class Sector {
 		packetListener = new PacketListener(this);
 		packetWriter = new PacketWriter(this);
 		packetParser = new PacketParser(this);
-		scheduler = new PacketScheduler(200, this);
+		scheduler = new PacketScheduler(this);
 		registerScheduledFunctions();
 		scheduler.start();
 
@@ -74,6 +72,7 @@ public class Sector {
 		scheduler.registerPacket(ScheduleModule.makeNPCListScheduler(this));
 		scheduler.registerPacket(ScheduleModule.makePlayerListScheduler(this));
 		scheduler.registerPacket(ScheduleModule.makeStructureListScheduler(this));
+		scheduler.registerPacket(ScheduleModule.makeNPCStatListPacket(this));
 
 	}
 

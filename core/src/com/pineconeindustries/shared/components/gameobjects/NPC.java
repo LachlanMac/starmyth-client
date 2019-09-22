@@ -24,6 +24,7 @@ import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.packets.types.Packets;
 import com.pineconeindustries.server.net.packets.types.UDPPacket;
 import com.pineconeindustries.shared.components.structures.Structure;
+import com.pineconeindustries.shared.components.ui.HealthBar;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.units.Units;
@@ -49,9 +50,12 @@ public class NPC extends Person {
 	private LuaFunction getName, getLocation, getDestination;
 	private LuaFunction _ON_DEATH, _ON_HIT, _ON_NEW_PATH;
 
+	private HealthBar hb;
+
 	// CLIENT CONSTRUCTOR
 	public NPC(int id, String name, Vector2 loc, int sectorID, int structureID, int layer, int factionID) {
 		super(id, name, loc, sectorID, structureID, layer, factionID);
+		hb = new HealthBar(loc.x, loc.y);
 	}
 
 	// SERVER CONSTRUCTOR
@@ -88,6 +92,7 @@ public class NPC extends Person {
 							renderLoc.x, renderLoc.y);
 
 				}
+				hb.render(b);
 			}
 
 			b.draw(currentFrame.getKeyFrame(state, true), renderLoc.x, renderLoc.y);
@@ -289,9 +294,12 @@ public class NPC extends Person {
 	public void update() {
 
 		if (Global.isServer()) {
+			updateEffects(Gdx.graphics.getDeltaTime());
 			fsm.performAction();
 		}
 		if (Global.isClient()) {
+			hb.update(renderLoc.x, renderLoc.y, stats.getCurrentHP() / stats.getHp());
+			updateText();
 			onClick();
 		}
 	}

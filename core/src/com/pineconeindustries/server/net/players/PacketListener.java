@@ -6,13 +6,13 @@ import java.net.DatagramSocket;
 
 import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.packets.types.UDPPacket;
+import com.pineconeindustries.shared.data.Global;
 
 public class PacketListener extends Thread {
 
 	private DatagramSocket socket;
 	private Sector sector;
 	private boolean isRunning = false, shutdown = false;
-	private static final int THREAD_WAIT_TIME = 1000;
 	private static final int PACKET_SIZE = 512;
 
 	private DatagramPacket inPacket;
@@ -46,7 +46,7 @@ public class PacketListener extends Thread {
 
 			} else {
 				try {
-					Thread.sleep(THREAD_WAIT_TIME);
+					Thread.sleep(Global.THREAD_WAIT_TIME);
 				} catch (InterruptedException e) {
 
 					e.printStackTrace();

@@ -29,7 +29,6 @@ public class Player extends Person {
 
 	public Entity target = null;
 	final float camspeed = 0.1f, icamspeed = 1.0f - camspeed;
-	BitmapFont font = new BitmapFont();
 
 	private String lastState;
 	private boolean moveDisabled = false;
@@ -81,9 +80,8 @@ public class Player extends Person {
 
 	}
 
-	@Override
 	public void dispose() {
-		font.dispose();
+
 	}
 
 	public void update() {

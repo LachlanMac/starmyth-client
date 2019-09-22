@@ -28,6 +28,7 @@ import com.pineconeindustries.shared.components.gameobjects.Player;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.data.Global.RUN_TYPE;
+import com.pineconeindustries.shared.text.TextManager;
 
 import box2dLight.RayHandler;
 
@@ -82,7 +83,7 @@ public class ClientApp extends ApplicationAdapter {
 
 		Texture temp = GameData.getInstance().Assets().get("textures/galaxybg1.png");
 		bg = new TextureRegion(temp);
-		
+
 		Player player = new Player(data.getCharID(), data.getName(), new Vector2(data.getX(), data.getY()),
 				data.getSector(), data.getStructure(), data.getLayer(), data.getFaction(), cam.getPlayerCamera());
 
@@ -121,10 +122,6 @@ public class ClientApp extends ApplicationAdapter {
 		batch.setProjectionMatrix(LogicController.getInstance().getFixedCamera().combined);
 		batch.begin();
 
-		// draw(Texture texture, float x, float y, float originX, float originY, float
-		// width, float height, float scaleX, float scaleY, float rotation, int srcX,
-		// int srcY, int srcWidth, int srcHeight, boolean flipX, boolean flipY)
-
 		batch.draw(bg, -(bg.getRegionWidth() / 2), -(bg.getRegionHeight() / 2), bg.getRegionWidth() / 2,
 				bg.getRegionHeight() / 2, bg.getRegionWidth(), bg.getRegionHeight(), 1, 1, state * 1, false);
 
@@ -137,7 +134,7 @@ public class ClientApp extends ApplicationAdapter {
 		batch.begin();
 
 		LogicController.getInstance().getSector().render(batch);
-
+		TextManager.getInstance().render(batch);
 		batch.end();
 
 		ui.render();
@@ -152,6 +149,7 @@ public class ClientApp extends ApplicationAdapter {
 		ui.dispose();
 		LightingManager.getInstance().dispose();
 		shapeBatch.dispose();
+		TextManager.getInstance().dispose();
 
 	}
 

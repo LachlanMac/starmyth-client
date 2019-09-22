@@ -26,6 +26,7 @@ public class Packets {
 	public static final int PLAYER_LIST_PACKET = 8001;
 	public static final int NPC_LIST_PACKET = 8002;
 	public static final int STRUCTURE_LIST_PACKET = 8004;
+	public static final int NPC_STAT_LIST_PACKET = 8005;
 
 	public static final int STRUCTURE_ELEVATOR_REQUEST_PACKET = 8100;
 	public static final int STRUCTURE_ELEVATOR_RESPONSE_PACKET = 8101;

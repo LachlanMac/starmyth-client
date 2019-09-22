@@ -35,8 +35,7 @@ public class StructureModule {
 		int playerID = Integer.parseInt(split[2]);
 
 		Structure s = Galaxy.getInstance().getSectorByID(sectorID).getStructureByID(structureID);
-		ArrayList<Elevator> elevators = Galaxy.getInstance().getSectorByID(sectorID).getStructureByID(structureID)
-				.getElevators();
+		ArrayList<Elevator> elevators = s.getElevators();
 		
 		StringBuilder sb = new StringBuilder();
 		for (Elevator e : elevators) {

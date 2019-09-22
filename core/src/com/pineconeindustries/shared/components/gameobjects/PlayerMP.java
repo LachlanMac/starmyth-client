@@ -13,8 +13,13 @@ import com.pineconeindustries.client.models.AnimationSet;
 import com.pineconeindustries.server.galaxy.Galaxy;
 import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.packets.modules.MoveModule;
-import com.pineconeindustries.shared.actions.Action;
 import com.pineconeindustries.shared.actions.ActionManager;
+import com.pineconeindustries.shared.actions.ActionSet;
+import com.pineconeindustries.shared.actions.types.Action;
+import com.pineconeindustries.shared.actions.types.ActionBase;
+import com.pineconeindustries.shared.actions.types.ActionPackage;
+import com.pineconeindustries.shared.actions.types.DirectProjectileAction;
+import com.pineconeindustries.shared.actions.types.TargetedEffectAction;
 import com.pineconeindustries.shared.components.structures.Tile;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
@@ -30,10 +35,12 @@ public class PlayerMP extends Person {
 	private boolean inputChanged = false;
 	private boolean[] inputState = new boolean[10];
 
-	private GameObject target = null;
+	private Entity target = null;
 
 	Sector serverSector;
-	Action a;
+
+	private ActionSet actionSet;
+
 	private Stats stats;
 
 	public PlayerMP(int id, String name, Vector2 loc, int sectorID, int structureID, int layer, int factionID) {
@@ -42,7 +49,14 @@ public class PlayerMP extends Person {
 
 		if (Global.isServer()) {
 			serverSector = Galaxy.getInstance().getSectorByID(sectorID);
-			a = ActionManager.getInstance().getActionByID(1);
+			actionSet = new ActionSet();
+
+			actionSet.addAction(new Action((DirectProjectileAction) ActionManager.getInstance().getActionByID(1)));
+			System.out.println("LOADED " + actionSet.getActionByID(1).getName() + " "
+					+ actionSet.getActionByID(1).getActionBase().getClass().getCanonicalName());
+			actionSet.addAction(new Action((TargetedEffectAction) ActionManager.getInstance().getActionByID(4)));
+			System.out.println("LOADED " + actionSet.getActionByID(4).getName() + " "
+					+ actionSet.getActionByID(4).getActionBase().getClass().getCanonicalName());
 		}
 
 	}
@@ -120,16 +134,27 @@ public class PlayerMP extends Person {
 		}
 
 		if (Global.isServer()) {
-			a.update(Gdx.graphics.getDeltaTime());
+
+			actionSet.update(Gdx.graphics.getDeltaTime());
+			updateEffects(Gdx.graphics.getDeltaTime());
+
 			Vector2 dir = VectorMath.getDirectionByInput(inputState).nor();
 
 			float x = dir.x;
 			float y = dir.y;
 
 			if (inputState[5]) {
-				if (a.isReady()) {
-					a.castDirect(this, target);
-				}
+
+				Action a = actionSet.getActionByID(1);
+
+				a.use(new ActionPackage(this, target));
+
+			}
+			if (inputState[6]) {
+
+				Action a = actionSet.getActionByID(4);
+
+				a.use(new ActionPackage(this, target));
 			}
 
 			if (x == 0 && y == 0) {
@@ -164,7 +189,7 @@ public class PlayerMP extends Person {
 		return target;
 	}
 
-	public void setTarget(GameObject target) {
+	public void setTarget(Entity target) {
 		this.target = target;
 	}
 

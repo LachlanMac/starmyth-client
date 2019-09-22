@@ -21,24 +21,24 @@ public class Database {
 
 	private Database() {
 		try {
-			if (Global.useDatabase) {
-				Class.forName("com.mysql.jdbc.Driver");
-				conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/starmyth?characterEncoding=latin1",
-						"root", "Movingon1");
-			}
+
+			Class.forName("com.mysql.jdbc.Driver");
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/starmyth?characterEncoding=latin1", "root",
+					"Movingon1");
+
 			playerDAO = new PlayerDAO(conn);
 			npcDAO = new NPCDAO(conn);
 			structureDAO = new StructureDAO(conn);
 			sectorDAO = new SectorDAO(conn);
 
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
-			Global.useDatabase = false;
+
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
-			Global.useDatabase = false;
+
 		}
 
 	}

@@ -11,6 +11,7 @@ import com.pineconeindustries.server.net.packets.types.TCPPacket;
 import com.pineconeindustries.server.net.packets.types.UDPPacket;
 import com.pineconeindustries.server.net.packets.types.Packet.PACKET_TYPE;
 import com.pineconeindustries.server.net.packets.types.Packets;
+import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.log.Log;
 
 public class PacketWriter extends Thread {
@@ -39,7 +40,7 @@ public class PacketWriter extends Thread {
 
 		while (isRunning) {
 			try {
-				Thread.sleep(10);
+				Thread.sleep(Global.THREAD_WAIT_TIME);
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();

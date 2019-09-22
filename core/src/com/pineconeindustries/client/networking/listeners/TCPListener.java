@@ -3,6 +3,7 @@ package com.pineconeindustries.client.networking.listeners;
 import java.io.BufferedReader;
 import java.util.concurrent.ArrayBlockingQueue;
 
+import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.log.Log;
 
 public class TCPListener extends Thread {
@@ -25,6 +26,12 @@ public class TCPListener extends Thread {
 	public void run() {
 
 		while (isRunning) {
+
+			try {
+				Thread.sleep(Global.THREAD_WAIT_TIME);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
 
 			String data;
 

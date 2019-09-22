@@ -6,6 +6,8 @@ import com.pineconeindustries.server.net.packets.types.Packets;
 import com.pineconeindustries.server.net.players.PlayerConnection;
 import com.pineconeindustries.shared.components.gameobjects.NPC;
 import com.pineconeindustries.shared.components.structures.Structure;
+import com.pineconeindustries.shared.stats.Stats;
+import com.pineconeindustries.shared.utils.Formatter;
 
 public class ScheduleModule {
 
@@ -41,6 +43,36 @@ public class ScheduleModule {
 
 	}
 
+	public static CustomTCPPacket makeNPCStatListPacket(Sector sector) {
+
+		CustomTCPPacket statPacket = new CustomTCPPacket(Packets.NPC_STAT_LIST_PACKET, "TEST DATA") {
+			@Override
+			public void update(Sector sector) {
+
+				StringBuilder sb = new StringBuilder();
+
+				for (NPC npc : sector.getNPCs()) {
+					Stats s = npc.getStats();
+					sb.append(npc.getID() + "#" + Formatter.format(s.getCurrentHP()) + "#" + Formatter.format(s.getHp())
+							+ "#" + Formatter.format(s.getCurrentEnergy()) + "#" + Formatter.format(s.getEnergy())
+							+ "=");
+				}
+
+				String data = sb.toString();
+
+				if (data.length() > 2) {
+					this.data = data.substring(0, data.length() - 1);
+				} else {
+					this.data = "";
+				}
+
+			}
+		};
+
+		return statPacket;
+
+	}
+
 	public static CustomTCPPacket makeNPCListScheduler(Sector sector) {
 
 		CustomTCPPacket npcListPacket = new CustomTCPPacket(Packets.NPC_LIST_PACKET, "TEST DATA") {
@@ -53,7 +85,8 @@ public class ScheduleModule {
 					String xLoc = Integer.toString((int) npc.getLoc().x);
 					String yLoc = Integer.toString((int) npc.getLoc().y);
 					sb.append(npc.getID() + "#" + npc.getName() + "#" + npc.getFactionID() + "#" + npc.getSectorID()
-							+ "#" + npc.getStructureID() + "#" + xLoc + "#" + yLoc + "#" + npc.getLayer() + "=");
+							+ "#" + npc.getStructureID() + "#" + xLoc + "#" + yLoc + "#" + npc.getLayer() + "#"
+							+ npc.getStats());
 				}
 
 				String data = sb.toString();

@@ -4,6 +4,7 @@ public class Stats {
 
 	private float hp, energy;
 	private int strength, stamina, logic, accuracy, reflexes;
+	private float currentHP, currentEnergy;
 
 	public Stats() {
 		this.hp = 100.0f;
@@ -13,6 +14,8 @@ public class Stats {
 		this.logic = 8;
 		this.accuracy = 5;
 		this.reflexes = 4;
+		this.currentHP = hp;
+		this.currentEnergy = energy;
 
 	}
 
@@ -24,8 +27,10 @@ public class Stats {
 		this.logic = logic;
 		this.accuracy = accuracy;
 		this.reflexes = reflexes;
+		this.currentHP = hp;
+		this.currentEnergy = energy;
 	}
-	
+
 	public void setStats(float hp, float energy, int strength, int stamina, int logic, int accuracy, int reflexes) {
 		this.hp = hp;
 		this.energy = energy;
@@ -34,6 +39,8 @@ public class Stats {
 		this.logic = logic;
 		this.accuracy = accuracy;
 		this.reflexes = reflexes;
+		this.currentHP = hp;
+		this.currentEnergy = energy;
 	}
 
 	public float getHp() {
@@ -92,4 +99,35 @@ public class Stats {
 		this.reflexes = reflexes;
 	}
 
+	public float getCurrentHP() {
+		return currentHP;
+	}
+
+	public float getCurrentEnergy() {
+		return currentEnergy;
+	}
+
+	public void changeCurrentHP(float val) {
+		currentHP += val;
+	}
+
+	public void changeCurrentEnergy(float val) {
+		currentEnergy += val;
+		if (currentEnergy < 0)
+			currentEnergy = 0;
+		if (currentEnergy > energy)
+			currentEnergy = energy;
+	}
+
+	public void setCurrentHP(float val) {
+		this.currentHP = val;
+		if (currentHP < 0)
+			currentHP = 0;
+		if (currentHP > hp)
+			currentHP = hp;
+	}
+
+	public void setCurrentEnergy(float val) {
+		this.currentEnergy = val;
+	}
 }

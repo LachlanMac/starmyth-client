@@ -11,6 +11,7 @@ import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.shared.components.behaviors.Targetable;
 import com.pineconeindustries.shared.components.structures.StructureLayer;
 import com.pineconeindustries.shared.components.structures.Tile;
+import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.stats.Stats;
 import com.pineconeindustries.shared.units.Units;
 
@@ -36,8 +37,10 @@ public abstract class GameObject implements Targetable {
 
 	protected String name;
 
-	// OLD String name, Vector2 loc, int layer, int id, int sectorID, int structureID
-	// NEW int id, String name, Vector2 loc, int sectorID, int structureID, int layer
+	// OLD String name, Vector2 loc, int layer, int id, int sectorID, int
+	// structureID
+	// NEW int id, String name, Vector2 loc, int sectorID, int structureID, int
+	// layer
 
 	public GameObject(int id, String name, Vector2 loc, int sectorID, int structureID, int layer) {
 		this.name = name;
@@ -47,6 +50,10 @@ public abstract class GameObject implements Targetable {
 		this.layer = layer;
 		this.id = id;
 		bounds = new Rectangle(loc.x, loc.y, boundsWidth, boundsHeight);
+
+		if (Global.isClient()) {
+			stats = new Stats();
+		}
 
 	}
 

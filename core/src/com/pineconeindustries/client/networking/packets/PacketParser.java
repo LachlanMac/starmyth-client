@@ -254,10 +254,34 @@ public class PacketParser {
 		case Packets.SHIP_EMERGENCY_PACKET:
 			rxShipEmergencyPacket(split);
 			break;
+		case Packets.NPC_STAT_LIST_PACKET:
+			rxNPCStatListPacket(split);
+			break;
 		default:
 			System.out.println("UNKNOWN PACKET " + packetData);
 		}
 
+	}
+
+	public static void rxNPCStatListPacket(String[] data) {
+
+		for (String stats : data) {
+			String[] statData = stats.split("#");
+			int id = Integer.parseInt(statData[0]);
+			float currentHP = Float.parseFloat(statData[1]);
+			float maxHP = Float.parseFloat(statData[2]);
+			float currentEnergy = Float.parseFloat(statData[3]);
+			float maxEnergy = Float.parseFloat(statData[4]);
+
+			NPC n = LogicController.getInstance().getSector().getNPCByID(id);
+			if (n != null) {
+				n.getStats().setHp(maxHP);
+				n.getStats().setEnergy(maxEnergy);
+				n.getStats().setCurrentEnergy(currentEnergy);
+				n.getStats().setCurrentHP(currentHP);
+			}
+
+		}
 	}
 
 	public static void rxProjectileMovePacket(String[] data) {

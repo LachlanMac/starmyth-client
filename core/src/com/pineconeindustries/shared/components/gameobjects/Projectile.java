@@ -1,13 +1,8 @@
 package com.pineconeindustries.shared.components.gameobjects;
 
-import java.awt.Shape;
-import java.awt.geom.Line2D;
 import java.text.DecimalFormat;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -15,10 +10,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.server.galaxy.Galaxy;
 import com.pineconeindustries.server.galaxy.Sector;
-import com.pineconeindustries.server.net.packets.modules.MoveModule;
 import com.pineconeindustries.server.net.players.PlayerConnection;
-import com.pineconeindustries.shared.actions.Action;
-import com.pineconeindustries.shared.actions.ActionManager;
+import com.pineconeindustries.shared.actions.types.ActionBase;
+import com.pineconeindustries.shared.actions.types.ActionPackage;
 import com.pineconeindustries.shared.components.structures.Tile;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
@@ -37,22 +31,22 @@ public class Projectile extends GameObject {
 	private Sector serverSector;
 	private Vector2 renderLoc;
 	private Animation<TextureRegion> currentFrame;
-	private Action action;
+	private ActionBase action;
 	private boolean setToBounce = false;
 	private boolean setToRemove = false;
 	private Vector2 bounceDir = new Vector2(0, 0);
-	private Entity caster;
+	private ActionPackage data;
 
 	public Projectile(String name, Vector2 loc, Vector2 direction, int layer, int id, float speed, int sectorID,
-			int structureID, float life, Action action, Entity caster) {
+			int structureID, float life, ActionBase action, ActionPackage data) {
 		super(id, name, loc, sectorID, structureID, layer);
 		this.action = action;
 		this.direction = direction;
 		this.speed = speed;
 		this.life = life;
 		renderLoc = loc;
-		this.caster = caster;
-
+		this.data = data;
+		
 		if (Global.isServer()) {
 			if (!Global.isHeadlessServer()) {
 				currentFrame = GameData.getInstance().Assets().getShot2Animation();
@@ -68,8 +62,10 @@ public class Projectile extends GameObject {
 		speedTho = Gdx.graphics.getDeltaTime();
 		if (Global.isServer()) {
 
+			action.loop(data);
+
 			if (setToRemove) {
-				action.ON_END();
+				action.onEnd(data);
 				serverSector.removeProjectile(this);
 				return;
 			}
@@ -88,7 +84,8 @@ public class Projectile extends GameObject {
 					100)) {
 
 				if (n.getBounds().contains(proposedVector)) {
-					action.ON_HIT();
+					data.setEntityHit(n);
+					action.onHitEntity(data);
 					setToRemove = true;
 				}
 
@@ -97,10 +94,11 @@ public class Projectile extends GameObject {
 			for (PlayerConnection mp : Galaxy.getInstance().getSectorByID(sectorID)
 					.getPlayerConnectionsInRange(structureID, layer, proposedVector, 100)) {
 				if (mp.getPlayerMP().getBounds().contains(proposedVector)) {
-					if (mp.getPlayerMP().equals(caster)) {
+					if (mp.getPlayerMP().equals(data.getCaster())) {
 
 					} else {
-						action.ON_HIT();
+						data.setEntityHit(mp.getPlayerMP());
+						action.onHitEntity(data);
 						setToRemove = true;
 					}
 

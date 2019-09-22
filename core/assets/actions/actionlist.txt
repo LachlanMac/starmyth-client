@@ -1,4 +1,5 @@
-1-shoot
-2-powerblast
-3-guard
-4-heal
+1-shoot-direct
+2-powerblast-direct
+3-guard-targetedeffect
+4-heal-targetedeffect
+5-poisonshot-targetedeffect

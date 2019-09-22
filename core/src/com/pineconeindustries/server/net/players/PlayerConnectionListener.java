@@ -5,11 +5,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import com.pineconeindustries.server.galaxy.Sector;
+import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.log.Log;
 
 public class PlayerConnectionListener extends Thread {
-
-	private static final int THREAD_WAIT_TIME = 1000;
 
 	private ServerSocket socket;
 	private Sector sector;
@@ -29,15 +28,14 @@ public class PlayerConnectionListener extends Thread {
 
 			if (isRunning) {
 				try {
-					Thread.sleep(5);
+					Thread.sleep(Global.THREAD_WAIT_TIME);
 				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				try {
 
 					Socket playerSocket = socket.accept();
-					playerSocket.setSoTimeout(5000);
+					playerSocket.setSoTimeout(Global.PLAYER_SOCKET_TIMEOUT);
 					PlayerConnection pc = new PlayerConnection(playerSocket, sector);
 					sector.connectPlayer(pc);
 
@@ -48,7 +46,7 @@ public class PlayerConnectionListener extends Thread {
 
 			} else {
 				try {
-					Thread.sleep(THREAD_WAIT_TIME);
+					Thread.sleep(Global.THREAD_WAIT_TIME);
 				} catch (InterruptedException e) {
 
 					e.printStackTrace();

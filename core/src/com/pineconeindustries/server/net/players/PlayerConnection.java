@@ -16,6 +16,7 @@ import com.pineconeindustries.server.net.packets.types.TCPPacket;
 import com.pineconeindustries.server.net.packets.types.UDPPacket;
 import com.pineconeindustries.shared.components.gameobjects.PlayerMP;
 import com.pineconeindustries.shared.data.GameData;
+import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.log.Log;
 
 public class PlayerConnection extends Thread {
@@ -66,9 +67,9 @@ public class PlayerConnection extends Thread {
 
 			if (connected) {
 				try {
-					Thread.sleep(5);
+					Thread.sleep(Global.THREAD_WAIT_TIME);
 				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
+
 					e1.printStackTrace();
 				}
 				timeout++;

@@ -7,12 +7,10 @@ public class TODO {
 	
 	// - FIX ACTIONS
 	
-	// -  RESTRUCTURE GAME OBJECT
-	
 	// - FINE TUNE PROJECTILES
 	
 	// - OPTIMIZE LOCAL PACKETS 
 	
-	
+	// - AI SECOND PASS
 
 }

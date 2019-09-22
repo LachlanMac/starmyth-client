@@ -5,14 +5,19 @@ import org.luaj.vm2.lib.jse.JsePlatform;
 
 public class Global {
 
+	public static final int THREAD_WAIT_TIME = 5;
+	public static final int PLAYER_SOCKET_TIMEOUT = 5000;
+	public static final int PACKET_SCHEDULER_TIMER = 500;
+	public static final int PACKET_SCHEDULER_DELAY = 100;
+
 	public static final int TEST_PLAYER_ID = 2;
 	public static final String localHost = "127.0.0.1";
 	public static final String remoteHost = "73.230.126.75";
 
 	public static Globals global = JsePlatform.standardGlobals();
 
-	public static String LOGIN_SERVER_IP = localHost;
-	public static String GAME_SERVER_IP = localHost;
+	public static String LOGIN_SERVER_IP = remoteHost;
+	public static String GAME_SERVER_IP = remoteHost;
 
 	public static RUN_TYPE runType;
 

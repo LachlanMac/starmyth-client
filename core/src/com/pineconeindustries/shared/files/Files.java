@@ -5,17 +5,16 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
-import com.pineconeindustries.shared.actions.Action;
+import com.pineconeindustries.shared.actions.ActionFactory;
+import com.pineconeindustries.shared.actions.types.ActionBase;
 import com.pineconeindustries.shared.data.Global;
 
 public class Files {
 
-	public static ArrayList<Action> loadActions() {
+	public static ArrayList<ActionBase> loadActions() {
 
-		ArrayList<Action> actions = new ArrayList<Action>();
+		ArrayList<ActionBase> actions = new ArrayList<ActionBase>();
 
 		File f;
 
@@ -27,7 +26,9 @@ public class Files {
 			while ((sCurrentLine = br.readLine()) != null) {
 
 				String data[] = sCurrentLine.split("-");
-				Action a = new Action(Integer.parseInt(data[0].trim()), data[1].trim());
+				ActionBase a = ActionFactory.getAction(Integer.parseInt(data[0].trim()), data[1].trim(),
+						data[2].trim());
+
 				actions.add(a);
 
 			}
@@ -38,7 +39,7 @@ public class Files {
 		return actions;
 
 	}
-	
+
 	public static String loadShipLayout(String path) {
 
 		StringBuilder dataBuilder = new StringBuilder();

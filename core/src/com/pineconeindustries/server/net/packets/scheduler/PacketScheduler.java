@@ -7,18 +7,15 @@ import com.pineconeindustries.client.networking.packets.custom.CustomTCPPacket;
 import com.pineconeindustries.client.networking.packets.custom.CustomUDPPacket;
 import com.pineconeindustries.server.clock.Clock;
 import com.pineconeindustries.server.galaxy.Sector;
+import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.log.Log;
 
 public class PacketScheduler extends Thread {
 
-	int currentIndex = 0;
-	int interval = 0;
 	Sector sector;
-
 	ArrayList<CustomPacket> packets;
 
-	public PacketScheduler(int interval, Sector sector) {
-		this.interval = interval;
+	public PacketScheduler(Sector sector) {
 		this.sector = sector;
 		packets = new ArrayList<CustomPacket>();
 	}
@@ -27,23 +24,19 @@ public class PacketScheduler extends Thread {
 
 		while (true) {
 			try {
-				Thread.sleep(200);
+				Thread.sleep(Global.PACKET_SCHEDULER_TIMER);
 			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			try {
 
 				for (CustomPacket p : packets) {
-
-					Thread.sleep(interval);
+					Thread.sleep(Global.PACKET_SCHEDULER_DELAY);
 					p.update(sector);
 					sector.getPacketWriter().queueToAll(p.getPacket());
-
 				}
 
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

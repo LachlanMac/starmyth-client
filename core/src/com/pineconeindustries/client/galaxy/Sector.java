@@ -19,6 +19,7 @@ import com.pineconeindustries.shared.components.gameobjects.Projectile;
 import com.pineconeindustries.shared.components.structures.Station;
 import com.pineconeindustries.shared.components.structures.Structure;
 import com.pineconeindustries.shared.log.Log;
+import com.pineconeindustries.shared.text.TextManager;
 
 public class Sector {
 
@@ -214,6 +215,7 @@ public class Sector {
 
 	public void addNPC(NPC npc) {
 		npcs.add(npc);
+		TextManager.getInstance().addText(npc.getText());
 		renderList.add(npc);
 	}
 
@@ -224,6 +226,7 @@ public class Sector {
 	}
 
 	public void removeNPC(NPC npc) {
+		TextManager.getInstance().removeText(npc.getText());
 		npcs.remove(npc);
 		renderList.remove(npc);
 

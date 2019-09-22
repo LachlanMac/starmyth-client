@@ -16,7 +16,7 @@ public class LAssetManager extends AssetManager {
 	Animation<TextureRegion> thrusterAnimation, targetAnimation, shotAnimation, shot2Animation;
 	Texture shipSS, elevator, ionThrusterSS, targetSS, shotSS, shot2SS;
 
-	TextureRegion[][] shipTiles, thrusterTiles, targetTiles, shotTiles, shot2Tiles;
+	TextureRegion[][] shipTiles, thrusterTiles, targetTiles, shotTiles, shot2Tiles, healthBar;
 
 	TextureRegion wall, wallDiagSW, wallDiagNE, wallDiagNW, wallDiagSE, hall, room, doorClosedEW, doorClosedNS,
 			doorOpenEW, doorOpenNS, zoneClosedE, zoneClosedW, zoneOpenE, zoneOpenW, thrusterOff, thruster1, thruster2,
@@ -26,10 +26,12 @@ public class LAssetManager extends AssetManager {
 
 	Sound explosion, shipStart, shipStop, shipLoop;
 
+	TextureRegion healthBarFrame, healthBarGreen, healthBarRed;
+
 	public LAssetManager() {
 
 	}
-	
+
 	public void loadTextures() {
 		load("textures/targetSS.png", Texture.class);
 		load("textures/shotSS.png", Texture.class);
@@ -45,6 +47,7 @@ public class LAssetManager extends AssetManager {
 		load("textures/shiptiles/wall.png", Texture.class);
 		load("textures/playerSS.png", Texture.class);
 		load("textures/elevator.png", Texture.class);
+		load("textures/healthbar.png", Texture.class);
 
 	}
 
@@ -111,6 +114,28 @@ public class LAssetManager extends AssetManager {
 
 	}
 
+	public void loadHealthBar() {
+
+		Texture hb = get("textures/healthbar.png");
+		healthBar = TextureRegion.split(hb, hb.getWidth(), hb.getHeight() / 3);
+		healthBarFrame = healthBar[0][0];
+		healthBarGreen = healthBar[1][0];
+		healthBarRed = healthBar[2][0];
+
+	}
+
+	public TextureRegion getHealthBarFrame() {
+		return healthBarFrame;
+	}
+
+	public TextureRegion getHealthBarGreen() {
+		return healthBarGreen;
+	}
+
+	public TextureRegion getHealthBarRed() {
+		return healthBarRed;
+	}
+
 	public void loadShipTiles() {
 
 		shipSS = get("textures/shiptiles/shipSS.png");
@@ -146,6 +171,7 @@ public class LAssetManager extends AssetManager {
 
 		loadTarget();
 
+		loadHealthBar();
 	}
 
 	public Animation<TextureRegion> getThursterAnimation() {

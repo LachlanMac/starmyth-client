@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.packets.types.Packets;
 import com.pineconeindustries.server.net.packets.types.UDPPacket;
+import com.pineconeindustries.shared.components.gameobjects.Entity;
 import com.pineconeindustries.shared.components.gameobjects.GameObject;
 import com.pineconeindustries.shared.components.gameobjects.PlayerMP;
 import com.pineconeindustries.shared.components.structures.Tile;
@@ -27,8 +28,9 @@ public class MoveModule {
 		}
 
 		GameObject obj = sector.getGameObectByTypeAndID(targetType, targetID);
-		player.setTarget(obj);
-
+		if (obj instanceof Entity) {
+			player.setTarget((Entity) obj);
+		}
 		boolean inputState[] = new boolean[10];
 
 		if (state.charAt(0) == '1') {
@@ -61,7 +63,7 @@ public class MoveModule {
 		if (state.charAt(9) == '1') {
 			inputState[9] = true;
 		}
-		
+
 		// if input stte changed....
 		player.setInputState(inputState);
 
@@ -108,8 +110,8 @@ public class MoveModule {
 
 	}
 
-	public static UDPPacket ds(int playerID, Vector2 playerLoc, Vector2 movement, float velocity,
-			int layer, int structureID) {
+	public static UDPPacket ds(int playerID, Vector2 playerLoc, Vector2 movement, float velocity, int layer,
+			int structureID) {
 		String packetData = new String(playerID + "=" + playerLoc.x + "=" + playerLoc.y + "=" + movement.x + "="
 				+ movement.y + "=" + velocity + "=" + layer + "=" + structureID + "=");
 
