@@ -14,7 +14,7 @@ public class LAssetManager extends AssetManager {
 
 	AnimationSet playerAnimations;
 	Animation<TextureRegion> thrusterAnimation, targetAnimation, shotAnimation, shot2Animation;
-	Texture shipSS, elevator, ionThrusterSS, targetSS, shotSS, shot2SS;
+	Texture shipSS, elevator, ionThrusterSS, targetSS, shotSS, shot2SS, healthBarSS;
 
 	TextureRegion[][] shipTiles, thrusterTiles, targetTiles, shotTiles, shot2Tiles, healthBar;
 
@@ -26,7 +26,7 @@ public class LAssetManager extends AssetManager {
 
 	Sound explosion, shipStart, shipStop, shipLoop;
 
-	TextureRegion healthBarFrame, healthBarGreen, healthBarRed;
+	TextureRegion healthBarFrame, healthBarGreen, healthBarRed, energyBarYellow, energyBarBlack;
 
 	public LAssetManager() {
 
@@ -34,6 +34,7 @@ public class LAssetManager extends AssetManager {
 
 	public void loadTextures() {
 		load("textures/targetSS.png", Texture.class);
+		load("textures/healthbarSS.png", Texture.class);
 		load("textures/shotSS.png", Texture.class);
 		load("textures/shot2SS.png", Texture.class);
 		load("textures/galaxybg1.png", Texture.class);
@@ -79,7 +80,7 @@ public class LAssetManager extends AssetManager {
 		return s;
 
 	}
-
+	
 	public Animation<TextureRegion> getTargetAnimation() {
 		return targetAnimation;
 	}
@@ -116,11 +117,15 @@ public class LAssetManager extends AssetManager {
 
 	public void loadHealthBar() {
 
-		Texture hb = get("textures/healthbar.png");
-		healthBar = TextureRegion.split(hb, hb.getWidth(), hb.getHeight() / 3);
+		Texture hbSS = get("textures/healthbarSS.png");
+
+		healthBar = TextureRegion.split(hbSS, hbSS.getWidth(), hbSS.getHeight() / 5);
+
 		healthBarFrame = healthBar[0][0];
-		healthBarGreen = healthBar[1][0];
-		healthBarRed = healthBar[2][0];
+		healthBarGreen = healthBar[3][0];
+		healthBarRed = healthBar[4][0];
+		energyBarYellow = healthBar[1][0];
+		energyBarBlack = healthBar[2][0];
 
 	}
 
@@ -134,6 +139,14 @@ public class LAssetManager extends AssetManager {
 
 	public TextureRegion getHealthBarRed() {
 		return healthBarRed;
+	}
+
+	public TextureRegion getEnergyBarYellow() {
+		return energyBarYellow;
+	}
+
+	public TextureRegion getEnergyBarBlack() {
+		return energyBarBlack;
 	}
 
 	public void loadShipTiles() {
@@ -201,7 +214,6 @@ public class LAssetManager extends AssetManager {
 			x = room;// bridge
 			break;
 		case '&':
-			System.out.println("DEFAULT DOOR loaded");
 			break;
 		case 'y':
 			x = doorOpenEW;
@@ -216,7 +228,6 @@ public class LAssetManager extends AssetManager {
 			x = doorClosedNS;
 			break;
 		case '_':
-			System.out.println("Default zone loaded");
 			break;
 		case 'd':
 			x = zoneClosedE;
@@ -282,7 +293,6 @@ public class LAssetManager extends AssetManager {
 			x = thrusterOff;
 			break;
 		default:
-			System.out.println("UNRECONGIZED PARAM = " + Character.toString(id));
 			break;
 		}
 		if (x == null)

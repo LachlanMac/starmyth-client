@@ -98,10 +98,10 @@ public class Elevator implements Targetable {
 		if (Global.isClient()) {
 
 			if (InputState.leftClick()) {
-				System.out.println(this.bounds);
+
 				if (Intersector.overlaps(new Rectangle(InputManager.mouseX, InputManager.mouseY, 1, 1), this.bounds)) {
 					if (LogicController.getInstance().getPlayer().getLoc().dst(loc) < 200) {
-						System.out.println("ELEVATOR LCICKED");
+
 						UserInterface.getInstance().adddSelectBox();
 					}
 				}

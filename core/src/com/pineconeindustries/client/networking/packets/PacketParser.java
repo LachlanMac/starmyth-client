@@ -14,6 +14,7 @@ import com.pineconeindustries.shared.components.structures.Ship;
 import com.pineconeindustries.shared.components.structures.Station;
 import com.pineconeindustries.shared.components.structures.Structure;
 import com.pineconeindustries.shared.components.structures.Structure.STRUCTURE_STATE;
+import com.pineconeindustries.shared.log.Log;
 import com.pineconeindustries.shared.utils.VectorMath;
 
 public class PacketParser {
@@ -57,7 +58,7 @@ public class PacketParser {
 				}
 
 			} catch (NumberFormatException e) {
-				System.out.println(e.getMessage());
+				Log.netTraffic(e.getMessage() + " DATA " + packetData, "Packet Parse Error");
 			}
 
 			break;
@@ -87,7 +88,7 @@ public class PacketParser {
 						n.setLayer(layer);
 					}
 				} catch (Exception e) {
-					System.out.println("EXCEPTION DATA: " + npcData + "    " + e.getMessage());
+					Log.netTraffic(e.getMessage() + " DATA " + packetData, "Packet Parse Error");
 				}
 			}
 
@@ -129,7 +130,6 @@ public class PacketParser {
 			break;
 
 		case Packets.CHAT_SAY_PACKET:
-			System.out.println(packetID + "  " + packetData);
 			String playerName = split[0];
 			String messageData = split[1];
 
@@ -257,8 +257,11 @@ public class PacketParser {
 		case Packets.NPC_STAT_LIST_PACKET:
 			rxNPCStatListPacket(split);
 			break;
+		case Packets.PLAYER_STAT_LIST_PACKET:
+			rxPlayerStatListPacket(split);
+			break;
 		default:
-			System.out.println("UNKNOWN PACKET " + packetData);
+			Log.netTraffic(" DATA " + packetData, "Unknown Packet Error");
 		}
 
 	}
@@ -279,6 +282,37 @@ public class PacketParser {
 				n.getStats().setEnergy(maxEnergy);
 				n.getStats().setCurrentEnergy(currentEnergy);
 				n.getStats().setCurrentHP(currentHP);
+			}
+
+		}
+	}
+
+	public static void rxPlayerStatListPacket(String[] data) {
+
+		for (String stats : data) {
+			String[] statData = stats.split("#");
+			int playerID = Integer.parseInt(statData[0]);
+			float currentHP = Float.parseFloat(statData[1]);
+			float maxHP = Float.parseFloat(statData[2]);
+			float currentEnergy = Float.parseFloat(statData[3]);
+			float maxEnergy = Float.parseFloat(statData[4]);
+
+			if (Net.isLocalPlayer(playerID)) {
+
+				Net.getLocalPlayer().getStats().setCurrentHP(currentHP);
+				Net.getLocalPlayer().getStats().setHp(maxHP);
+				Net.getLocalPlayer().getStats().setCurrentEnergy(currentEnergy);
+				Net.getLocalPlayer().getStats().setEnergy(maxEnergy);
+
+			} else {
+
+				PlayerMP pmp = Net.getPlayerMP(playerID);
+				if (pmp != null) {
+					pmp.getStats().setCurrentHP(currentHP);
+					pmp.getStats().setHp(maxHP);
+					pmp.getStats().setCurrentEnergy(currentEnergy);
+					pmp.getStats().setEnergy(maxEnergy);
+				}
 			}
 
 		}
@@ -316,7 +350,7 @@ public class PacketParser {
 				}
 
 			} catch (Exception e) {
-				System.out.println("EXCEPTION DATA: " + projectileData + ":");
+				Log.netTraffic(e.getMessage() + " DATA " + data, "Packet Parse Error");
 				e.printStackTrace();
 			}
 		}

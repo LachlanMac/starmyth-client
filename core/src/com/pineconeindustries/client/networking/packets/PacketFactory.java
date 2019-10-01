@@ -30,6 +30,7 @@ public class PacketFactory {
 				+ "=" + targetType;
 
 		packetNumber++;
+
 		return new UDPPacket(Packets.INPUT_CHANGE_PACKET, data, packetNumber);
 
 	}

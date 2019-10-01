@@ -1,12 +1,11 @@
 package com.pineconeindustries.shared.actions.types;
 
-import com.pineconeindustries.shared.actions.effects.EffectOverTime;
-import com.pineconeindustries.shared.log.Log;
+import com.pineconeindustries.shared.actions.effects.EffectPickup;
 import com.pineconeindustries.shared.scripting.ScriptInterface;
 
-public class TargetedEffectAction extends ActionBase {
+public class PickupAction extends ActionBase {
 
-	public TargetedEffectAction(int id, String name) {
+	public PickupAction(int id, String name) {
 		super(id, name);
 		init();
 	}
@@ -18,12 +17,9 @@ public class TargetedEffectAction extends ActionBase {
 
 	@Override
 	public void use(ActionPackage data) {
-		if (data.getTarget() == null) {
-			data.setTarget(data.getCaster());
-		}
 		data.getCaster().getStats().changeCurrentEnergy(-_cost);
 
-		EffectOverTime e = new EffectOverTime(this, data);
+		EffectPickup e = new EffectPickup(this, data);
 		data.getTarget().addEffectOverTime(e);
 
 	}

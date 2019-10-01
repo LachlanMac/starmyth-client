@@ -10,28 +10,35 @@ import com.pineconeindustries.shared.scripting.ScriptInterface;
 
 public abstract class ActionBase {
 
+	protected final static boolean DEFAULT_TOGGLE = false;
+	protected final static boolean DEFAULT_UNIQUE = true;
+	protected final static float DEFAULT_MINIMUM_TOGGLE_TIME = 1f;
 	protected final static float DEFAULT_ACCURACY = 50f;
 	protected final static float DEFAULT_SPEED = 100f;
 	protected final static float DEFAULT_DAMAGE = 10f;
 	protected final static float DEFAULT_COOLDOWN = 5f;
 	protected final static float DEFAULT_LIFE = 10f;
+	protected final static float DEFAULT_COST = 0f;
 	protected final static float DEFAULT_RANGE = 700f;
 	protected final static float DEFAULT_CAST_TIME = 0f;
 	protected final static float DEFAULT_BUFF_TIME = 10f;
 	protected final static float DEFAULT_MAGNITUDE = 2f;
 	protected final static int DEFAULT_INTERVAL = 5;
-	protected float _accuracy, _speed, _damage, _cooldown, _life, _range, _cast_time, _buff_time, _magnitude;
+	protected float _accuracy, _speed, _damage, _cooldown, _life, _range, _cast_time, _buff_time, _magnitude,
+			_minimum_toggle_time, _cost;
 	protected int _interval;
+	protected boolean _unique, _toggle;
 
 	public enum type {
-		DIRECT_PROJECTILE, TARGETED_EFFECT, SELF_EFFECT;
+		DIRECT_PROJECTILE, TARGETED_EFFECT, SELF_EFFECT, PICKUP_EFFECT;
 	}
 
 	protected String name;
 	protected int id;
 	protected Globals script;
 
-	protected LuaFunction _ON_CAST, _ON_HIT_ENTITY, _ON_END, _ON_MISS, _ON_HIT_TILE, _ON_COOLDOWN, _LOOP;
+	protected LuaFunction _ON_CAST, _ON_HIT_ENTITY, _ON_END, _ON_MISS, _ON_HIT_TILE, _ON_COOLDOWN, _LOOP, _ON_DROP,
+			_ON_TOGGLE_OFF, _ON_FAIL, _ON_PICKUP, _ON_NOT_ENOUGH_ENERGY;
 
 	public ActionBase(int id, String name) {
 		this.name = name;
@@ -47,6 +54,9 @@ public abstract class ActionBase {
 		_buff_time = DEFAULT_BUFF_TIME;
 		_magnitude = DEFAULT_MAGNITUDE;
 		_interval = DEFAULT_INTERVAL;
+		_unique = DEFAULT_UNIQUE;
+		_minimum_toggle_time = DEFAULT_MINIMUM_TOGGLE_TIME;
+		_cost = DEFAULT_COST;
 
 	}
 
@@ -56,6 +66,13 @@ public abstract class ActionBase {
 			_ON_HIT_ENTITY.call(info);
 		}
 
+	}
+
+	public void onNotEnoughEnergy(ActionPackage data) {
+		if (_ON_NOT_ENOUGH_ENERGY != null) {
+			LuaValue info = CoerceJavaToLua.coerce(data);
+			_ON_NOT_ENOUGH_ENERGY.call(info);
+		}
 	}
 
 	public void onEnd(ActionPackage data) {
@@ -73,6 +90,20 @@ public abstract class ActionBase {
 
 	}
 
+	public void onPickup(ActionPackage data) {
+		if (_ON_PICKUP != null) {
+			LuaValue info = CoerceJavaToLua.coerce(data);
+			_ON_PICKUP.call(info);
+		}
+	}
+
+	public void onToggleOff(ActionPackage data) {
+		if (_ON_TOGGLE_OFF != null) {
+			LuaValue info = CoerceJavaToLua.coerce(data);
+			_ON_TOGGLE_OFF.call(info);
+		}
+	}
+
 	public void onCast(ActionPackage data) {
 		if (_ON_CAST != null) {
 			LuaValue info = CoerceJavaToLua.coerce(data);
@@ -84,6 +115,20 @@ public abstract class ActionBase {
 		if (_ON_HIT_TILE != null) {
 			LuaValue info = CoerceJavaToLua.coerce(data);
 			_ON_HIT_TILE.call(info);
+		}
+	}
+
+	public void onDrop(ActionPackage data) {
+		if (_ON_DROP != null) {
+			LuaValue info = CoerceJavaToLua.coerce(data);
+			_ON_DROP.call(info);
+		}
+	}
+
+	public void onFail(ActionPackage data) {
+		if (_ON_FAIL != null) {
+			LuaValue info = CoerceJavaToLua.coerce(data);
+			_ON_FAIL.call(info);
 		}
 	}
 
@@ -109,6 +154,18 @@ public abstract class ActionBase {
 		} catch (Exception e) {
 			Log.debug("Could not load function " + name + " in " + this.name);
 			return null;
+		}
+
+	}
+
+	public boolean registerLuaBoolean(boolean value, String name) {
+
+		boolean initialValue = value;
+		try {
+			return value = script.get(name).toboolean();
+		} catch (Exception e) {
+			Log.debug("Could not parse variable " + e.getMessage());
+			return initialValue;
 		}
 
 	}
@@ -148,13 +205,14 @@ public abstract class ActionBase {
 	public static type getType(String identifier) {
 
 		switch (identifier) {
-
 		case "direct":
 			return type.DIRECT_PROJECTILE;
 		case "targetedeffect":
 			return type.TARGETED_EFFECT;
 		case "selfeffect":
 			return type.SELF_EFFECT;
+		case "pickupeffect":
+			return type.PICKUP_EFFECT;
 		default:
 			return type.DIRECT_PROJECTILE;
 		}
@@ -195,6 +253,22 @@ public abstract class ActionBase {
 		return _magnitude;
 	}
 
+	public boolean isUnique() {
+		return _unique;
+	}
+
+	public boolean canToggle() {
+		return _toggle;
+	}
+
+	public float getMinimumToggleTime() {
+		return _minimum_toggle_time;
+	}
+
+	public float getCost() {
+		return _cost;
+	}
+
 	public void load() {
 		Log.debug("Loading Functions and Variables for " + name);
 		_ON_CAST = registerLuaFunction(_ON_CAST, "_ON_CAST");
@@ -204,7 +278,12 @@ public abstract class ActionBase {
 		_ON_HIT_TILE = registerLuaFunction(_ON_HIT_TILE, "_ON_HIT_TILE");
 		_LOOP = registerLuaFunction(_LOOP, "_LOOP");
 		_ON_COOLDOWN = registerLuaFunction(_ON_COOLDOWN, "_ON_COOLDOWN");
-
+		_ON_FAIL = registerLuaFunction(_ON_FAIL, "_ON_FAIL");
+		_ON_DROP = registerLuaFunction(_ON_DROP, "_ON_DROP");
+		_ON_PICKUP = registerLuaFunction(_ON_PICKUP, "_ON_PICKUP");
+		_ON_TOGGLE_OFF = registerLuaFunction(_ON_TOGGLE_OFF, "_ON_TOGGLE_OFF");
+		_ON_NOT_ENOUGH_ENERGY = registerLuaFunction(_ON_NOT_ENOUGH_ENERGY, "_ON_NOT_ENOUGH_ENERGY");
+		_cost = registerLuaFloat(_cost, "cost");
 		_cooldown = registerLuaFloat(_cooldown, "cooldown");
 		_accuracy = registerLuaFloat(_accuracy, "accuracy");
 		_life = registerLuaFloat(_life, "life");
@@ -215,6 +294,9 @@ public abstract class ActionBase {
 		_buff_time = registerLuaFloat(_buff_time, "bufftime");
 		_magnitude = registerLuaFloat(_magnitude, "magnitude");
 		_interval = registerLuaInt(_interval, "interval");
+		_unique = registerLuaBoolean(_unique, "unique");
+		_toggle = registerLuaBoolean(_toggle, "toggle");
+		_minimum_toggle_time = registerLuaFloat(_minimum_toggle_time, "togglemin");
 		Log.debug("Finished Loading");
 
 	}

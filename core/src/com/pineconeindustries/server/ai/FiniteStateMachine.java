@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.pineconeindustries.server.ai.pathfinding.AStarPath;
+import com.pineconeindustries.server.ai.states.DownedState;
 import com.pineconeindustries.server.ai.states.IdleState;
 import com.pineconeindustries.server.ai.states.MoveState;
 import com.pineconeindustries.server.ai.states.SleepState;
@@ -44,17 +45,32 @@ public class FiniteStateMachine {
 		registerStates("WORK", new WorkState(this));
 		registerStates("SLEEP", new SleepState(this));
 		registerStates("MOVE", new MoveState(this));
-		
+		registerStates("DOWNED", new DownedState(this));
+
 	}
 
 	public void performAction() {
-		checkSchedule();
 
+		checkSchedule();
+		checkForDowned();
 		currentState.performAction();
 
 	}
 
+	public void checkForDowned() {
+
+		if (owner.isDowned() && currentState != states.get("DOWNED")) {
+			changeState(states.get("DOWNED"));
+		}
+
+	}
+
 	public void checkSchedule() {
+
+		if (owner.isDowned()) {
+			return;
+		}
+
 		int hour = Clock.getInstance().getTime().getHour();
 
 		scheduleState = states.get(schedule[hour]);

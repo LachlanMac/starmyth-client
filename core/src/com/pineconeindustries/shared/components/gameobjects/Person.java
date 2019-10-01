@@ -19,7 +19,7 @@ public abstract class Person extends Entity {
 
 	public void setAnimations() {
 		animSet = GameData.getInstance().Assets().getPlayerAnimations();
-		currentFrame = animSet.getAnimation(new Vector2(0, 1), 0);
+		currentFrame = animSet.getAnimation(new Vector2(0, 1), 0, getAnimationCode());
 	}
 
 	public boolean shouldTickRender() {

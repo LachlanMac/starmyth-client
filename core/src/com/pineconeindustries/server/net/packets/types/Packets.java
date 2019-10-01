@@ -5,12 +5,16 @@ public class Packets {
 	public static final int MOVE_REQUEST_PACKET = 1100;
 
 	public static final int MOVE_PACKET = 100;
+	public static final int MOVE_PACKET_RANGE = 500;
+
 	public static final int NPC_MOVE_PACKET = 101;
+	public static final int NPC_MOVE_PACKET_RANGE = 500;
+
 	public static final int PROJECTILE_MOVE_PACKET = 104;
+	public static final int PROJECTILE_MOVE_PACKET_RANGE = 500;
+
 	public static final int INPUT_CHANGE_PACKET = 102;
-
 	public static final int SHIP_HIT_PACKET = 110;
-
 	public static final int SHIP_STOP_PACKET = 111;
 	public static final int SHIP_START_PACKET = 112;
 	public static final int SHIP_EMERGENCY_PACKET = 113;
@@ -27,6 +31,7 @@ public class Packets {
 	public static final int NPC_LIST_PACKET = 8002;
 	public static final int STRUCTURE_LIST_PACKET = 8004;
 	public static final int NPC_STAT_LIST_PACKET = 8005;
+	public static final int PLAYER_STAT_LIST_PACKET = 8006;
 
 	public static final int STRUCTURE_ELEVATOR_REQUEST_PACKET = 8100;
 	public static final int STRUCTURE_ELEVATOR_RESPONSE_PACKET = 8101;

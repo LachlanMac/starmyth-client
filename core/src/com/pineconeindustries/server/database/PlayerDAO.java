@@ -83,9 +83,6 @@ public class PlayerDAO {
 					"SELECT hp, energy, strength, stamina, accuracy, reflexes, logic FROM PlayerCharacterStats WHERE character_id=?");
 			stmt.setInt(1, player.getID());
 			ResultSet rs = stmt.executeQuery();
-
-			System.out.println("Loading stats for player " + player.getID());
-
 			int rows = 0;
 
 			while (rs.next()) {

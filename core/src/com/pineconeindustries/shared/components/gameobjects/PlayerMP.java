@@ -18,8 +18,10 @@ import com.pineconeindustries.shared.actions.ActionSet;
 import com.pineconeindustries.shared.actions.types.Action;
 import com.pineconeindustries.shared.actions.types.ActionBase;
 import com.pineconeindustries.shared.actions.types.ActionPackage;
+import com.pineconeindustries.shared.actions.types.PickupAction;
 import com.pineconeindustries.shared.actions.types.DirectProjectileAction;
 import com.pineconeindustries.shared.actions.types.TargetedEffectAction;
+import com.pineconeindustries.shared.components.gameobjects.GameObject.type;
 import com.pineconeindustries.shared.components.structures.Tile;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
@@ -39,10 +41,6 @@ public class PlayerMP extends Person {
 
 	Sector serverSector;
 
-	private ActionSet actionSet;
-
-	private Stats stats;
-
 	public PlayerMP(int id, String name, Vector2 loc, int sectorID, int structureID, int layer, int factionID) {
 		super(id, name, loc, sectorID, structureID, layer, factionID);
 		speed = Units.PLAYER_MOVE_SPEED;
@@ -50,15 +48,13 @@ public class PlayerMP extends Person {
 		if (Global.isServer()) {
 			serverSector = Galaxy.getInstance().getSectorByID(sectorID);
 			actionSet = new ActionSet();
-
 			actionSet.addAction(new Action((DirectProjectileAction) ActionManager.getInstance().getActionByID(1)));
-			System.out.println("LOADED " + actionSet.getActionByID(1).getName() + " "
-					+ actionSet.getActionByID(1).getActionBase().getClass().getCanonicalName());
 			actionSet.addAction(new Action((TargetedEffectAction) ActionManager.getInstance().getActionByID(4)));
-			System.out.println("LOADED " + actionSet.getActionByID(4).getName() + " "
-					+ actionSet.getActionByID(4).getActionBase().getClass().getCanonicalName());
+			actionSet.addAction(new Action((PickupAction) ActionManager.getInstance().getActionByID(6)));
+			goType = type.PLAYER;
+			addDefaultEntityPassives();
 		}
-
+		
 	}
 
 	public boolean[] getInputState() {
@@ -79,7 +75,7 @@ public class PlayerMP extends Person {
 
 		state += Gdx.graphics.getDeltaTime();
 
-		currentFrame = animSet.getAnimation(lastDirectionFaced, velocity);
+		currentFrame = animSet.getAnimation(lastDirectionFaced, velocity, getAnimationCode());
 
 		if (velocity == 999 || spin == true) {
 			TextureRegion t = currentFrame.getKeyFrame(state, true);
@@ -157,6 +153,13 @@ public class PlayerMP extends Person {
 				a.use(new ActionPackage(this, target));
 			}
 
+			if (inputState[7]) {
+
+				Action a = actionSet.getActionByID(6);
+
+				a.use(new ActionPackage(this, target));
+			}
+
 			if (x == 0 && y == 0) {
 				return;
 			}
@@ -181,6 +184,11 @@ public class PlayerMP extends Person {
 			serverSector.getPacketWriter()
 					.queueToAll(MoveModule.getMovePacket(getID(), getLoc(), dir, velocity, getLayer()));
 			inputChanged = false;
+
+			if (held != null) {
+				held.updatePosition(new Vector2(getLoc().x - 5, getLoc().y - 5));
+			}
+
 		}
 
 	}

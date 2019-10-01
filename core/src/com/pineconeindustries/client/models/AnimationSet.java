@@ -2,10 +2,13 @@ package com.pineconeindustries.client.models;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 public class AnimationSet {
+
+	public static final int DOWNED = 1;
 
 	public static final float CHARACTER_ANIMATION_SPEED = 0.15f;
 
@@ -32,17 +35,21 @@ public class AnimationSet {
 		mov_right = new Animation<TextureRegion>(CHARACTER_ANIMATION_SPEED,
 				new TextureRegion[] { regions[2][1], regions[2][2], regions[2][3], regions[2][4] });
 
-		dead = new Animation<TextureRegion>(CHARACTER_ANIMATION_SPEED, new TextureRegion[] { regions[3][7] });
 		idle_up = new Animation<TextureRegion>(CHARACTER_ANIMATION_SPEED, new TextureRegion[] { regions[0][0] });
 		idle_down = new Animation<TextureRegion>(CHARACTER_ANIMATION_SPEED, new TextureRegion[] { regions[1][0] });
 		idle_left = new Animation<TextureRegion>(CHARACTER_ANIMATION_SPEED, new TextureRegion[] { regions[3][0] });
 		idle_right = new Animation<TextureRegion>(CHARACTER_ANIMATION_SPEED, new TextureRegion[] { regions[2][0] });
 
+		dead = new Animation<TextureRegion>(CHARACTER_ANIMATION_SPEED, new TextureRegion[] { regions[2][5] });
+
 	}
 
-	public Animation<TextureRegion> getAnimation(Vector2 direction, float velocity) {
+	public Animation<TextureRegion> getAnimation(Vector2 direction, float velocity, int special) {
 
-		
+		if (special == DOWNED) {
+			return dead;
+		}
+
 		// character is not moving
 		if (velocity == 0) {
 			if (direction.x > 0)

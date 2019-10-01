@@ -123,7 +123,7 @@ public class Galaxy {
 		return connection;
 
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Galaxy!";

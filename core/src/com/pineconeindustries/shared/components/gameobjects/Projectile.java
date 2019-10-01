@@ -13,6 +13,8 @@ import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.players.PlayerConnection;
 import com.pineconeindustries.shared.actions.types.ActionBase;
 import com.pineconeindustries.shared.actions.types.ActionPackage;
+import com.pineconeindustries.shared.components.gameobjects.GameObject.type;
+import com.pineconeindustries.shared.components.structures.Structure;
 import com.pineconeindustries.shared.components.structures.Tile;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
@@ -29,6 +31,7 @@ public class Projectile extends GameObject {
 	private float speedTho = 0;
 	private int framesSinceUpdate = 0;
 	private Sector serverSector;
+	private Structure structure;
 	private Vector2 renderLoc;
 	private Animation<TextureRegion> currentFrame;
 	private ActionBase action;
@@ -36,7 +39,7 @@ public class Projectile extends GameObject {
 	private boolean setToRemove = false;
 	private Vector2 bounceDir = new Vector2(0, 0);
 	private ActionPackage data;
-
+	
 	public Projectile(String name, Vector2 loc, Vector2 direction, int layer, int id, float speed, int sectorID,
 			int structureID, float life, ActionBase action, ActionPackage data) {
 		super(id, name, loc, sectorID, structureID, layer);
@@ -46,14 +49,17 @@ public class Projectile extends GameObject {
 		this.life = life;
 		renderLoc = loc;
 		this.data = data;
-		
+
 		if (Global.isServer()) {
 			if (!Global.isHeadlessServer()) {
 				currentFrame = GameData.getInstance().Assets().getShot2Animation();
 			}
+			goType = type.PROJECTILE;
 			serverSector = Galaxy.getInstance().getSectorByID(sectorID);
+			structure = serverSector.getStructureByID(structureID);
 		} else {
 			currentFrame = GameData.getInstance().Assets().getShot2Animation();
+
 		}
 	}
 
@@ -66,7 +72,7 @@ public class Projectile extends GameObject {
 
 			if (setToRemove) {
 				action.onEnd(data);
-				serverSector.removeProjectile(this);
+				structure.removeProjectile(this);
 				return;
 			}
 
@@ -137,7 +143,7 @@ public class Projectile extends GameObject {
 
 			String data = new String(getID() + "x" + df.format(getLoc().x) + "x" + df.format(getLoc().y) + "x" + layer
 					+ "x" + df.format(direction.x) + "x" + df.format(direction.y) + "x" + structureID + "=");
-			serverSector.addProjectileMovementData(data);
+			structure.addProjectileMovementData(data);
 			if (life <= 0) {
 
 				setToRemove = true;

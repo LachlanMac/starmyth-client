@@ -16,9 +16,19 @@ import com.pineconeindustries.client.manager.SoundEffectManager;
 import com.pineconeindustries.client.networking.packets.PacketFactory;
 import com.pineconeindustries.client.networking.packets.PacketRequester;
 import com.pineconeindustries.server.ai.pathfinding.PathNode;
+import com.pineconeindustries.server.galaxy.Galaxy;
+import com.pineconeindustries.server.galaxy.Sector;
+import com.pineconeindustries.server.net.packetdata.MoveData;
+import com.pineconeindustries.server.net.packets.modules.ScheduleModule;
+import com.pineconeindustries.server.net.packets.scheduler.PacketScheduler;
+import com.pineconeindustries.server.net.packets.scheduler.StructurePacketScheduler;
+import com.pineconeindustries.server.net.packets.types.Packet;
 import com.pineconeindustries.server.net.players.PlayerConnection;
 import com.pineconeindustries.shared.components.gameobjects.Elevator;
 import com.pineconeindustries.shared.components.gameobjects.GridTile;
+import com.pineconeindustries.shared.components.gameobjects.NPC;
+import com.pineconeindustries.shared.components.gameobjects.PlayerMP;
+import com.pineconeindustries.shared.components.gameobjects.Projectile;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.files.Files;
@@ -29,6 +39,15 @@ public abstract class Structure {
 	public enum STRUCTURE_STATE {
 		running, off, emergency, none
 	};
+
+	ArrayBlockingQueue<MoveData> npcMoveList;
+	ArrayBlockingQueue<String> projectileMoveList;
+	protected ArrayBlockingQueue<NPC> npcs;
+	protected ArrayBlockingQueue<PlayerConnection> players;
+	protected ArrayBlockingQueue<Packet> sendQueue;
+	protected ArrayBlockingQueue<Projectile> projectiles;
+	PacketScheduler scheduler;
+	Sector sector;
 
 	public final static int STRUCTURE_SIZE = 64;
 	protected int width, height, structureID, sectorID, factionID, renderX, renderY, layers, type;
@@ -62,7 +81,7 @@ public abstract class Structure {
 		this.layers = layers;
 		this.renderX = renderX;
 		this.renderY = renderY;
-
+		this.sector = Galaxy.getInstance().getSectorByID(sectorID);
 		layerList = new ArrayBlockingQueue<StructureLayer>(4);
 		this.type = 0;
 		loadLayers();
@@ -70,6 +89,20 @@ public abstract class Structure {
 
 		if (Global.isClient()) {
 			requestData();
+		} else {
+			scheduler = new StructurePacketScheduler(sector, this);
+			npcs = new ArrayBlockingQueue<NPC>(64);
+			players = new ArrayBlockingQueue<PlayerConnection>(64);
+			sendQueue = new ArrayBlockingQueue<Packet>(1024);
+			projectiles = new ArrayBlockingQueue<Projectile>(256);
+			npcMoveList = new ArrayBlockingQueue<MoveData>(1024);
+			projectileMoveList = new ArrayBlockingQueue<String>(1024);
+
+			scheduler.registerPacket(ScheduleModule.makeNPCListScheduler(this, sector, 5.0f));
+			scheduler.registerPacket(ScheduleModule.makePlayerListScheduler(this, sector, 5.0f));
+			scheduler.registerPacket(ScheduleModule.makeNPCStatListPacket(this, sector, 0.2f));
+			scheduler.registerPacket(ScheduleModule.makePlayerStatListPacket(this, sector, 0.2f));
+			scheduler.start();
 		}
 		setState(currentState);
 
@@ -294,6 +327,68 @@ public abstract class Structure {
 			return STRUCTURE_STATE.off;
 		}
 
+	}
+
+	public void addToSendQueue(Packet p) {
+		sendQueue.add(p);
+	}
+
+	public ArrayBlockingQueue<Packet> getSendQueue() {
+		return sendQueue;
+	}
+
+	public void addProjectile(Projectile p) {
+		projectiles.add(p);
+	}
+
+	public void removeProjectile(Projectile p) {
+		projectiles.remove(p);
+	}
+
+	public ArrayBlockingQueue<Projectile> getProjectiles() {
+		return projectiles;
+	}
+
+	public void addPlayer(PlayerConnection p) {
+		Log.debug("Adding player to Structure " + structureID);
+		players.add(p);
+	}
+
+	public void removePlayer(PlayerConnection p) {
+		Log.debug("Removing player from Structure " + structureID);
+		players.remove(p);
+	}
+
+	public ArrayBlockingQueue<PlayerConnection> getPlayers() {
+		return players;
+	}
+
+	public void addNPC(NPC npc) {
+		npcs.add(npc);
+	}
+
+	public void removeNPC(NPC npc) {
+		npcs.remove(npc);
+	}
+
+	public ArrayBlockingQueue<NPC> getNPCs() {
+		return npcs;
+	}
+
+	public void addNPCMovementData(MoveData data) {
+		npcMoveList.add(data);
+	}
+
+	public void addProjectileMovementData(String data) {
+		projectileMoveList.add(data);
+	}
+
+	public ArrayBlockingQueue<MoveData> getNPCMoveList() {
+		return npcMoveList;
+	}
+
+	public ArrayBlockingQueue<String> getProjectileMoveList() {
+		return projectileMoveList;
 	}
 
 }

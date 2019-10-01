@@ -2,6 +2,7 @@ package com.pineconeindustries.server.net.packets.types;
 
 public abstract class Packet {
 
+	public final static String empty = "EMPTY";
 	private static long udpCount = 0;
 	protected String split[];
 	protected int packetID;
@@ -16,7 +17,7 @@ public abstract class Packet {
 	protected int restrictedStructure = 0;
 
 	protected PACKET_TYPE type;
-	
+
 	public enum PACKET_TYPE {
 		UDP, TCP;
 	}

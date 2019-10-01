@@ -35,7 +35,9 @@ public class DirectProjectileAction extends ActionBase {
 		if (data.getTarget() == null) {
 			return;
 		}
+
 		if (data.getCaster().isInRange(data.getTarget(), _range)) {
+			data.getCaster().getStats().changeCurrentEnergy(-_cost);
 			onCast(data);
 			projectileID++;
 			float accuracy = data.getCaster().getStats().getAccuracy();
@@ -60,7 +62,7 @@ public class DirectProjectileAction extends ActionBase {
 					new Vector2(data.getCaster().getCenter().x, data.getCaster().getCenter().y),
 					new Vector2(dir.x, dir.y), data.getCaster().getLayer(), projectileID, _speed,
 					data.getCaster().getSectorID(), data.getCaster().getStructureID(), _life, this, data);
-			Galaxy.getInstance().getSectorByID(data.getCaster().getSectorID()).addProjectile(p);
+			data.getCaster().getStructure().addProjectile(p);
 
 		} else {
 			//

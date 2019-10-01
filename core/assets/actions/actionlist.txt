@@ -3,3 +3,5 @@
 3-guard-targetedeffect
 4-heal-targetedeffect
 5-poisonshot-targetedeffect
+6-rescue-pickupeffect
+7-passiveregen-selfeffect

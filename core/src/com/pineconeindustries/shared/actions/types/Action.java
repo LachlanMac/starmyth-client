@@ -1,18 +1,24 @@
 package com.pineconeindustries.shared.actions.types;
 
+import com.pineconeindustries.shared.components.gameobjects.Entity;
 import com.pineconeindustries.shared.utils.Base36;
 
 public class Action {
 
 	private ActionBase action;
-	private float cooldown, sinceLastCast;
+	private float cooldown, sinceLastCast, cost;
+	private float toggleTime;
 	private boolean ready = false;
+	private boolean toggle, toggled;
 
 	public Action(ActionBase action) {
 		this.action = action;
-		this.cooldown = this.action.getCooldown();
+		this.cooldown = action.getCooldown();
 		this.sinceLastCast = cooldown;
-
+		this.toggle = action.canToggle();
+		this.toggleTime = action.getMinimumToggleTime();
+		this.toggled = false;
+		this.cost = action.getCost();
 	}
 
 	public void update(float delta) {
@@ -33,14 +39,38 @@ public class Action {
 	}
 
 	public void use(ActionPackage data) {
+
 		if (ready) {
-			action.use(data);
-			sinceLastCast = 0;
-			ready = false;
+
+			if (hasEnoughEnergy(data.getCaster())) {
+				action.use(data);
+				sinceLastCast = 0;
+				toggled = false;
+				ready = false;
+			} else {
+				action.onNotEnoughEnergy(data);
+			}
 		} else {
-			action.onCooldown(data);
-			getCooldownRemaining();
+			if (toggle && !toggled) {
+				if (sinceLastCast >= toggleTime) {
+					action.onToggleOff(data);
+					sinceLastCast = 0.01f;
+					toggled = true;
+				}
+
+			} else {
+				if (sinceLastCast >= 0) {
+					action.onCooldown(data);
+				}
+			}
+
 		}
+	}
+
+	public boolean hasEnoughEnergy(Entity caster) {
+
+		return caster.getStats().getCurrentEnergy() >= cost;
+
 	}
 
 	public boolean isReady() {

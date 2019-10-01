@@ -31,7 +31,7 @@ public class WanderState extends State {
 	public void enterState() {
 		fsm.getOwner().clearPath();
 		fsm.getOwner().findRandomPath();
-
+		
 	}
 
 	@Override

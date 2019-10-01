@@ -21,7 +21,7 @@ function _ON_MISS(data)
 end
 
 function _LOOP(data)
-   data:getTarget():getStats():changeCurrentHP(15)  
+  data:getTarget():getStats():changeCurrentHP(15)
 end
 
 function _ON_HIT_ENTITY(data)

@@ -15,7 +15,7 @@ public class ActionManager {
 		actions = Files.loadActions();
 
 	}
-
+	
 	public static ActionManager getInstance() {
 		if (instance == null)
 			instance = new ActionManager();

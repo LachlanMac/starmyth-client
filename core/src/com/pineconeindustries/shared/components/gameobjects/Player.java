@@ -18,6 +18,7 @@ import com.pineconeindustries.client.manager.InputState;
 import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.Net;
 import com.pineconeindustries.client.networking.packets.PacketFactory;
+import com.pineconeindustries.shared.components.ui.StatusBar;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.units.Units;
 
@@ -33,7 +34,7 @@ public class Player extends Person {
 	private String lastState;
 	private boolean moveDisabled = false;
 	private boolean targetChanged = false;
-
+	private StatusBar hb;
 	Chatbox chatbox;
 	Camera camera;
 
@@ -43,6 +44,7 @@ public class Player extends Person {
 		this.camera = camera;
 		projectiles = new ArrayList<Projectile>();
 		lastState = InputState.getDefaultState();
+		hb = new StatusBar(loc.x, loc.y);
 
 	}
 
@@ -51,7 +53,7 @@ public class Player extends Person {
 
 		state += Gdx.graphics.getDeltaTime();
 
-		currentFrame = animSet.getAnimation(lastDirectionFaced, velocity);
+		currentFrame = animSet.getAnimation(lastDirectionFaced, velocity, getAnimationCode());
 
 		if (velocity == 999) {
 			TextureRegion t = currentFrame.getKeyFrame(state, true);
@@ -61,6 +63,7 @@ public class Player extends Person {
 
 		} else {
 			b.draw(currentFrame.getKeyFrame(state, true), renderLoc.x, renderLoc.y);
+			hb.render(b);
 		}
 
 		if (renderLoc.dst(loc) > 500) {
@@ -87,6 +90,9 @@ public class Player extends Person {
 	public void update() {
 		InputState.update();
 		hover();
+
+		hb.update(renderLoc.x, renderLoc.y, stats.getCurrentHP() / stats.getHp(),
+				stats.getCurrentEnergy() / stats.getEnergy());
 
 		if (!chatbox.isTyping())
 			move();

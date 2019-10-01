@@ -1,6 +1,8 @@
 package com.pineconeindustries.shared.components.gameobjects;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -8,7 +10,11 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.server.galaxy.Galaxy;
 import com.pineconeindustries.server.galaxy.Sector;
+import com.pineconeindustries.server.net.packetdata.MoveData;
+import com.pineconeindustries.shared.actions.effects.EffectOverTime;
+import com.pineconeindustries.shared.actions.types.ActionPackage;
 import com.pineconeindustries.shared.components.behaviors.Targetable;
+import com.pineconeindustries.shared.components.structures.Structure;
 import com.pineconeindustries.shared.components.structures.StructureLayer;
 import com.pineconeindustries.shared.components.structures.Tile;
 import com.pineconeindustries.shared.data.Global;
@@ -19,7 +25,6 @@ public abstract class GameObject implements Targetable {
 
 	public static final int GAMEOBJECT_WIDTH = 64;
 	public static final int GAMEOBJECT_HEIGHT = 64;
-
 	protected Vector2 loc;
 	protected boolean debugMode = false;
 	public boolean target = false;
@@ -31,16 +36,22 @@ public abstract class GameObject implements Targetable {
 	private int boundsWidth = DEFAULT_BOUNDS_WIDTH;
 	private int boundsHeight = DEFAULT_BOUNDS_HEIGHT;
 	protected Rectangle bounds;
+	protected boolean immobile = false;
 	protected int sectorID;
 	protected int structureID;
 	protected Stats stats;
-
+	protected ArrayBlockingQueue<EffectOverTime> effects;
 	protected String name;
+	protected GameObject held = null;
+	protected GameObject holder = null;
+	protected Structure structure = null;
+	protected type goType;
+	protected DecimalFormat df = new DecimalFormat("#.00");
+	protected boolean holdable = false;
 
-	// OLD String name, Vector2 loc, int layer, int id, int sectorID, int
-	// structureID
-	// NEW int id, String name, Vector2 loc, int sectorID, int structureID, int
-	// layer
+	enum type {
+		NPC, PLAYER, GROUND_OBJECT, PROJECTILE, GAME_OBJECT;
+	};
 
 	public GameObject(int id, String name, Vector2 loc, int sectorID, int structureID, int layer) {
 		this.name = name;
@@ -53,6 +64,10 @@ public abstract class GameObject implements Targetable {
 
 		if (Global.isClient()) {
 			stats = new Stats();
+		} else {
+			structure = Galaxy.getInstance().getSectorByID(sectorID).getStructureByID(structureID);
+			goType = type.GAME_OBJECT;
+			effects = new ArrayBlockingQueue<EffectOverTime>(24);
 		}
 
 	}
@@ -212,4 +227,100 @@ public abstract class GameObject implements Targetable {
 		return stats;
 	}
 
+	public GameObject getHolder() {
+		return holder;
+	}
+
+	public GameObject getHeld() {
+		return held;
+	}
+
+	public void drop() {
+		held = null;
+	}
+
+	public void beDropped() {
+		holder = null;
+	}
+
+	public void pickup(GameObject obj) {
+		held = obj;
+	}
+
+	public void bePickedup(GameObject obj) {
+		holder = obj;
+	}
+
+	public static void pickup(GameObject a, GameObject b) {
+		a.pickup(b);
+		b.bePickedup(a);
+	}
+
+	public static void drop(GameObject a, GameObject b) {
+		a.drop();
+		b.beDropped();
+	}
+
+	public void updatePosition(Vector2 location) {
+
+		switch (goType) {
+		case NPC:
+			String data = new String(getID() + "x" + df.format(location.x) + "x" + df.format(location.y) + "x" + "s"
+					+ "x" + layer + "=");
+			setLoc(location);
+			structure.addNPCMovementData(new MoveData(data, structureID, layer));
+			break;
+		case PLAYER:
+			break;
+		case PROJECTILE:
+			break;
+		default:
+			break;
+
+		}
+	}
+
+	public void updateEffects(float delta) {
+
+		for (EffectOverTime e : effects) {
+
+			if (e.isRunning()) {
+				e.update(delta);
+			} else {
+				removeEffectOverTime(e);
+			}
+		}
+	}
+
+	public void addEffectOverTime(EffectOverTime e) {
+		effects.add(e);
+	}
+
+	public void removeEffectOverTime(EffectOverTime e) {
+		effects.remove(e);
+	}
+
+	public ArrayBlockingQueue<EffectOverTime> getCurrentEffects() {
+		return effects;
+	}
+
+	public boolean isImmobile() {
+		return immobile;
+	}
+
+	public void setImmobile(boolean immobile) {
+		this.immobile = immobile;
+	}
+
+	public boolean isHoldable() {
+		return holdable;
+	}
+
+	public void setHoldable(boolean holdable) {
+		this.holdable = holdable;
+	}
+
+	public boolean isDowned() {
+		return getStats().getCurrentHP() <= 0;
+	}
 }

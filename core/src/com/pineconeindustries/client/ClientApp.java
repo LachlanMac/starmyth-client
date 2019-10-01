@@ -4,14 +4,11 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2D;
-import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.pineconeindustries.client.cameras.CameraController;
 import com.pineconeindustries.client.config.NetworkConfiguration;
 import com.pineconeindustries.client.data.LocalPlayerData;
@@ -22,7 +19,6 @@ import com.pineconeindustries.client.manager.LAssetManager;
 import com.pineconeindustries.client.manager.LightingManager;
 import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.Connection;
-import com.pineconeindustries.client.tests.Test;
 import com.pineconeindustries.client.ui.UserInterface;
 import com.pineconeindustries.shared.components.gameobjects.Player;
 import com.pineconeindustries.shared.data.GameData;
@@ -30,7 +26,6 @@ import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.data.Global.RUN_TYPE;
 import com.pineconeindustries.shared.text.TextManager;
 
-import box2dLight.RayHandler;
 
 public class ClientApp extends ApplicationAdapter {
 

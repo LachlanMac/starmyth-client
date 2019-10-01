@@ -16,15 +16,22 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.manager.LogicController;
+import com.pineconeindustries.client.models.AnimationSet;
 import com.pineconeindustries.server.ai.FiniteStateMachine;
 import com.pineconeindustries.server.ai.pathfinding.AStarPath;
 import com.pineconeindustries.server.ai.pathfinding.PathNode;
 import com.pineconeindustries.server.galaxy.Galaxy;
 import com.pineconeindustries.server.galaxy.Sector;
+import com.pineconeindustries.server.net.packetdata.MoveData;
 import com.pineconeindustries.server.net.packets.types.Packets;
 import com.pineconeindustries.server.net.packets.types.UDPPacket;
+import com.pineconeindustries.shared.actions.ActionManager;
+import com.pineconeindustries.shared.actions.ActionSet;
+import com.pineconeindustries.shared.actions.effects.EffectOverTime;
+import com.pineconeindustries.shared.actions.types.ActionPackage;
+import com.pineconeindustries.shared.components.gameobjects.GameObject.type;
 import com.pineconeindustries.shared.components.structures.Structure;
-import com.pineconeindustries.shared.components.ui.HealthBar;
+import com.pineconeindustries.shared.components.ui.StatusBar;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.units.Units;
@@ -38,6 +45,7 @@ public class NPC extends Person {
 	private boolean destinationReached = false;
 	private boolean spin = false;
 	private boolean hasPath = false;
+
 	private AStarPath pathfinder;
 	private Structure structure;
 	private LinkedList<PathNode> path;
@@ -45,17 +53,14 @@ public class NPC extends Person {
 	private LuaValue script;
 	private boolean hasScript = false;
 
-	private DecimalFormat df = new DecimalFormat("#.00");
-
-	private LuaFunction getName, getLocation, getDestination;
 	private LuaFunction _ON_DEATH, _ON_HIT, _ON_NEW_PATH;
 
-	private HealthBar hb;
+	private StatusBar hb;
 
 	// CLIENT CONSTRUCTOR
 	public NPC(int id, String name, Vector2 loc, int sectorID, int structureID, int layer, int factionID) {
 		super(id, name, loc, sectorID, structureID, layer, factionID);
-		hb = new HealthBar(loc.x, loc.y);
+		hb = new StatusBar(loc.x, loc.y);
 	}
 
 	// SERVER CONSTRUCTOR
@@ -67,6 +72,8 @@ public class NPC extends Person {
 		this.structure = sector.getStructureByID(structureID);
 		fsm = new FiniteStateMachine(this);
 		speed = Units.NPC_SPEED;
+		goType = type.NPC;
+		addDefaultEntityPassives();
 
 	}
 
@@ -75,7 +82,7 @@ public class NPC extends Person {
 
 		state += Gdx.graphics.getDeltaTime();
 
-		currentFrame = animSet.getAnimation(lastDirectionFaced, velocity);
+		currentFrame = animSet.getAnimation(lastDirectionFaced, velocity, getAnimationCode());
 
 		if (velocity == 999 || spin == true) {
 			TextureRegion t = currentFrame.getKeyFrame(state, true);
@@ -126,10 +133,8 @@ public class NPC extends Person {
 	public void move() {
 
 		if (destination != null) {
-
 			calculateMov(destination);
 		}
-
 	}
 
 	public void setDestination(Vector2 destination) {
@@ -160,10 +165,7 @@ public class NPC extends Person {
 			bounds.x = loc.x;
 			bounds.y = loc.y;
 
-			String data = new String(getID() + "x" + df.format(getLoc().x) + "x" + df.format(getLoc().y) + "x"
-					+ VectorMath.getPacketDirection(directionX, directionY) + "x" + layer + "=");
-
-			sector.addNPCMovementData(data);
+			sendMoveData(VectorMath.getPacketDirection(directionX, directionY));
 
 			if (dest.dst(loc) <= 5) {
 
@@ -172,6 +174,13 @@ public class NPC extends Person {
 			}
 
 		}
+	}
+
+	public void sendMoveData(String dir) {
+		String data = new String(
+				getID() + "x" + df.format(getLoc().x) + "x" + df.format(getLoc().y) + "x" + dir + "x" + layer + "=");
+
+		structure.addNPCMovementData(new MoveData(data, structureID, layer));
 	}
 
 	public void moveOnPath() {
@@ -298,7 +307,8 @@ public class NPC extends Person {
 			fsm.performAction();
 		}
 		if (Global.isClient()) {
-			hb.update(renderLoc.x, renderLoc.y, stats.getCurrentHP() / stats.getHp());
+			hb.update(renderLoc.x, renderLoc.y, stats.getCurrentHP() / stats.getHp(),
+					stats.getCurrentEnergy() / stats.getEnergy());
 			updateText();
 			onClick();
 		}

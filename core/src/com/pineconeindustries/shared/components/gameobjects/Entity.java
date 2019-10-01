@@ -17,7 +17,12 @@ import com.pineconeindustries.client.manager.InputManager;
 import com.pineconeindustries.client.manager.InputState;
 import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.models.AnimationSet;
+import com.pineconeindustries.server.galaxy.Galaxy;
+import com.pineconeindustries.shared.actions.ActionManager;
+import com.pineconeindustries.shared.actions.ActionSet;
 import com.pineconeindustries.shared.actions.effects.EffectOverTime;
+import com.pineconeindustries.shared.actions.types.ActionPackage;
+import com.pineconeindustries.shared.components.structures.Structure;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.log.Log;
@@ -34,8 +39,10 @@ public abstract class Entity extends GameObject implements Comparable<Entity> {
 	AnimationSet animSet;
 	Animation<TextureRegion> currentFrame;
 	Vector2 renderLoc, lastDirectionFaced;
-	ArrayBlockingQueue<EffectOverTime> effects;
+
 	Text textName;
+	ActionSet actionSet;
+	Structure structure;
 
 	public Entity(int id, String name, Vector2 loc, int sectorID, int structureID, int layer, int factionID) {
 		super(id, name, loc, sectorID, structureID, layer);
@@ -45,16 +52,21 @@ public abstract class Entity extends GameObject implements Comparable<Entity> {
 		speed = Units.ENTITY_SPEED;
 		renderLoc = loc;
 		lastDirectionFaced = loc;
-		effects = new ArrayBlockingQueue<EffectOverTime>(24);
+
 		this.factionID = factionID;
 
 		if (!Global.isHeadlessServer()) {
 			textName = new Text(getName(), getCenter(), 64);
 			animSet = GameData.getInstance().Assets().getDefaultAnimations();
-			currentFrame = animSet.getAnimation(lastDirectionFaced, 0);
+			currentFrame = animSet.getAnimation(lastDirectionFaced, 0, getAnimationCode());
+
 		} else {
 
 			animSet = null;
+		}
+
+		if (!Global.isClient()) {
+			structure = Galaxy.getInstance().getSectorByID(sectorID).getStructureByID(structureID);
 		}
 
 	}
@@ -63,7 +75,7 @@ public abstract class Entity extends GameObject implements Comparable<Entity> {
 	public void update() {
 		interval += Gdx.graphics.getDeltaTime();
 		updateEffects(interval);
-		currentFrame = animSet.getAnimation(lastDirectionFaced, velocity);
+		currentFrame = animSet.getAnimation(lastDirectionFaced, velocity, getAnimationCode());
 		if (getFramesSinceLastMove() > MAX_FRAMES_SINCE_LAST_MOVE) {
 			velocity = 0;
 		}
@@ -179,29 +191,6 @@ public abstract class Entity extends GameObject implements Comparable<Entity> {
 
 	}
 
-	public void addEffectOverTime(EffectOverTime e) {
-		effects.add(e);
-	}
-
-	public void removeEffectOverTime(EffectOverTime e) {
-		effects.remove(e);
-	}
-
-	public void updateEffects(float delta) {
-
-		for (EffectOverTime e : effects) {
-			if (e.isRunning()) {
-				e.update(delta);
-			} else {
-				removeEffectOverTime(e);
-			}
-		}
-	}
-
-	public ArrayBlockingQueue<EffectOverTime> getCurrentEffects() {
-		return effects;
-	}
-
 	@Override
 	public int compareTo(Entity o) {
 
@@ -224,6 +213,24 @@ public abstract class Entity extends GameObject implements Comparable<Entity> {
 
 	}
 
-	
+	public int getAnimationCode() {
+
+		int code = 0;
+
+		if (isDowned()) {
+			code = AnimationSet.DOWNED;
+		}
+
+		return code;
+
+	}
+
+	public Structure getStructure() {
+		return structure;
+	}
+
+	public void addDefaultEntityPassives() {
+		addEffectOverTime(new EffectOverTime(ActionManager.getInstance().getActionByID(7), new ActionPackage(this)));
+	}
 
 }

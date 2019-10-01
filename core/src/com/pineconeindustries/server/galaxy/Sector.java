@@ -9,8 +9,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.packets.custom.CustomTCPPacket;
 import com.pineconeindustries.server.database.Database;
+import com.pineconeindustries.server.net.packetdata.MoveData;
 import com.pineconeindustries.server.net.packets.modules.ScheduleModule;
 import com.pineconeindustries.server.net.packets.scheduler.PacketScheduler;
+import com.pineconeindustries.server.net.packets.scheduler.SectorPacketScheduler;
 import com.pineconeindustries.server.net.packets.types.Packets;
 import com.pineconeindustries.server.net.players.PacketListener;
 import com.pineconeindustries.server.net.players.PacketParser;
@@ -27,12 +29,8 @@ import com.pineconeindustries.shared.log.Log;
 
 public class Sector {
 
-	ArrayBlockingQueue<PlayerConnection> players;
-	ArrayBlockingQueue<NPC> npcs;
 	ArrayBlockingQueue<Structure> structures;
-	ArrayBlockingQueue<Projectile> projectiles;
-	ArrayBlockingQueue<String> npcMoveList;
-	ArrayBlockingQueue<String> projectileMoveList;
+	ArrayBlockingQueue<PlayerConnection> players;
 
 	private int port, globalX, globalY;
 	private String name;
@@ -42,24 +40,20 @@ public class Sector {
 	PacketListener packetListener;
 	PacketWriter packetWriter;
 	PacketParser packetParser;
-	PacketScheduler scheduler;
+	SectorPacketScheduler scheduler;
 
 	public Sector(int port, int globalX, int globalY, String name) {
 		this.port = port;
 		this.globalX = globalX;
 		this.globalY = globalY;
 		this.name = name;
-		players = new ArrayBlockingQueue<PlayerConnection>(64);
-		npcs = new ArrayBlockingQueue<NPC>(128);
-		structures = new ArrayBlockingQueue<Structure>(16);
-		npcMoveList = new ArrayBlockingQueue<String>(128);
-		projectileMoveList = new ArrayBlockingQueue<String>(128);
-		projectiles = new ArrayBlockingQueue<Projectile>(256);
 		connListener = new PlayerConnectionListener(this);
 		packetListener = new PacketListener(this);
 		packetWriter = new PacketWriter(this);
 		packetParser = new PacketParser(this);
-		scheduler = new PacketScheduler(this);
+		scheduler = new SectorPacketScheduler(this);
+		structures = new ArrayBlockingQueue<Structure>(64);
+		players = new ArrayBlockingQueue<PlayerConnection>(64);
 		registerScheduledFunctions();
 		scheduler.start();
 
@@ -69,19 +63,8 @@ public class Sector {
 
 	public void registerScheduledFunctions() {
 
-		scheduler.registerPacket(ScheduleModule.makeNPCListScheduler(this));
-		scheduler.registerPacket(ScheduleModule.makePlayerListScheduler(this));
-		scheduler.registerPacket(ScheduleModule.makeStructureListScheduler(this));
-		scheduler.registerPacket(ScheduleModule.makeNPCStatListPacket(this));
+		scheduler.registerPacket(ScheduleModule.makeStructureListScheduler(this, 8.0f));
 
-	}
-
-	public void addNPCMovementData(String data) {
-		npcMoveList.add(data);
-	}
-
-	public void addProjectileMovementData(String data) {
-		projectileMoveList.add(data);
 	}
 
 	public void updateAndRender(boolean val) {
@@ -96,62 +79,64 @@ public class Sector {
 		}
 
 		for (Structure structure : structures) {
+
 			structure.render(b);
+			for (Projectile p : structure.getProjectiles()) {
+				p.render(b);
+			}
+
+			for (PlayerConnection conn : structure.getPlayers()) {
+				conn.getPlayerMP().render(b);
+			}
+
+			for (NPC npc : structure.getNPCs()) {
+				npc.render(b);
+			}
+
 		}
 
-		for (Projectile p : projectiles) {
-			p.render(b);
-		}
-
-		for (PlayerConnection conn : players) {
-
-			conn.getPlayerMP().render(b);
-
-		}
-		for (NPC npc : npcs) {
-			npc.render(b);
-		}
 	}
 
 	public void debugRender(ShapeRenderer debugRenderer) {
 		for (Structure structure : structures) {
 			structure.debugRender(debugRenderer);
+
+			for (PlayerConnection conn : structure.getPlayers()) {
+				conn.getPlayerMP().debugRender(debugRenderer);
+			}
+			for (NPC npc : structure.getNPCs()) {
+				npc.debugRender(debugRenderer);
+			}
+
 		}
 
-		for (PlayerConnection conn : players) {
-
-			conn.getPlayerMP().debugRender(debugRenderer);
-
-		}
-		for (NPC npc : npcs) {
-			npc.debugRender(debugRenderer);
-		}
 	}
 
 	public void update() {
 		if (!update) {
 			return;
 		}
-		for (NPC npc : npcs) {
-			npc.update();
-		}
 
-		for (Projectile p : projectiles) {
-			p.update();
-		}
+		for (Structure s : structures) {
 
-		for (PlayerConnection conn : players) {
-			if (conn.isVerified()) {
-				conn.getPlayerMP().update();
+			for (NPC npc : s.getNPCs())
+				npc.update();
+			for (Projectile projectile : s.getProjectiles())
+				projectile.update();
+			for (PlayerConnection player : s.getPlayers()) {
+				if (player.isVerified())
+					player.getPlayerMP().update();
 			}
-		}
-		if (!npcMoveList.isEmpty()) {
-			packetWriter.sendNPCMoves(npcMoveList);
-			npcMoveList.clear();
-		}
-		if (!projectileMoveList.isEmpty()) {
-			packetWriter.sendProjectileMoves(projectileMoveList);
-			projectileMoveList.clear();
+
+			if (!s.getNPCMoveList().isEmpty()) {
+				packetWriter.sendNPCMoves(s);
+				s.getNPCMoveList().clear();
+			}
+			if (!s.getProjectileMoveList().isEmpty()) {
+				packetWriter.sendProjectileMoves(s);
+				s.getProjectileMoveList().clear();
+			}
+
 		}
 
 	}
@@ -167,8 +152,8 @@ public class Sector {
 
 	public void startSector() {
 		Log.serverLog("Starting sector on port " + port);
-		addStructures();
-		addNPCs();
+		loadStructures();
+		loadNPCs();
 
 		update = true;
 		render = true;
@@ -183,23 +168,28 @@ public class Sector {
 		player.connect();
 	}
 
+	public ArrayBlockingQueue<PlayerConnection> getPlayers() {
+		return players;
+	}
+
 	public void addPlayer(PlayerConnection player) {
-		Log.serverLog("Player ID[" + player.getPlayerID() + "] added to Sector " + port);
+		Log.serverLog("Player ID[" + player.getPlayerID() + "] added to Sector " + port + " to structure "
+				+ player.getPlayerMP().getStructureID());
+		getStructureByID(player.getPlayerMP().getStructureID()).addPlayer(player);
 		players.add(player);
 		Galaxy.getInstance().addPlayerToGlobal(player);
 
 	}
 
-	public void addProjectile(Projectile p) {
-		projectiles.add(p);
-
+	public void removePlayer(PlayerConnection player) {
+		Log.serverLog("Player ID[" + player.getPlayerID() + "] removed from Sector " + port);
+		Database.getInstance().getPlayerDAO().savePlayer(player.getPlayerMP());
+		players.remove(player);
+		getStructureByID(player.getPlayerMP().getStructureID()).removePlayer(player);
+		Galaxy.getInstance().removePlayerFromGlobal(player);
 	}
 
-	public void removeProjectile(Projectile p) {
-		projectiles.remove(p);
-	}
-
-	public void addStructures() {
+	public void loadStructures() {
 		ArrayList<Structure> tempList = Database.getInstance().getStructureDAO().loadStructuressBySectorID(port);
 
 		for (Structure structure : tempList) {
@@ -222,23 +212,16 @@ public class Sector {
 
 	}
 
-	public void addNPCs() {
+	public void loadNPCs() {
 
-		ArrayList<NPC> tempList = Database.getInstance().getNPCDAO().loadNPCsBySectorID(port);
+		for (Structure s : structures) {
 
-		for (NPC npc : tempList) {
-
-			npcs.add(npc);
+			for (NPC n : Database.getInstance().getNPCDAO().loadNPCsbyStructureID(s.getStructureID())) {
+				s.addNPC(n);
+			}
 
 		}
 
-	}
-
-	public void removePlayer(PlayerConnection player) {
-		Log.serverLog("Player ID[" + player.getPlayerID() + "] removed from Sector " + port);
-		Database.getInstance().getPlayerDAO().savePlayer(player.getPlayerMP());
-		players.remove(player);
-		Galaxy.getInstance().removePlayerFromGlobal(player);
 	}
 
 	public int getPort() {
@@ -249,9 +232,13 @@ public class Sector {
 
 		PlayerConnection playerConnection = null;
 
-		for (PlayerConnection c : players) {
-			if (c.getPlayerMP().getID() == id)
-				playerConnection = c;
+		for (Structure s : structures) {
+
+			for (PlayerConnection c : s.getPlayers()) {
+				if (c.getPlayerMP().getID() == id)
+					playerConnection = c;
+			}
+
 		}
 
 		return playerConnection;
@@ -276,23 +263,24 @@ public class Sector {
 
 		NPC npc = null;
 
-		for (NPC n : npcs) {
-			if (n.getID() == id)
-				npc = n;
+		for (Structure s : structures) {
+			for (NPC n : s.getNPCs()) {
+				if (n.getID() == id)
+					npc = n;
+			}
 		}
-
 		return npc;
 	}
 
 	public PlayerMP getPlayerByID(int id) {
 
 		PlayerMP player = null;
-
-		for (PlayerConnection c : players) {
-			if (c.getPlayerMP().getID() == id)
-				player = c.getPlayerMP();
+		for (Structure s : structures) {
+			for (PlayerConnection c : s.getPlayers()) {
+				if (c.getPlayerMP().getID() == id)
+					player = c.getPlayerMP();
+			}
 		}
-
 		return player;
 	}
 
@@ -301,7 +289,9 @@ public class Sector {
 
 		ArrayList<PlayerConnection> connections = new ArrayList<PlayerConnection>();
 
-		for (PlayerConnection c : players) {
+		Structure s = getStructureByID(structureID);
+
+		for (PlayerConnection c : s.getPlayers()) {
 
 			if (c.getPlayerMP().getStructureID() == structureID && c.getPlayerMP().getLayer() == layer
 					&& origin.dst(c.getPlayerMP().getLoc()) < distance) {
@@ -317,10 +307,11 @@ public class Sector {
 	public ArrayList<NPC> getNPCsInRange(int structureID, int layer, Vector2 origin, float distance) {
 
 		ArrayList<NPC> n = new ArrayList<NPC>();
+		Structure s = getStructureByID(structureID);
 
-		for (NPC npc : npcs) {
+		for (NPC npc : s.getNPCs()) {
 
-			if (npc.getStructureID() == structureID && npc.getLayer() == layer && origin.dst(npc.getLoc()) < distance) {
+			if (npc.getLayer() == layer && origin.dst(npc.getLoc()) < distance) {
 				n.add(npc);
 			}
 
@@ -344,14 +335,6 @@ public class Sector {
 
 	public ArrayBlockingQueue<Structure> getStructures() {
 		return structures;
-	}
-
-	public ArrayBlockingQueue<NPC> getNPCs() {
-		return npcs;
-	}
-
-	public ArrayBlockingQueue<PlayerConnection> getPlayers() {
-		return players;
 	}
 
 	@Override

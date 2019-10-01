@@ -6,24 +6,31 @@ import com.pineconeindustries.shared.log.Log;
 
 public class EffectOverTime {
 
-	private float time = 0f;
-	private ActionBase action;
-	private float duration;
-	private float interval;
-	private float intervalDuration;
-	private int counter = 0;
-	private boolean running = true;
+	protected boolean passive = false;
+	protected float time = 0f;
+	protected ActionBase action;
+	protected float duration;
+	protected float interval;
+	protected float intervalDuration;
+	protected int counter = 0;
 
-	private ActionPackage data;
+	protected boolean running = true;
+
+	protected ActionPackage data;
 
 	public EffectOverTime(ActionBase action, ActionPackage data) {
 		this.action = action;
 		this.data = data;
 		duration = action.getLife();
 		interval = action.getInterval();
-		intervalDuration = duration / interval;
-		Log.debug(data.getCaster().getName() + " cast " + action.getName() + " on " + data.getTarget().getName()
-				+ "[ interval = " + interval + ", duration = " + duration + ", delta = " + intervalDuration + " ]");
+
+		if (duration == 0) {
+			intervalDuration = interval;
+			passive = true;
+		} else {
+			intervalDuration = duration / interval;
+		}
+
 	}
 
 	public void update(float delta) {
@@ -34,9 +41,15 @@ public class EffectOverTime {
 		if (time >= intervalDuration) {
 			time = endTime - intervalDuration;
 			counter++;
+
 			if (counter > interval) {
-				running = false;
-				action.onEnd(data);
+				if (!passive) {
+					running = false;
+					action.onEnd(data);
+				} else {
+					counter = 0;
+					action.loop(data);
+				}
 			} else {
 
 				action.loop(data);
@@ -49,6 +62,10 @@ public class EffectOverTime {
 
 	public boolean isRunning() {
 		return running;
+	}
+
+	public String getActionName() {
+		return action.getName();
 	}
 
 }

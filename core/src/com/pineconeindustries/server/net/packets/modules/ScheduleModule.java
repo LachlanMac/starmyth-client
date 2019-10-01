@@ -1,7 +1,9 @@
 package com.pineconeindustries.server.net.packets.modules;
 
 import com.pineconeindustries.client.networking.packets.custom.CustomTCPPacket;
+import com.pineconeindustries.client.networking.packets.custom.CustomUDPPacket;
 import com.pineconeindustries.server.galaxy.Sector;
+import com.pineconeindustries.server.net.packets.types.Packet;
 import com.pineconeindustries.server.net.packets.types.Packets;
 import com.pineconeindustries.server.net.players.PlayerConnection;
 import com.pineconeindustries.shared.components.gameobjects.NPC;
@@ -11,15 +13,15 @@ import com.pineconeindustries.shared.utils.Formatter;
 
 public class ScheduleModule {
 
-	public static CustomTCPPacket makePlayerListScheduler(Sector sector) {
+	public static CustomTCPPacket makePlayerListScheduler(Structure structure, Sector sector, float seconds) {
 
-		CustomTCPPacket playerListPacket = new CustomTCPPacket(Packets.PLAYER_LIST_PACKET, "TEST DATA") {
+		CustomTCPPacket playerListPacket = new CustomTCPPacket(Packets.PLAYER_LIST_PACKET, Packet.empty, seconds) {
 			@Override
-			public void update(Sector sector) {
+			public void update() {
 
 				StringBuilder sb = new StringBuilder();
 
-				for (PlayerConnection conn : sector.getPlayers()) {
+				for (PlayerConnection conn : structure.getPlayers()) {
 					String xLoc = Integer.toString((int) conn.getPlayerMP().getLoc().x);
 					String yLoc = Integer.toString((int) conn.getPlayerMP().getLoc().y);
 					sb.append(conn.getPlayerID() + "#" + conn.getPlayerMP().getName() + "#"
@@ -33,7 +35,7 @@ public class ScheduleModule {
 				if (data.length() > 2) {
 					this.data = data.substring(0, data.length() - 1);
 				} else {
-					this.data = "";
+					this.data = Packet.empty;
 				}
 
 			}
@@ -43,15 +45,15 @@ public class ScheduleModule {
 
 	}
 
-	public static CustomTCPPacket makeNPCStatListPacket(Sector sector) {
+	public static CustomUDPPacket makeNPCStatListPacket(Structure structure, Sector sector, float seconds) {
 
-		CustomTCPPacket statPacket = new CustomTCPPacket(Packets.NPC_STAT_LIST_PACKET, "TEST DATA") {
+		CustomUDPPacket statPacket = new CustomUDPPacket(Packets.NPC_STAT_LIST_PACKET, Packet.empty, 0, seconds) {
 			@Override
-			public void update(Sector sector) {
+			public void update() {
 
 				StringBuilder sb = new StringBuilder();
 
-				for (NPC npc : sector.getNPCs()) {
+				for (NPC npc : structure.getNPCs()) {
 					Stats s = npc.getStats();
 					sb.append(npc.getID() + "#" + Formatter.format(s.getCurrentHP()) + "#" + Formatter.format(s.getHp())
 							+ "#" + Formatter.format(s.getCurrentEnergy()) + "#" + Formatter.format(s.getEnergy())
@@ -63,7 +65,7 @@ public class ScheduleModule {
 				if (data.length() > 2) {
 					this.data = data.substring(0, data.length() - 1);
 				} else {
-					this.data = "";
+					this.data = Packet.empty;
 				}
 
 			}
@@ -73,20 +75,19 @@ public class ScheduleModule {
 
 	}
 
-	public static CustomTCPPacket makeNPCListScheduler(Sector sector) {
+	public static CustomUDPPacket makePlayerStatListPacket(Structure structure, Sector sector, float seconds) {
 
-		CustomTCPPacket npcListPacket = new CustomTCPPacket(Packets.NPC_LIST_PACKET, "TEST DATA") {
+		CustomUDPPacket statPacket = new CustomUDPPacket(Packets.PLAYER_STAT_LIST_PACKET, Packet.empty, 0, seconds) {
 			@Override
-			public void update(Sector sector) {
+			public void update() {
 
 				StringBuilder sb = new StringBuilder();
 
-				for (NPC npc : sector.getNPCs()) {
-					String xLoc = Integer.toString((int) npc.getLoc().x);
-					String yLoc = Integer.toString((int) npc.getLoc().y);
-					sb.append(npc.getID() + "#" + npc.getName() + "#" + npc.getFactionID() + "#" + npc.getSectorID()
-							+ "#" + npc.getStructureID() + "#" + xLoc + "#" + yLoc + "#" + npc.getLayer() + "#"
-							+ npc.getStats());
+				for (PlayerConnection p : structure.getPlayers()) {
+					Stats s = p.getPlayerMP().getStats();
+					sb.append(p.getPlayerMP().getID() + "#" + Formatter.format(s.getCurrentHP()) + "#"
+							+ Formatter.format(s.getHp()) + "#" + Formatter.format(s.getCurrentEnergy()) + "#"
+							+ Formatter.format(s.getEnergy()) + "=");
 				}
 
 				String data = sb.toString();
@@ -94,7 +95,37 @@ public class ScheduleModule {
 				if (data.length() > 2) {
 					this.data = data.substring(0, data.length() - 1);
 				} else {
-					this.data = "";
+					this.data = Packet.empty;
+				}
+
+			}
+		};
+
+		return statPacket;
+
+	}
+
+	public static CustomTCPPacket makeNPCListScheduler(Structure structure, Sector sector, float seconds) {
+
+		CustomTCPPacket npcListPacket = new CustomTCPPacket(Packets.NPC_LIST_PACKET, Packet.empty, seconds) {
+			@Override
+			public void update() {
+
+				StringBuilder sb = new StringBuilder();
+
+				for (NPC npc : structure.getNPCs()) {
+					String xLoc = Integer.toString((int) npc.getLoc().x);
+					String yLoc = Integer.toString((int) npc.getLoc().y);
+					sb.append(npc.getID() + "#" + npc.getName() + "#" + npc.getFactionID() + "#" + npc.getSectorID()
+							+ "#" + npc.getStructureID() + "#" + xLoc + "#" + yLoc + "#" + npc.getLayer() + "=");
+				}
+
+				String data = sb.toString();
+
+				if (data.length() > 2) {
+					this.data = data.substring(0, data.length() - 1);
+				} else {
+					this.data = Packet.empty;
 				}
 
 			}
@@ -104,11 +135,12 @@ public class ScheduleModule {
 
 	}
 
-	public static CustomTCPPacket makeStructureListScheduler(Sector sector) {
+	public static CustomTCPPacket makeStructureListScheduler(Sector sector, float seconds) {
 
-		CustomTCPPacket structureListPacket = new CustomTCPPacket(Packets.STRUCTURE_LIST_PACKET, "TEST DATA") {
+		CustomTCPPacket structureListPacket = new CustomTCPPacket(Packets.STRUCTURE_LIST_PACKET, Packet.empty,
+				seconds) {
 			@Override
-			public void update(Sector sector) {
+			public void update() {
 
 				StringBuilder sb = new StringBuilder();
 
@@ -124,7 +156,7 @@ public class ScheduleModule {
 				if (data.length() > 2) {
 					this.data = data.substring(0, data.length() - 1);
 				} else {
-					this.data = "";
+					this.data = Packet.empty;
 				}
 
 			}

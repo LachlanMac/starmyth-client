@@ -3,13 +3,12 @@ package com.pineconeindustries.server.ai.states;
 import com.pineconeindustries.server.ai.FiniteStateMachine;
 
 public class MoveState extends State {
+	final String key = "MOVE";
 
 	public MoveState(FiniteStateMachine fsm) {
 		super(fsm);
-		// TODO Auto-generated constructor stub
-	}
 
-	final String key = "MOVE";
+	}
 
 	@Override
 	public void leaveState() {

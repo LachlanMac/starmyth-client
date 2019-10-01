@@ -39,8 +39,6 @@ public class Base36 {
 		int start = parse(a);
 		int index = start;
 
-		System.out.println("subtract :" + subtract + "    start :" + start);
-
 		for (int i = subtract; i > 0; i--) {
 			index--;
 			if (index == -1) {

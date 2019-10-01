@@ -6,11 +6,13 @@ import java.net.DatagramSocket;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import com.pineconeindustries.server.galaxy.Sector;
+import com.pineconeindustries.server.net.packetdata.MoveData;
 import com.pineconeindustries.server.net.packets.types.Packet;
 import com.pineconeindustries.server.net.packets.types.TCPPacket;
 import com.pineconeindustries.server.net.packets.types.UDPPacket;
 import com.pineconeindustries.server.net.packets.types.Packet.PACKET_TYPE;
 import com.pineconeindustries.server.net.packets.types.Packets;
+import com.pineconeindustries.shared.components.structures.Structure;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.log.Log;
 
@@ -59,23 +61,36 @@ public class PacketWriter extends Thread {
 			while (!tcpSendQueue.isEmpty()) {
 
 				TCPPacket toSend = tcpSendQueue.poll();
-				for (PlayerConnection conn : sector.getPlayers()) {
-					conn.sendTCP(toSend);
+
+				if (toSend.isStructureRestricted()) {
+					for (PlayerConnection conn : sector.getStructureByID(toSend.getStructureRestriction())
+							.getPlayers()) {
+						conn.sendTCP(toSend);
+					}
+				} else {
+					for (PlayerConnection conn : sector.getPlayers()) {
+						conn.sendTCP(toSend);
+					}
 				}
+
 			}
 		}
 	}
 
-	public void sendNPCMoves(ArrayBlockingQueue<String> moves) {
+	public void sendNPCMoves(Structure structure) {
+
 		StringBuilder sb = new StringBuilder();
 		int counter = 0;
 
-		for (String move : moves) {
+		for (MoveData move : structure.getNPCMoveList()) {
 
-			sb.append(move);
+			sb.append(move.getData());
+			counter++;
 
 			if (counter >= 10) {
-				queueToAll(new UDPPacket(Packets.NPC_MOVE_PACKET, sb.toString(), UDPPacket.packetCounter()));
+				UDPPacket p = new UDPPacket(Packets.NPC_MOVE_PACKET, sb.toString(), UDPPacket.packetCounter());
+				p.setStructureRestriction(structure.getStructureID());
+				queueToAll(p);
 				counter = 0;
 				sb = new StringBuilder();
 			}
@@ -83,16 +98,19 @@ public class PacketWriter extends Thread {
 		}
 		if (sb.toString().equals(""))
 			return;
-		queueToAll(new UDPPacket(Packets.NPC_MOVE_PACKET, sb.toString(), UDPPacket.packetCounter()));
+
+		UDPPacket p = new UDPPacket(Packets.NPC_MOVE_PACKET, sb.toString(), UDPPacket.packetCounter());
+		p.setStructureRestriction(structure.getStructureID());
+		queueToAll(p);
 
 	}
 
-	public void sendProjectileMoves(ArrayBlockingQueue<String> moves) {
+	public void sendProjectileMoves(Structure structure) {
 
 		StringBuilder sb = new StringBuilder();
 		int counter = 0;
 
-		for (String move : moves) {
+		for (String move : structure.getProjectileMoveList()) {
 
 			sb.append(move);
 
@@ -109,6 +127,24 @@ public class PacketWriter extends Thread {
 
 	}
 
+	public void queueToStructure(Packet packet, Structure structure) {
+
+		if (packet.getType() == PACKET_TYPE.UDP) {
+
+			for (PlayerConnection conn : structure.getPlayers()) {
+
+				UDPPacket udpPacket = (UDPPacket) packet;
+
+				addToSendQueue(udpPacket.getDatagramPacket(conn.getIP(), conn.getConnectedPort()));
+
+			}
+		} else if (packet.getType() == PACKET_TYPE.TCP) {
+
+			tcpSendQueue.add((TCPPacket) packet);
+		}
+
+	}
+
 	public void queueToAll(Packet packet) {
 
 		if (packet.getType() == PACKET_TYPE.UDP) {
@@ -117,7 +153,14 @@ public class PacketWriter extends Thread {
 
 				UDPPacket udpPacket = (UDPPacket) packet;
 
-				addToSendQueue(udpPacket.getDatagramPacket(conn.getIP(), conn.getConnectedPort()));
+				if (udpPacket.isStructureRestricted()) {
+					if (conn.getPlayerMP().getStructureID() == udpPacket.getStructureRestriction()) {
+						addToSendQueue(udpPacket.getDatagramPacket(conn.getIP(), conn.getConnectedPort()));
+					}
+				} else {
+					addToSendQueue(udpPacket.getDatagramPacket(conn.getIP(), conn.getConnectedPort()));
+				}
+
 			}
 		} else if (packet.getType() == PACKET_TYPE.TCP) {
 

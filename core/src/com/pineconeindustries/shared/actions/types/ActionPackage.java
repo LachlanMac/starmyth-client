@@ -8,6 +8,7 @@ public class ActionPackage {
 	private Entity target;
 	private Entity caster, entityHit;
 	private Tile tileHit;
+	private String error;
 
 	public ActionPackage(Entity caster, Entity target, Entity entityHit) {
 		this.caster = caster;
@@ -19,6 +20,10 @@ public class ActionPackage {
 		this.caster = caster;
 		this.target = target;
 		this.tileHit = tileHit;
+	}
+
+	public ActionPackage(Entity caster) {
+		this.caster = caster;
 	}
 
 	public ActionPackage(Entity caster, Entity target) {
@@ -56,6 +61,14 @@ public class ActionPackage {
 
 	public void setTarget(Entity target) {
 		this.target = target;
+	}
+
+	public String error() {
+		return error;
+	}
+
+	public void setError(String error) {
+		this.error = error;
 	}
 
 }

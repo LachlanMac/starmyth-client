@@ -109,6 +109,10 @@ public class Stats {
 
 	public void changeCurrentHP(float val) {
 		currentHP += val;
+		if (currentHP < 0)
+			currentHP = 0;
+		if (currentHP > hp)
+			currentHP = hp;
 	}
 
 	public void changeCurrentEnergy(float val) {

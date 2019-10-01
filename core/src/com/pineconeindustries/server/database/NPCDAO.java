@@ -52,6 +52,39 @@ public class NPCDAO {
 
 	}
 
+	public ArrayList<NPC> loadNPCsbyStructureID(int id) {
+
+		ArrayList<NPC> npcs = new ArrayList<NPC>();
+		PreparedStatement stmt;
+
+		try {
+			stmt = conn.prepareStatement(
+					"SELECT npc_id, npc_name, faction_id, local_x, local_y, sector_id, layer FROM NPC WHERE structure_id=?");
+			stmt.setInt(1, id);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				int npcID = rs.getInt("npc_id");
+				String name = rs.getString("npc_name");
+				int factionID = rs.getInt("faction_id");
+				int sectorID = rs.getInt("sector_id");
+				float localX = rs.getFloat("local_x");
+				float localY = rs.getFloat("local_y");
+				int layer = rs.getInt("layer");
+				NPC n = new NPC(npcID, name, new Vector2(localX, localY), Galaxy.getInstance().getSectorByID(sectorID),
+						id, layer, factionID);
+
+				n.setStats(new Stats());
+				npcs.add(n);
+				Log.dbLog("Loaded NPC [" + npcID + ":" + name + "]");
+			}
+
+		} catch (SQLException e) {
+			Log.dbLog("Error Loading Player From Database: " + e.getMessage());
+		}
+
+		return npcs;
+	}
+
 	public ArrayList<NPC> loadNPCsBySectorID(int id) {
 
 		ArrayList<NPC> npcs = new ArrayList<NPC>();
