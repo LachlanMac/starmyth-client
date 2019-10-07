@@ -12,7 +12,7 @@ import com.pineconeindustries.server.galaxy.Galaxy;
 import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.packetdata.MoveData;
 import com.pineconeindustries.shared.actions.effects.EffectOverTime;
-import com.pineconeindustries.shared.actions.types.ActionPackage;
+import com.pineconeindustries.shared.actions.types.DataPackage;
 import com.pineconeindustries.shared.components.behaviors.Targetable;
 import com.pineconeindustries.shared.components.structures.Structure;
 import com.pineconeindustries.shared.components.structures.StructureLayer;

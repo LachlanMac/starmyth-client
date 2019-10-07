@@ -26,7 +26,7 @@ public class DownedState extends State {
 
 	@Override
 	public void performAction() {
-
+		fsm.getOwner().getProfession().downed(fsm.getData());
 	}
 
 	@Override

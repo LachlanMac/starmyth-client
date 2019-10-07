@@ -13,11 +13,13 @@ import com.pineconeindustries.server.ai.states.WanderState;
 import com.pineconeindustries.server.ai.states.WorkState;
 import com.pineconeindustries.server.clock.Clock;
 import com.pineconeindustries.server.galaxy.Galaxy;
+import com.pineconeindustries.shared.actions.types.DataPackage;
 import com.pineconeindustries.shared.components.gameobjects.NPC;
 import com.pineconeindustries.shared.components.structures.Station;
 import com.pineconeindustries.shared.components.structures.Structure;
 import com.pineconeindustries.shared.files.Files;
 import com.pineconeindustries.shared.log.Log;
+import com.pineconeindustries.shared.professions.Schedule;
 
 public class FiniteStateMachine {
 
@@ -25,20 +27,21 @@ public class FiniteStateMachine {
 	NPC owner;
 
 	private HashMap<String, State> states;
-	private String schedule[];
 
 	State currentState;
 	State scheduleState;
 
+	Schedule schedule;
+
 	Structure structure;
+	DataPackage data;
 
 	public FiniteStateMachine(NPC owner) {
 		this.owner = owner;
 
 		structure = Galaxy.getInstance().getSectorByID(owner.getSectorID()).getStructureByID(owner.getStructureID());
-
 		currentState = new IdleState(this);
-		schedule = Files.loadAIScript("scripts/ai/default_ai");
+		schedule = Schedule.makeSchedule(owner.getProfession().getSchedule());
 		states = new HashMap<String, State>();
 		registerStates("WANDER", new WanderState(this));
 		registerStates("IDLE", new IdleState(this));
@@ -46,6 +49,8 @@ public class FiniteStateMachine {
 		registerStates("SLEEP", new SleepState(this));
 		registerStates("MOVE", new MoveState(this));
 		registerStates("DOWNED", new DownedState(this));
+
+		data = new DataPackage(owner, structure);
 
 	}
 
@@ -61,6 +66,7 @@ public class FiniteStateMachine {
 
 		if (owner.isDowned() && currentState != states.get("DOWNED")) {
 			changeState(states.get("DOWNED"));
+
 		}
 
 	}
@@ -71,9 +77,7 @@ public class FiniteStateMachine {
 			return;
 		}
 
-		int hour = Clock.getInstance().getTime().getHour();
-
-		scheduleState = states.get(schedule[hour]);
+		scheduleState = states.get(Schedule.getString(schedule.getCurrentSchedule()));
 
 		if (!scheduleState.getKey().equals(currentState.getKey())) {
 			Log.aiStateLog(owner.getName() + " changing state to " + scheduleState.getKey());
@@ -100,6 +104,10 @@ public class FiniteStateMachine {
 
 	public Structure getStructure() {
 		return structure;
+	}
+
+	public DataPackage getData() {
+		return data;
 	}
 
 }

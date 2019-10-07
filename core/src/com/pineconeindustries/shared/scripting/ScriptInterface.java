@@ -21,9 +21,16 @@ public class ScriptInterface {
 
 	}
 
-	public Globals loadScript(String name) {
+	public Globals loadActionScript(String name) {
 		Globals globals = JsePlatform.standardGlobals();
 		LuaValue v = globals.loadfile("actions/" + name + ".lua");
+		v.call();
+		return globals;
+	}
+
+	public Globals loadProfessionScript(String name) {
+		Globals globals = JsePlatform.standardGlobals();
+		LuaValue v = globals.loadfile("professions/" + name + ".lua");
 		v.call();
 		return globals;
 	}

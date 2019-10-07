@@ -38,7 +38,7 @@ public class Action {
 		return action.getName();
 	}
 
-	public void use(ActionPackage data) {
+	public void use(DataPackage data) {
 
 		if (ready) {
 

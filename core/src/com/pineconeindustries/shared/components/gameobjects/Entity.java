@@ -21,7 +21,7 @@ import com.pineconeindustries.server.galaxy.Galaxy;
 import com.pineconeindustries.shared.actions.ActionManager;
 import com.pineconeindustries.shared.actions.ActionSet;
 import com.pineconeindustries.shared.actions.effects.EffectOverTime;
-import com.pineconeindustries.shared.actions.types.ActionPackage;
+import com.pineconeindustries.shared.actions.types.DataPackage;
 import com.pineconeindustries.shared.components.structures.Structure;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
@@ -230,7 +230,7 @@ public abstract class Entity extends GameObject implements Comparable<Entity> {
 	}
 
 	public void addDefaultEntityPassives() {
-		addEffectOverTime(new EffectOverTime(ActionManager.getInstance().getActionByID(7), new ActionPackage(this)));
+		addEffectOverTime(new EffectOverTime(ActionManager.getInstance().getActionByID(7), new DataPackage(this)));
 	}
 
 }

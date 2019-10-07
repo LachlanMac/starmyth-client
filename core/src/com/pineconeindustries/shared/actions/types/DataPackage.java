@@ -2,36 +2,53 @@ package com.pineconeindustries.shared.actions.types;
 
 import com.pineconeindustries.shared.components.gameobjects.Entity;
 import com.pineconeindustries.shared.components.gameobjects.GameObject;
+import com.pineconeindustries.shared.components.gameobjects.NPC;
+import com.pineconeindustries.shared.components.structures.Structure;
 import com.pineconeindustries.shared.components.structures.Tile;
 
-public class ActionPackage {
+public class DataPackage {
 	private Entity target;
 	private Entity caster, entityHit;
 	private Tile tileHit;
 	private String error;
+	private NPC npc;
+	private Structure structure;
 
-	public ActionPackage(Entity caster, Entity target, Entity entityHit) {
+	public DataPackage(Entity caster, Entity target, Entity entityHit) {
 		this.caster = caster;
 		this.target = target;
 		this.entityHit = entityHit;
 	}
 
-	public ActionPackage(Entity caster, Entity target, Tile tileHit) {
+	public DataPackage(Entity caster, Entity target, Tile tileHit) {
 		this.caster = caster;
 		this.target = target;
 		this.tileHit = tileHit;
 	}
 
-	public ActionPackage(Entity caster) {
+	public DataPackage(Entity caster) {
 		this.caster = caster;
 	}
 
-	public ActionPackage(Entity caster, Entity target) {
+	public DataPackage(NPC npc, Structure structure) {
+		this.npc = npc;
+		this.structure = structure;
+	}
+
+	public NPC getNPC() {
+		return npc;
+	}
+
+	public Structure getStructure() {
+		return structure;
+	}
+
+	public DataPackage(Entity caster, Entity target) {
 		this.caster = caster;
 		this.target = target;
 	}
 
-	public ActionPackage() {
+	public DataPackage() {
 
 	}
 

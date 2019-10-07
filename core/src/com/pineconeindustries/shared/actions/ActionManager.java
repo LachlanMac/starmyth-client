@@ -12,16 +12,19 @@ public class ActionManager {
 	private ArrayList<ActionBase> actions;
 
 	private ActionManager() {
-		actions = Files.loadActions();
 
 	}
-	
+
 	public static ActionManager getInstance() {
 		if (instance == null)
 			instance = new ActionManager();
 
 		return instance;
 
+	}
+
+	public void loadActions() {
+		actions = Files.loadActions();
 	}
 
 	public ActionBase getActionByID(int id) {

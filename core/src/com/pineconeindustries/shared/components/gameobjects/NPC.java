@@ -28,12 +28,14 @@ import com.pineconeindustries.server.net.packets.types.UDPPacket;
 import com.pineconeindustries.shared.actions.ActionManager;
 import com.pineconeindustries.shared.actions.ActionSet;
 import com.pineconeindustries.shared.actions.effects.EffectOverTime;
-import com.pineconeindustries.shared.actions.types.ActionPackage;
+import com.pineconeindustries.shared.actions.types.DataPackage;
 import com.pineconeindustries.shared.components.gameobjects.GameObject.type;
 import com.pineconeindustries.shared.components.structures.Structure;
 import com.pineconeindustries.shared.components.ui.StatusBar;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
+import com.pineconeindustries.shared.professions.Profession;
+import com.pineconeindustries.shared.professions.ProfessionFactory;
 import com.pineconeindustries.shared.units.Units;
 import com.pineconeindustries.shared.utils.VectorMath;
 
@@ -41,6 +43,8 @@ public class NPC extends Person {
 
 	private Sector sector;
 	private FiniteStateMachine fsm;
+	private Profession profession;
+	private int professionID;
 	private Vector2 destination = null;
 	private boolean destinationReached = false;
 	private boolean spin = false;
@@ -64,13 +68,16 @@ public class NPC extends Person {
 	}
 
 	// SERVER CONSTRUCTOR
-	public NPC(int id, String name, Vector2 loc, Sector sector, int structureID, int layer, int factionID) {
+	public NPC(int id, String name, Vector2 loc, Sector sector, int structureID, int layer, int factionID,
+			int professionID) {
 		super(id, name, loc, sector.getPort(), structureID, layer, factionID);
-
+		this.professionID = professionID;
 		registerScript();
 		this.sector = sector;
 		this.structure = sector.getStructureByID(structureID);
+		profession = ProfessionFactory.getProfessionByID(professionID);
 		fsm = new FiniteStateMachine(this);
+
 		speed = Units.NPC_SPEED;
 		goType = type.NPC;
 		addDefaultEntityPassives();
@@ -317,6 +324,10 @@ public class NPC extends Person {
 	@Override
 	public String getType() {
 		return "n";
+	}
+
+	public Profession getProfession() {
+		return profession;
 	}
 
 }

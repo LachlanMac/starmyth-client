@@ -24,18 +24,18 @@ public class DirectProjectileAction extends ActionBase {
 
 	public void init() {
 
-		script = ScriptInterface.getInstance().loadScript(name);
-
+		script = ScriptInterface.getInstance().loadActionScript(name);
+		
 		load();
 	}
 
 	@Override
-	public void use(ActionPackage data) {
+	public void use(DataPackage data) {
 
 		if (data.getTarget() == null) {
 			return;
 		}
-
+		
 		if (data.getCaster().isInRange(data.getTarget(), _range)) {
 			data.getCaster().getStats().changeCurrentEnergy(-_cost);
 			onCast(data);

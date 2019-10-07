@@ -9,6 +9,8 @@ import com.badlogic.gdx.Gdx;
 import com.pineconeindustries.shared.actions.ActionFactory;
 import com.pineconeindustries.shared.actions.types.ActionBase;
 import com.pineconeindustries.shared.data.Global;
+import com.pineconeindustries.shared.professions.Profession;
+import com.pineconeindustries.shared.professions.ProfessionFactory;
 
 public class Files {
 
@@ -17,7 +19,6 @@ public class Files {
 		ArrayList<ActionBase> actions = new ArrayList<ActionBase>();
 
 		File f;
-
 		f = Gdx.files.internal("actions/actionlist.txt").file();
 
 		try (BufferedReader br = new BufferedReader(new FileReader(f))) {
@@ -38,6 +39,29 @@ public class Files {
 
 		return actions;
 
+	}
+
+	public static ArrayList<Profession> loadProfessions() {
+
+		ArrayList<Profession> professions = new ArrayList<Profession>();
+		File f;
+		f = Gdx.files.internal("professions/professionlist.txt").file();
+
+		try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+
+			String sCurrentLine;
+			while ((sCurrentLine = br.readLine()) != null) {
+
+				String data[] = sCurrentLine.split("-");
+				Profession p = ProfessionFactory.loadProfession(data[0].trim(), data[1].trim(), data[2].trim());
+				professions.add(p);
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return professions;
 	}
 
 	public static String loadShipLayout(String path) {

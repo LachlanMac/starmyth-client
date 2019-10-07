@@ -1,13 +1,13 @@
 package com.pineconeindustries.shared.actions.effects;
 
 import com.pineconeindustries.shared.actions.types.ActionBase;
-import com.pineconeindustries.shared.actions.types.ActionPackage;
+import com.pineconeindustries.shared.actions.types.DataPackage;
 import com.pineconeindustries.shared.components.gameobjects.GameObject;
 import com.pineconeindustries.shared.log.Log;
 
 public class EffectPickup extends EffectOverTime {
 
-	public EffectPickup(ActionBase action, ActionPackage data) {
+	public EffectPickup(ActionBase action, DataPackage data) {
 		super(action, data);
 
 		if (data.getTarget().isHoldable()) {

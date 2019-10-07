@@ -12,12 +12,12 @@ public class TargetedEffectAction extends ActionBase {
 	}
 
 	public void init() {
-		script = ScriptInterface.getInstance().loadScript(name);
+		script = ScriptInterface.getInstance().loadActionScript(name);
 		load();
 	}
 
 	@Override
-	public void use(ActionPackage data) {
+	public void use(DataPackage data) {
 		if (data.getTarget() == null) {
 			data.setTarget(data.getCaster());
 		}

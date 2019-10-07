@@ -11,12 +11,12 @@ public class PickupAction extends ActionBase {
 	}
 
 	public void init() {
-		script = ScriptInterface.getInstance().loadScript(name);
+		script = ScriptInterface.getInstance().loadActionScript(name);
 		load();
 	}
 
 	@Override
-	public void use(ActionPackage data) {
+	public void use(DataPackage data) {
 		data.getCaster().getStats().changeCurrentEnergy(-_cost);
 
 		EffectPickup e = new EffectPickup(this, data);

@@ -1,0 +1,6 @@
+1-guard-temp
+2-soldier-temp
+3-captain-temp
+4-engineer-temp
+5-doctor-temp
+6-medic-temp

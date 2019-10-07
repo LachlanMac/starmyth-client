@@ -3,6 +3,7 @@ package com.pineconeindustries.shared.data;
 import com.pineconeindustries.client.manager.LAssetManager;
 import com.pineconeindustries.server.ServerApp;
 import com.pineconeindustries.shared.actions.ActionManager;
+import com.pineconeindustries.shared.professions.ProfessionFactory;
 
 public class GameData {
 
@@ -10,11 +11,15 @@ public class GameData {
 
 	private LAssetManager assetManager;
 	private ActionManager actionManager;
+	private ProfessionFactory professionFactory;
 
 	private boolean headless;
 
 	private GameData() {
 		actionManager = ActionManager.getInstance();
+		professionFactory = ProfessionFactory.getInstance();
+		actionManager.loadActions();
+		professionFactory.loadProfessions();
 	}
 
 	public static GameData getInstance() {
@@ -33,7 +38,7 @@ public class GameData {
 		if (headless) {
 			return;
 		}
-		
+
 		Assets().loadTextures();
 		Assets().finishLoading();
 		Assets().loadAnimations();

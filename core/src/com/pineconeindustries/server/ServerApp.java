@@ -58,7 +58,7 @@ public class ServerApp extends ApplicationAdapter {
 			Global.runType = RUN_TYPE.server;
 		}
 	}
-
+	
 	@Override
 	public void create() {
 		gameData = GameData.getInstance();

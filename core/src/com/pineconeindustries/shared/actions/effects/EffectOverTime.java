@@ -1,7 +1,7 @@
 package com.pineconeindustries.shared.actions.effects;
 
 import com.pineconeindustries.shared.actions.types.ActionBase;
-import com.pineconeindustries.shared.actions.types.ActionPackage;
+import com.pineconeindustries.shared.actions.types.DataPackage;
 import com.pineconeindustries.shared.log.Log;
 
 public class EffectOverTime {
@@ -16,9 +16,9 @@ public class EffectOverTime {
 
 	protected boolean running = true;
 
-	protected ActionPackage data;
+	protected DataPackage data;
 
-	public EffectOverTime(ActionBase action, ActionPackage data) {
+	public EffectOverTime(ActionBase action, DataPackage data) {
 		this.action = action;
 		this.data = data;
 		duration = action.getLife();

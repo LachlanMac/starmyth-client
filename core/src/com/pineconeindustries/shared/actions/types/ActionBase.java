@@ -6,9 +6,10 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 import com.pineconeindustries.shared.log.Log;
+import com.pineconeindustries.shared.scripting.GameScript;
 import com.pineconeindustries.shared.scripting.ScriptInterface;
 
-public abstract class ActionBase {
+public abstract class ActionBase extends GameScript {
 
 	protected final static boolean DEFAULT_TOGGLE = false;
 	protected final static boolean DEFAULT_UNIQUE = true;
@@ -19,7 +20,7 @@ public abstract class ActionBase {
 	protected final static float DEFAULT_COOLDOWN = 5f;
 	protected final static float DEFAULT_LIFE = 10f;
 	protected final static float DEFAULT_COST = 0f;
-	protected final static float DEFAULT_RANGE = 700f;
+	protected final static float DEFAULT_RANGE = 200f;
 	protected final static float DEFAULT_CAST_TIME = 0f;
 	protected final static float DEFAULT_BUFF_TIME = 10f;
 	protected final static float DEFAULT_MAGNITUDE = 2f;
@@ -33,16 +34,11 @@ public abstract class ActionBase {
 		DIRECT_PROJECTILE, TARGETED_EFFECT, SELF_EFFECT, PICKUP_EFFECT;
 	}
 
-	protected String name;
-	protected int id;
-	protected Globals script;
-
 	protected LuaFunction _ON_CAST, _ON_HIT_ENTITY, _ON_END, _ON_MISS, _ON_HIT_TILE, _ON_COOLDOWN, _LOOP, _ON_DROP,
 			_ON_TOGGLE_OFF, _ON_FAIL, _ON_PICKUP, _ON_NOT_ENOUGH_ENERGY;
 
 	public ActionBase(int id, String name) {
-		this.name = name;
-		this.id = id;
+		super(id, name);
 
 		_accuracy = DEFAULT_ACCURACY;
 		_speed = DEFAULT_SPEED;
@@ -60,7 +56,7 @@ public abstract class ActionBase {
 
 	}
 
-	public void onHitEntity(ActionPackage data) {
+	public void onHitEntity(DataPackage data) {
 		if (_ON_HIT_ENTITY != null) {
 			LuaValue info = CoerceJavaToLua.coerce(data);
 			_ON_HIT_ENTITY.call(info);
@@ -68,21 +64,21 @@ public abstract class ActionBase {
 
 	}
 
-	public void onNotEnoughEnergy(ActionPackage data) {
+	public void onNotEnoughEnergy(DataPackage data) {
 		if (_ON_NOT_ENOUGH_ENERGY != null) {
 			LuaValue info = CoerceJavaToLua.coerce(data);
 			_ON_NOT_ENOUGH_ENERGY.call(info);
 		}
 	}
 
-	public void onEnd(ActionPackage data) {
+	public void onEnd(DataPackage data) {
 		if (_ON_END != null) {
 			LuaValue info = CoerceJavaToLua.coerce(data);
 			_ON_END.call(info);
 		}
 	}
 
-	public void onMiss(ActionPackage data) {
+	public void onMiss(DataPackage data) {
 		if (_ON_MISS != null) {
 			LuaValue info = CoerceJavaToLua.coerce(data);
 			_ON_MISS.call(info);
@@ -90,116 +86,60 @@ public abstract class ActionBase {
 
 	}
 
-	public void onPickup(ActionPackage data) {
+	public void onPickup(DataPackage data) {
 		if (_ON_PICKUP != null) {
 			LuaValue info = CoerceJavaToLua.coerce(data);
 			_ON_PICKUP.call(info);
 		}
 	}
 
-	public void onToggleOff(ActionPackage data) {
+	public void onToggleOff(DataPackage data) {
 		if (_ON_TOGGLE_OFF != null) {
 			LuaValue info = CoerceJavaToLua.coerce(data);
 			_ON_TOGGLE_OFF.call(info);
 		}
 	}
 
-	public void onCast(ActionPackage data) {
+	public void onCast(DataPackage data) {
 		if (_ON_CAST != null) {
 			LuaValue info = CoerceJavaToLua.coerce(data);
 			_ON_CAST.call(info);
 		}
 	}
 
-	public void onHitTile(ActionPackage data) {
+	public void onHitTile(DataPackage data) {
 		if (_ON_HIT_TILE != null) {
 			LuaValue info = CoerceJavaToLua.coerce(data);
 			_ON_HIT_TILE.call(info);
 		}
 	}
 
-	public void onDrop(ActionPackage data) {
+	public void onDrop(DataPackage data) {
 		if (_ON_DROP != null) {
 			LuaValue info = CoerceJavaToLua.coerce(data);
 			_ON_DROP.call(info);
 		}
 	}
 
-	public void onFail(ActionPackage data) {
+	public void onFail(DataPackage data) {
 		if (_ON_FAIL != null) {
 			LuaValue info = CoerceJavaToLua.coerce(data);
 			_ON_FAIL.call(info);
 		}
 	}
 
-	public void onCooldown(ActionPackage data) {
+	public void onCooldown(DataPackage data) {
 		if (_ON_COOLDOWN != null) {
 			LuaValue info = CoerceJavaToLua.coerce(data);
 			_ON_COOLDOWN.call(info);
 		}
 	}
 
-	public void loop(ActionPackage data) {
+	public void loop(DataPackage data) {
 		if (_LOOP != null) {
 			LuaValue info = CoerceJavaToLua.coerce(data);
 			_LOOP.call(info);
 		}
-	}
-
-	public LuaFunction registerLuaFunction(LuaFunction function, String name) {
-
-		try {
-			return function = (LuaFunction) script.get(name);
-
-		} catch (Exception e) {
-			Log.debug("Could not load function " + name + " in " + this.name);
-			return null;
-		}
-
-	}
-
-	public boolean registerLuaBoolean(boolean value, String name) {
-
-		boolean initialValue = value;
-		try {
-			return value = script.get(name).toboolean();
-		} catch (Exception e) {
-			Log.debug("Could not parse variable " + e.getMessage());
-			return initialValue;
-		}
-
-	}
-
-	public float registerLuaFloat(float value, String name) {
-
-		float initialValue = value;
-
-		try {
-			return value = script.get(name).tofloat();
-		} catch (Exception e) {
-			Log.debug("Could not parse variable " + e.getMessage());
-			return initialValue;
-		}
-
-	}
-
-	public int registerLuaInt(int value, String name) {
-		int initialValue = value;
-		try {
-			return value = script.get(name).toint();
-		} catch (Exception e) {
-			Log.debug("Could not parse variable " + e.getMessage());
-			return initialValue;
-		}
-
-	}
-
-	public int getID() {
-		return id;
-	}
-
-	public String getName() {
-		return name;
 	}
 
 	public static type getType(String identifier) {
@@ -219,7 +159,7 @@ public abstract class ActionBase {
 
 	}
 
-	public abstract void use(ActionPackage data);
+	public abstract void use(DataPackage data);
 
 	public float getAccuracy() {
 		return _accuracy;
@@ -283,20 +223,20 @@ public abstract class ActionBase {
 		_ON_PICKUP = registerLuaFunction(_ON_PICKUP, "_ON_PICKUP");
 		_ON_TOGGLE_OFF = registerLuaFunction(_ON_TOGGLE_OFF, "_ON_TOGGLE_OFF");
 		_ON_NOT_ENOUGH_ENERGY = registerLuaFunction(_ON_NOT_ENOUGH_ENERGY, "_ON_NOT_ENOUGH_ENERGY");
-		_cost = registerLuaFloat(_cost, "cost");
-		_cooldown = registerLuaFloat(_cooldown, "cooldown");
-		_accuracy = registerLuaFloat(_accuracy, "accuracy");
-		_life = registerLuaFloat(_life, "life");
-		_range = registerLuaFloat(_range, "range");
-		_damage = registerLuaFloat(_damage, "damage");
-		_speed = registerLuaFloat(_speed, "speed");
-		_cast_time = registerLuaFloat(_cast_time, "casttime");
-		_buff_time = registerLuaFloat(_buff_time, "bufftime");
-		_magnitude = registerLuaFloat(_magnitude, "magnitude");
+		_cost = registerLuaFloat(_cost, "cost", DEFAULT_COST);
+		_cooldown = registerLuaFloat(_cooldown, "cooldown", DEFAULT_COOLDOWN);
+		_accuracy = registerLuaFloat(_accuracy, "accuracy", DEFAULT_ACCURACY);
+		_life = registerLuaFloat(_life, "life", DEFAULT_LIFE);
+		_range = registerLuaFloat(_range, "range", DEFAULT_RANGE);
+		_damage = registerLuaFloat(_damage, "damage", DEFAULT_DAMAGE);
+		_speed = registerLuaFloat(_speed, "speed", DEFAULT_SPEED);
+		_cast_time = registerLuaFloat(_cast_time, "casttime", DEFAULT_CAST_TIME);
+		_buff_time = registerLuaFloat(_buff_time, "bufftime", DEFAULT_BUFF_TIME);
+		_magnitude = registerLuaFloat(_magnitude, "magnitude", DEFAULT_MAGNITUDE);
 		_interval = registerLuaInt(_interval, "interval");
 		_unique = registerLuaBoolean(_unique, "unique");
 		_toggle = registerLuaBoolean(_toggle, "toggle");
-		_minimum_toggle_time = registerLuaFloat(_minimum_toggle_time, "togglemin");
+		_minimum_toggle_time = registerLuaFloat(_minimum_toggle_time, "togglemin", DEFAULT_MINIMUM_TOGGLE_TIME);
 		Log.debug("Finished Loading");
 
 	}

@@ -59,7 +59,7 @@ public class NPCDAO {
 
 		try {
 			stmt = conn.prepareStatement(
-					"SELECT npc_id, npc_name, faction_id, local_x, local_y, sector_id, layer FROM NPC WHERE structure_id=?");
+					"SELECT npc_id, npc_name, faction_id, local_x, local_y, sector_id, layer, type FROM NPC WHERE structure_id=?");
 			stmt.setInt(1, id);
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
@@ -70,8 +70,9 @@ public class NPCDAO {
 				float localX = rs.getFloat("local_x");
 				float localY = rs.getFloat("local_y");
 				int layer = rs.getInt("layer");
+				int type = rs.getInt("type");
 				NPC n = new NPC(npcID, name, new Vector2(localX, localY), Galaxy.getInstance().getSectorByID(sectorID),
-						id, layer, factionID);
+						id, layer, factionID, type);
 
 				n.setStats(new Stats());
 				npcs.add(n);
@@ -92,7 +93,7 @@ public class NPCDAO {
 		PreparedStatement stmt;
 		try {
 			stmt = conn.prepareStatement(
-					"SELECT npc_id, npc_name, faction_id, local_x, local_y, structure_id, layer FROM NPC WHERE sector_id=?");
+					"SELECT npc_id, npc_name, faction_id, local_x, local_y, structure_id, layer, type FROM NPC WHERE sector_id=?");
 			stmt.setInt(1, id);
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
@@ -103,8 +104,9 @@ public class NPCDAO {
 				float localX = rs.getFloat("local_x");
 				float localY = rs.getFloat("local_y");
 				int layer = rs.getInt("layer");
+				int type = rs.getInt("type");
 				NPC n = new NPC(npcID, name, new Vector2(localX, localY), Galaxy.getInstance().getSectorByID(id),
-						structureID, layer, factionID);
+						structureID, layer, factionID, type);
 
 				n.setStats(new Stats());
 				npcs.add(n);

@@ -17,7 +17,7 @@ import com.pineconeindustries.shared.actions.ActionManager;
 import com.pineconeindustries.shared.actions.ActionSet;
 import com.pineconeindustries.shared.actions.types.Action;
 import com.pineconeindustries.shared.actions.types.ActionBase;
-import com.pineconeindustries.shared.actions.types.ActionPackage;
+import com.pineconeindustries.shared.actions.types.DataPackage;
 import com.pineconeindustries.shared.actions.types.PickupAction;
 import com.pineconeindustries.shared.actions.types.DirectProjectileAction;
 import com.pineconeindustries.shared.actions.types.TargetedEffectAction;
@@ -143,21 +143,21 @@ public class PlayerMP extends Person {
 
 				Action a = actionSet.getActionByID(1);
 
-				a.use(new ActionPackage(this, target));
+				a.use(new DataPackage(this, target));
 
 			}
 			if (inputState[6]) {
 
 				Action a = actionSet.getActionByID(4);
 
-				a.use(new ActionPackage(this, target));
+				a.use(new DataPackage(this, target));
 			}
 
 			if (inputState[7]) {
 
 				Action a = actionSet.getActionByID(6);
 
-				a.use(new ActionPackage(this, target));
+				a.use(new DataPackage(this, target));
 			}
 
 			if (x == 0 && y == 0) {

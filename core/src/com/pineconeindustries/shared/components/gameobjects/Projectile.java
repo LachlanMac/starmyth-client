@@ -12,7 +12,7 @@ import com.pineconeindustries.server.galaxy.Galaxy;
 import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.players.PlayerConnection;
 import com.pineconeindustries.shared.actions.types.ActionBase;
-import com.pineconeindustries.shared.actions.types.ActionPackage;
+import com.pineconeindustries.shared.actions.types.DataPackage;
 import com.pineconeindustries.shared.components.gameobjects.GameObject.type;
 import com.pineconeindustries.shared.components.structures.Structure;
 import com.pineconeindustries.shared.components.structures.Tile;
@@ -38,10 +38,10 @@ public class Projectile extends GameObject {
 	private boolean setToBounce = false;
 	private boolean setToRemove = false;
 	private Vector2 bounceDir = new Vector2(0, 0);
-	private ActionPackage data;
+	private DataPackage data;
 	
 	public Projectile(String name, Vector2 loc, Vector2 direction, int layer, int id, float speed, int sectorID,
-			int structureID, float life, ActionBase action, ActionPackage data) {
+			int structureID, float life, ActionBase action, DataPackage data) {
 		super(id, name, loc, sectorID, structureID, layer);
 		this.action = action;
 		this.direction = direction;
