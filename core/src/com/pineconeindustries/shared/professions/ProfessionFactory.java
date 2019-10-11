@@ -10,6 +10,7 @@ public class ProfessionFactory {
 
 	public static ArrayList<Profession> professions;
 	private static ProfessionFactory instance;
+	private Profession defaultProfession;
 
 	private ProfessionFactory() {
 
@@ -17,6 +18,7 @@ public class ProfessionFactory {
 
 	public void loadProfessions() {
 		professions = Files.loadProfessions();
+		loadDefaults();
 	}
 
 	public static ProfessionFactory getInstance() {
@@ -45,6 +47,12 @@ public class ProfessionFactory {
 		}
 
 		return profession;
+
+	}
+
+	public void loadDefaults() {
+
+		defaultProfession = new Profession(0, "default");
 
 	}
 

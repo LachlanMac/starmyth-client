@@ -24,7 +24,15 @@ public class Galaxy {
 
 		sectors = new ArrayList<Sector>();
 		globalPlayerList = new ArrayBlockingQueue<PlayerConnection>(1024);
+		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+			public void run() {
+				System.out.println("Shutting down galaxy");
+				for (Sector s : sectors) {
+					s.shutdown();
+				}
 
+			}
+		}));
 	}
 
 	public void update() {
@@ -128,4 +136,5 @@ public class Galaxy {
 	public String toString() {
 		return "Galaxy!";
 	}
+
 }

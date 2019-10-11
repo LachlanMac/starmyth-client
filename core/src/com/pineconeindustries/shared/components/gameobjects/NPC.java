@@ -3,6 +3,7 @@ package com.pineconeindustries.shared.components.gameobjects;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaFunction;
@@ -28,9 +29,11 @@ import com.pineconeindustries.server.net.packets.types.UDPPacket;
 import com.pineconeindustries.shared.actions.ActionManager;
 import com.pineconeindustries.shared.actions.ActionSet;
 import com.pineconeindustries.shared.actions.effects.EffectOverTime;
+import com.pineconeindustries.shared.actions.types.Action;
 import com.pineconeindustries.shared.actions.types.DataPackage;
 import com.pineconeindustries.shared.components.gameobjects.GameObject.type;
 import com.pineconeindustries.shared.components.structures.Structure;
+import com.pineconeindustries.shared.components.structures.Tile;
 import com.pineconeindustries.shared.components.ui.StatusBar;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
@@ -41,6 +44,10 @@ import com.pineconeindustries.shared.utils.VectorMath;
 
 public class NPC extends Person {
 
+	private final float AGGRO_RADIUS = 2000f;
+
+	private ArrayBlockingQueue<Entity> aggroList;
+
 	private Sector sector;
 	private FiniteStateMachine fsm;
 	private Profession profession;
@@ -49,13 +56,14 @@ public class NPC extends Person {
 	private boolean destinationReached = false;
 	private boolean spin = false;
 	private boolean hasPath = false;
-
 	private AStarPath pathfinder;
 	private Structure structure;
 	private LinkedList<PathNode> path;
 	private Globals local;
 	private LuaValue script;
 	private boolean hasScript = false;
+
+	private Entity aggroedTarget = null;
 
 	private LuaFunction _ON_DEATH, _ON_HIT, _ON_NEW_PATH;
 
@@ -72,12 +80,12 @@ public class NPC extends Person {
 			int professionID) {
 		super(id, name, loc, sector.getPort(), structureID, layer, factionID);
 		this.professionID = professionID;
-		registerScript();
 		this.sector = sector;
 		this.structure = sector.getStructureByID(structureID);
 		profession = ProfessionFactory.getProfessionByID(professionID);
 		fsm = new FiniteStateMachine(this);
-
+		aggroList = new ArrayBlockingQueue<Entity>(16);
+		actionSet = profession.getActionSetByProfession();
 		speed = Units.NPC_SPEED;
 		goType = type.NPC;
 		addDefaultEntityPassives();
@@ -140,11 +148,15 @@ public class NPC extends Person {
 	public void move() {
 
 		if (destination != null) {
+
 			calculateMov(destination);
+		} else {
+			System.out.println("Destination is null");
 		}
 	}
 
 	public void setDestination(Vector2 destination) {
+		System.out.println("SETTING DESTINATION!");
 		this.destination = destination;
 	}
 
@@ -175,7 +187,7 @@ public class NPC extends Person {
 			sendMoveData(VectorMath.getPacketDirection(directionX, directionY));
 
 			if (dest.dst(loc) <= 5) {
-
+				System.out.println("DESTINATION REACHED!");
 				destinationReached = true;
 				destination = null;
 			}
@@ -196,6 +208,7 @@ public class NPC extends Person {
 
 			PathNode p = path.pop();
 			if (!path.isEmpty()) {
+
 				fsm.getOwner().setDestinationReached(false);
 				Vector2 vector = structure
 						.getGlobalVector(new Vector2(p.getX() * Units.GRID_INTERVAL, p.getY() * Units.GRID_INTERVAL));
@@ -214,47 +227,51 @@ public class NPC extends Person {
 	}
 
 	public void clearPath() {
-
+		System.out.println("Clearing Path!");
 		destinationReached = false;
 		path = null;
+		hasPath = false;
 		destination = null;
 
 	}
 
-	public void registerScript() {
-		local = JsePlatform.standardGlobals();
-		hasScript = true;
-		LuaValue instance = CoerceJavaToLua.coerce(this);
-		local.set("npc", instance);
-		try {
-			local.get("dofile").call("lua/npc_" + getID() + ".lua");
+	public void findPathTo(GameObject obj) {
+		System.out.println("FIDNING PATH TO " + obj.getLoc());
+		Vector2 localVector = obj.getCenter();
 
-		} catch (Exception e) {
+		GridTile t = obj.getStructure().getLayerByNumber(obj.getLayer()).getGridTileAt(localVector.x, localVector.y);
 
+		PathNode n = t.getPathNode();
+
+		pathfinder = new AStarPath(structure.getGridWidth(), structure.getGridHeight(),
+				new PathNode((int) (getLoc().x / Units.GRID_INTERVAL), (int) (getLoc().y / Units.GRID_INTERVAL)), n);
+		pathfinder.setBlocks(structure.getLayerByNumber(layer).getBlocked());
+		ArrayList<PathNode> pathArray = pathfinder.findPath();
+		if (pathArray.size() == 0) {
+			System.out.println("NO PATH FOUND!");
+		} else {
+
+			path = new LinkedList<PathNode>();
+			for (PathNode p : pathArray) {
+				path.add(p);
+			}
+
+			Vector2 firstVector = structure.getGlobalVector(
+					new Vector2(path.peek().getX() * Units.GRID_INTERVAL, path.peek().getY() * Units.GRID_INTERVAL));
+
+			if (path.size() == 0) {
+				System.out.println("NO PATH!");
+				System.exit(0);
+				setLocation(firstVector);
+				hasPath = false;
+			} else {
+				System.out.println("Setting Destination to " + firstVector + " because path is " + path.size());
+				setDestination(firstVector);
+				hasPath = true;
+				path.pop();
+
+			}
 		}
-
-		registerScriptFunctions();
-	}
-
-	public void registerScriptFunctions() {
-		try {
-			_ON_DEATH = (LuaFunction) local.get("_ON_DEATH");
-			_ON_HIT = (LuaFunction) local.get("_ON_HIT");
-			_ON_NEW_PATH = (LuaFunction) local.get("_ON_NEW_PATH");
-
-		} catch (Exception e) {
-
-		}
-
-	}
-
-	public void die() {
-		if (_ON_DEATH == null)
-			return;
-		LuaValue returned = _ON_DEATH.call();
-	}
-
-	public void test() {
 
 	}
 
@@ -310,6 +327,7 @@ public class NPC extends Person {
 	public void update() {
 
 		if (Global.isServer()) {
+			actionSet.update(Gdx.graphics.getDeltaTime());
 			updateEffects(Gdx.graphics.getDeltaTime());
 			fsm.performAction();
 		}
@@ -321,6 +339,17 @@ public class NPC extends Person {
 		}
 	}
 
+	public boolean lookAt(Entity e) {
+
+		boolean okay = VectorMath.hasLineOfSight(structure.getLayerByNumber(layer),
+				structure.getLocalVector(this.getCenter()), structure.getLocalVector(e.getCenter()));
+
+		Vector2 dir = VectorMath.getDirection(this.getCenter(), e.getCenter());
+		sendMoveData(VectorMath.getPacketDirection(dir.x, dir.y));
+
+		return okay;
+	}
+
 	@Override
 	public String getType() {
 		return "n";
@@ -328,6 +357,83 @@ public class NPC extends Person {
 
 	public Profession getProfession() {
 		return profession;
+	}
+
+	public void addToAggroList(Entity e) {
+
+		if (!aggroList.contains(e)) {
+			aggroList.add(e);
+		}
+
+	}
+
+	public Action getAction(String name) {
+
+		return null;
+	}
+
+	public void castDirectAction(String name, Entity target) {
+
+		for (Action a : actionSet.getActions()) {
+
+			if (a.getName().equals(name)) {
+
+				DataPackage d = new DataPackage(this, target);
+				a.use(d);
+			}
+
+		}
+	}
+
+	public void updateAggroList() {
+
+		for (Entity e : aggroList) {
+
+			if (e.isDowned()) {
+				removeFromAggroList(e);
+			}
+
+		}
+
+	}
+
+	public Entity getClosestTarget() {
+		Entity closest = null;
+		float closestDistance = AGGRO_RADIUS;
+
+		for (Entity entity : aggroList) {
+
+			if (closest == null) {
+				closest = entity;
+				closestDistance = this.loc.dst(entity.getLoc());
+			} else {
+				float dist = this.loc.dst(entity.getLoc());
+				if (dist <= closestDistance) {
+					closest = entity;
+				}
+			}
+
+		}
+		return closest;
+
+	}
+
+	public void removeFromAggroList(Entity e) {
+		aggroList.remove(e);
+	}
+
+	public ArrayBlockingQueue<Entity> getAggroList() {
+		return aggroList;
+	}
+
+	public boolean inCombat() {
+
+		if (aggroList.isEmpty()) {
+			return false;
+		} else {
+			return true;
+		}
+
 	}
 
 }

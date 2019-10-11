@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.pineconeindustries.server.ai.pathfinding.AStarPath;
+import com.pineconeindustries.server.ai.states.CombatState;
 import com.pineconeindustries.server.ai.states.DownedState;
 import com.pineconeindustries.server.ai.states.IdleState;
 import com.pineconeindustries.server.ai.states.MoveState;
@@ -49,6 +50,7 @@ public class FiniteStateMachine {
 		registerStates("SLEEP", new SleepState(this));
 		registerStates("MOVE", new MoveState(this));
 		registerStates("DOWNED", new DownedState(this));
+		registerStates("COMBAT", new CombatState(this));
 
 		data = new DataPackage(owner, structure);
 
@@ -57,8 +59,18 @@ public class FiniteStateMachine {
 	public void performAction() {
 
 		checkSchedule();
+		checkForCombat();
 		checkForDowned();
+
 		currentState.performAction();
+
+	}
+
+	public void checkForCombat() {
+
+		if (owner.inCombat() && currentState != states.get("COMBAT")) {
+			changeState(states.get("COMBAT"));
+		}
 
 	}
 
@@ -66,14 +78,13 @@ public class FiniteStateMachine {
 
 		if (owner.isDowned() && currentState != states.get("DOWNED")) {
 			changeState(states.get("DOWNED"));
-
 		}
 
 	}
 
 	public void checkSchedule() {
 
-		if (owner.isDowned()) {
+		if (owner.isDowned() || owner.inCombat()) {
 			return;
 		}
 
@@ -109,5 +120,7 @@ public class FiniteStateMachine {
 	public DataPackage getData() {
 		return data;
 	}
+	
+	
 
 }

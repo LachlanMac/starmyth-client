@@ -31,18 +31,13 @@ public class WanderState extends State {
 	public void enterState() {
 		fsm.getOwner().clearPath();
 		fsm.getOwner().findRandomPath();
-		
+
 	}
 
 	@Override
 	public void performAction() {
 
-		if (fsm.getOwner().hasPath()) {
-			fsm.getOwner().moveOnPath();
-		}
-
-		fsm.getOwner().setSpin(false);
-
+		fsm.getOwner().getProfession().wander(fsm.getData());
 	}
 
 	@Override

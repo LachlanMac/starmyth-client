@@ -17,6 +17,7 @@ public class Schedule {
 	public static final int RECREATION = 4;
 	public static final int GYM = 5;
 	public static final int IDLE = 6;
+	public static final int WANDER = 7;
 
 	private int[] schedule;
 
@@ -52,6 +53,8 @@ public class Schedule {
 			return "WORK";
 		case GUARD:
 			return "GUARD";
+		case WANDER:
+			return "WANDER";
 		default:
 			return "IDLE";
 		}

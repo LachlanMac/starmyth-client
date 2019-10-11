@@ -350,7 +350,10 @@ public class PacketParser {
 				}
 
 			} catch (Exception e) {
-				Log.netTraffic(e.getMessage() + " DATA " + data, "Packet Parse Error");
+				Log.debug(new String(e.getMessage() + " DATA Packet Parse Error"));
+				for (String s : data) {
+					System.out.println(s);
+				}
 				e.printStackTrace();
 			}
 		}

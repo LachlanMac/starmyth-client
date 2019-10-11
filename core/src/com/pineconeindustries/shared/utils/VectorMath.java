@@ -2,8 +2,12 @@ package com.pineconeindustries.shared.utils;
 
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
+
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.pineconeindustries.shared.components.structures.StructureLayer;
+import com.pineconeindustries.shared.components.structures.Tile;
 
 public class VectorMath {
 
@@ -21,6 +25,57 @@ public class VectorMath {
 			x += 1;
 
 		return new Vector2(x, y).nor();
+
+	}
+
+	public static ArrayList<Vector2> getPointsBetweenVectors(Vector2 startingPoint, Vector2 endingPoint) {
+
+		ArrayList<Vector2> points = new ArrayList<Vector2>();
+
+		Vector2 dir = new Vector2(endingPoint.x, endingPoint.y).sub(startingPoint.x, startingPoint.y).nor();
+
+		Vector2 dir2 = new Vector2(dir.x * 5, dir.y * 5);
+
+		Vector2 start = new Vector2(startingPoint);
+
+		Vector2 currentPoint = start.add(dir2);
+
+		points.add(new Vector2(currentPoint));
+
+		while (currentPoint.dst(endingPoint) >= 10) {
+
+			currentPoint.add(dir2);
+			points.add(new Vector2(currentPoint));
+
+		}
+
+		return points;
+
+	}
+
+	public static Vector2 getDirection(Vector2 start, Vector2 end) {
+
+		Vector2 startTemp = new Vector2(start);
+		Vector2 endTemp = new Vector2(end);
+
+		return new Vector2(endTemp.sub(startTemp)).nor();
+
+	}
+
+	public static boolean hasLineOfSight(StructureLayer layer, Vector2 startingPoint, Vector2 endingPoint) {
+
+		ArrayList<Vector2> points = getPointsBetweenVectors(startingPoint, endingPoint);
+
+		for (Vector2 v : points) {
+
+			Tile t = layer.getTileAt(v.x, v.y);
+			if (t.isCollidable()) {
+
+				return false;
+			}
+		}
+
+		return true;
 
 	}
 

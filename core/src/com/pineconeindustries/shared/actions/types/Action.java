@@ -40,6 +40,7 @@ public class Action {
 
 	public void use(DataPackage data) {
 
+
 		if (ready) {
 
 			if (hasEnoughEnergy(data.getCaster())) {

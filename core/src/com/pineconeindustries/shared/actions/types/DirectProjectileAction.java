@@ -19,13 +19,13 @@ public class DirectProjectileAction extends ActionBase {
 	public DirectProjectileAction(int id, String name) {
 		super(id, name);
 		init();
-
+		aggressive = true;
 	}
 
 	public void init() {
 
 		script = ScriptInterface.getInstance().loadActionScript(name);
-		
+
 		load();
 	}
 
@@ -35,7 +35,7 @@ public class DirectProjectileAction extends ActionBase {
 		if (data.getTarget() == null) {
 			return;
 		}
-		
+
 		if (data.getCaster().isInRange(data.getTarget(), _range)) {
 			data.getCaster().getStats().changeCurrentEnergy(-_cost);
 			onCast(data);

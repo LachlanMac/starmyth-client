@@ -39,7 +39,7 @@ public class Projectile extends GameObject {
 	private boolean setToRemove = false;
 	private Vector2 bounceDir = new Vector2(0, 0);
 	private DataPackage data;
-	
+
 	public Projectile(String name, Vector2 loc, Vector2 direction, int layer, int id, float speed, int sectorID,
 			int structureID, float life, ActionBase action, DataPackage data) {
 		super(id, name, loc, sectorID, structureID, layer);
@@ -90,9 +90,31 @@ public class Projectile extends GameObject {
 					100)) {
 
 				if (n.getBounds().contains(proposedVector)) {
-					data.setEntityHit(n);
-					action.onHitEntity(data);
-					setToRemove = true;
+
+					if (n.getID() == data.getCaster().getID()) {
+
+					} else if (n.getFactionID() == data.getCaster().getFactionID()) {
+						if (data.getCaster().isPlayer()) {
+							if (!setToRemove && !n.isDowned()) {
+
+								data.setEntityHit(n);
+								n.addToAggroList(data.getCaster());
+								action.onHitEntity(data);
+								setToRemove = true;
+							}
+						}
+
+					} else {
+
+						if (!setToRemove && !n.isDowned()) {
+
+							data.setEntityHit(n);
+							n.addToAggroList(data.getCaster());
+							action.onHitEntity(data);
+							setToRemove = true;
+						}
+					}
+
 				}
 
 			}
@@ -103,9 +125,11 @@ public class Projectile extends GameObject {
 					if (mp.getPlayerMP().equals(data.getCaster())) {
 
 					} else {
-						data.setEntityHit(mp.getPlayerMP());
-						action.onHitEntity(data);
-						setToRemove = true;
+						if (!setToRemove) {
+							data.setEntityHit(mp.getPlayerMP());
+							action.onHitEntity(data);
+							setToRemove = true;
+						}
 					}
 
 				}
@@ -118,20 +142,25 @@ public class Projectile extends GameObject {
 					Vector2 collide = VectorMath.getIntersectionPoint(tile.getBounds(), this.loc, proposedVector);
 					if (collide.x != 0 || collide.y != 0) {
 
-						String dirString = VectorMath.getDirectionLetter(collide.x, collide.y);
-						if (dirString.equals("n") || dirString.equals("s")) {
+						if (!setToRemove) {
 
-							bounceDir = new Vector2(direction.x, -direction.y);
-							setToBounce = true;
-
-						} else {
-
-							bounceDir = new Vector2(-direction.x, direction.y);
-							setToBounce = true;
-
+							setToRemove = true;
+							this.loc = collide;
 						}
-
-						this.loc = collide;
+						/*
+						 * String dirString = VectorMath.getDirectionLetter(collide.x, collide.y); if
+						 * (dirString.equals("n") || dirString.equals("s")) {
+						 * 
+						 * bounceDir = new Vector2(direction.x, -direction.y); setToBounce = true;
+						 * 
+						 * } else {
+						 * 
+						 * bounceDir = new Vector2(-direction.x, direction.y); setToBounce = true;
+						 * 
+						 * }
+						 * 
+						 * this.loc = collide;
+						 */
 
 					}
 				}

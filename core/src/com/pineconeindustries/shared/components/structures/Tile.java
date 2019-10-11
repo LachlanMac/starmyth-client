@@ -81,7 +81,12 @@ public class Tile {
 		case ROOM:
 			blocked = false;
 			break;
-
+		case '8':
+			blocked = false;
+			break;
+		case '7':
+			blocked = false;
+			break;
 		default:
 			blocked = true;
 		}
@@ -116,7 +121,7 @@ public class Tile {
 
 	public void render(SpriteBatch b) {
 
-		if (id == 'p') {
+		if (id == 'p' || id == '8' || id == '7') {
 			// donothing
 		} else if (id == 'l') {
 			state += Gdx.graphics.getDeltaTime();
@@ -171,6 +176,10 @@ public class Tile {
 
 	public void setCollidable(boolean collidable) {
 		this.collidable = collidable;
+	}
+
+	public void setID(char id) {
+		this.id = id;
 	}
 
 }

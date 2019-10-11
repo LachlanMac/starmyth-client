@@ -25,7 +25,7 @@ public class Profession extends GameScript {
 	private static final int[] DEFAULT_SCHEDULE = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3,
 			3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0 };
 	private int[] _schedule;
-	private LuaFunction _WORK, _SLEEP, _IDLE, _DOWNED, _RECREATION;
+	private LuaFunction _WORK, _SLEEP, _IDLE, _DOWNED, _RECREATION, _ON_LOAD, _WANDER, _COMBAT;
 
 	public Profession(int id, String name) {
 		super(id, name);
@@ -38,7 +38,14 @@ public class Profession extends GameScript {
 		script = ScriptInterface.getInstance().loadProfessionScript(name);
 		this._schedule = DEFAULT_SCHEDULE;
 		load();
+		onLoad();
 
+	}
+
+	public void onLoad() {
+		if (_ON_LOAD != null) {
+			_ON_LOAD.call();
+		}
 	}
 
 	public void idle(DataPackage data) {
@@ -55,11 +62,27 @@ public class Profession extends GameScript {
 		}
 	}
 
+	public void wander(DataPackage data) {
+		if (_WANDER != null) {
+			LuaValue info = CoerceJavaToLua.coerce(data);
+			_WANDER.call(info);
+		}
+	}
+
 	public void work(DataPackage data) {
 		if (_WORK != null) {
 			LuaValue info = CoerceJavaToLua.coerce(data);
 			_WORK.call(info);
 		}
+	}
+
+	public void combat(DataPackage data) {
+
+		if (_COMBAT != null) {
+			LuaValue info = CoerceJavaToLua.coerce(data);
+			_COMBAT.call(info);
+		}
+
 	}
 
 	public void sleep(DataPackage data) {
@@ -76,7 +99,7 @@ public class Profession extends GameScript {
 		}
 	}
 
-	public static ActionSet getActionSetByProfession() {
+	public ActionSet getActionSetByProfession() {
 
 		ActionSet actionSet = new ActionSet();
 		actionSet.addAction(new Action((DirectProjectileAction) ActionManager.getInstance().getActionByID(1)));
@@ -94,6 +117,14 @@ public class Profession extends GameScript {
 		_RECREATION = registerLuaFunction(_RECREATION, "_RECREATION");
 		_IDLE = registerLuaFunction(_IDLE, "_IDLE");
 		_DOWNED = registerLuaFunction(_DOWNED, "_DOWNED");
+		_WANDER = registerLuaFunction(_WANDER, "_WANDER");
+		_COMBAT = registerLuaFunction(_COMBAT, "_COMBAT");
+		_ON_LOAD = registerLuaFunction(_ON_LOAD, "_ON_LOAD");
+
+	}
+
+	public void loadDefaults() {
+
 	}
 
 	public int[] getSchedule() {

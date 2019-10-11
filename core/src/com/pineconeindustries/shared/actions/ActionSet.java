@@ -20,8 +20,12 @@ public class ActionSet {
 		actions.remove(action);
 	}
 
+	public ArrayList<Action> getActions() {
+		return actions;
+	}
+
 	public Action getActionByID(int id) {
-		
+
 		for (Action a : actions) {
 			if (a.getID() == id)
 				return a;
@@ -31,7 +35,6 @@ public class ActionSet {
 
 	}
 
-	
 	public void update(float delta) {
 
 		for (Action a : actions)

@@ -342,4 +342,12 @@ public class Sector {
 		return "Sector : " + name + " [" + globalX + ", " + globalY + "]  on Port: " + port;
 	}
 
+	public void shutdown() {
+		Log.debug("Shutting down Sector : " + port);
+		connListener.stopListener();
+		packetListener.stopListener();
+		packetWriter.stopWriter();
+
+	}
+
 }

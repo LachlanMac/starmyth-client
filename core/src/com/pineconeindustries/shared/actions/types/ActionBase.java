@@ -28,6 +28,7 @@ public abstract class ActionBase extends GameScript {
 	protected float _accuracy, _speed, _damage, _cooldown, _life, _range, _cast_time, _buff_time, _magnitude,
 			_minimum_toggle_time, _cost;
 	protected int _interval;
+	protected boolean aggressive = false;
 	protected boolean _unique, _toggle;
 
 	public enum type {
@@ -239,6 +240,10 @@ public abstract class ActionBase extends GameScript {
 		_minimum_toggle_time = registerLuaFloat(_minimum_toggle_time, "togglemin", DEFAULT_MINIMUM_TOGGLE_TIME);
 		Log.debug("Finished Loading");
 
+	}
+
+	public boolean isAggressive() {
+		return aggressive;
 	}
 
 }

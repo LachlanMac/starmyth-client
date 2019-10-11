@@ -40,8 +40,6 @@ public class StructureLayer {
 			requestData();
 		}
 
-		
-
 	}
 
 	public void render(SpriteBatch b) {
@@ -73,6 +71,29 @@ public class StructureLayer {
 	}
 
 	public void update() {
+
+	}
+
+	public void printLayer() {
+
+		for (int y = Units.STRUCTURE_SIZE - 1; y >= 0; y--) {
+			System.out.println();
+			for (int x = 0; x < Units.STRUCTURE_SIZE; x++) {
+
+				if (tiles[x][y].isCollidable() && tiles[x][y].getTileID() != 'p') {
+					System.out.print(" X ");
+				} else {
+					if (tiles[x][y].getTileID() == '8') {
+						System.out.print(" . ");
+					} else if (tiles[x][y].getTileID() == '7') {
+						System.out.print(" | ");
+					} else {
+						System.out.print("   ");
+					}
+				}
+
+			}
+		}
 
 	}
 
@@ -113,7 +134,8 @@ public class StructureLayer {
 
 				} else {
 					tiles[x][y] = (new Tile(unpackedData[index], x + (parent.getRenderX() * Units.STRUCTURE_SIZE),
-							y + (parent.getRenderY() * Units.STRUCTURE_SIZE), parent.getRenderX(), parent.getRenderY()));
+							y + (parent.getRenderY() * Units.STRUCTURE_SIZE), parent.getRenderX(),
+							parent.getRenderY()));
 				}
 				index++;
 			}
@@ -208,7 +230,30 @@ public class StructureLayer {
 		return layer;
 	}
 
+	public GridTile getGridTileAt(float x, float y) {
+
+		// total dimension of the grid is 8,192 x 8192...
+		// there are 4 grids per tile.
+
+		// 16 * x = 8192
+
+		int tileX = (int) x / 64;
+		int tileY = (int) y / 64;
+
+		System.out.println(
+				"SO for [" + x + "," + y + "] gets tile {" + tileX + ", " + tileY + "} out of a max " + grid[0].length);
+
+		return grid[tileX][tileY];
+
+	}
+
 	public Tile getTileAt(float x, float y) {
+
+		// so
+
+		// 4000, 4000
+		// total dimensions of ship are 64 x 128 = 8,192, 8192
+		// 62.5 x 62.5 thatseems reasonable
 
 		int tileX = (int) x / Units.TILE_SIZE;
 		int tileY = (int) y / Units.TILE_SIZE;

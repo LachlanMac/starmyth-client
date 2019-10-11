@@ -72,6 +72,20 @@ public abstract class GameObject implements Targetable {
 
 	}
 
+	public boolean isNPC() {
+		if (goType == type.NPC)
+			return true;
+		else
+			return false;
+	}
+
+	public boolean isPlayer() {
+		if (goType == type.PLAYER)
+			return true;
+		else
+			return false;
+	}
+
 	public abstract String getType();
 
 	public abstract void update();
@@ -322,5 +336,9 @@ public abstract class GameObject implements Targetable {
 
 	public boolean isDowned() {
 		return getStats().getCurrentHP() <= 0;
+	}
+
+	public Structure getStructure() {
+		return structure;
 	}
 }
