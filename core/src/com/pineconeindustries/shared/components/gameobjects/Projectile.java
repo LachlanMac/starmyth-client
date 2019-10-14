@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.manager.LogicController;
+import com.pineconeindustries.client.manager.SoundEffectManager;
 import com.pineconeindustries.server.galaxy.Galaxy;
 import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.players.PlayerConnection;
@@ -19,6 +20,7 @@ import com.pineconeindustries.shared.components.structures.Tile;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.units.Units;
+import com.pineconeindustries.shared.utils.PseudoRandom;
 import com.pineconeindustries.shared.utils.VectorMath;
 
 public class Projectile extends GameObject {
@@ -58,6 +60,23 @@ public class Projectile extends GameObject {
 			serverSector = Galaxy.getInstance().getSectorByID(sectorID);
 			structure = serverSector.getStructureByID(structureID);
 		} else {
+
+			float distance = loc.dst(LogicController.getInstance().getPlayer().getLoc());
+			float distancePercent = distance / 600;
+			float volume = 1 - distancePercent;
+			int i = PseudoRandom.getInt(1, 4);
+			
+			if (i == 1) {
+				SoundEffectManager.getInstance().playSoundEffect(GameData.getInstance().Assets().getSoundEffect("pew1"),
+						volume);
+			} else if (i == 2) {
+				SoundEffectManager.getInstance().playSoundEffect(GameData.getInstance().Assets().getSoundEffect("pew2"),
+						volume);
+			} else {
+				SoundEffectManager.getInstance().playSoundEffect(GameData.getInstance().Assets().getSoundEffect("pew3"),
+						volume);
+			}
+
 			currentFrame = GameData.getInstance().Assets().getShot2Animation();
 
 		}

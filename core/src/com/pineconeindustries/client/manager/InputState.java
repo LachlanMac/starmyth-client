@@ -11,6 +11,8 @@ import com.pineconeindustries.client.ui.UserInterface;
 public class InputState implements InputProcessor {
 
 	public static int[] input = new int[10];
+
+	public static int[] debugInput = new int[10];
 	public static int DOWN = Input.Keys.S;
 	public static int UP = Input.Keys.W;
 	public static int RIGHT = Input.Keys.D;
@@ -26,6 +28,9 @@ public class InputState implements InputProcessor {
 	public static int PLAYER_BUTTON_3 = Input.Keys.NUM_3;
 	public static int PLAYER_BUTTON_4 = Input.Keys.NUM_4;
 	public static int PLAYER_BUTTON_5 = Input.Keys.NUM_5;
+
+	public static int BUILD_MODE = Input.Keys.B;
+	public static int TILE_TYPE = Input.Keys.N;
 
 	private static InputState instance = null;
 
@@ -66,6 +71,9 @@ public class InputState implements InputProcessor {
 		input[8] = isPressedState(PLAYER_BUTTON_4);
 		input[9] = isPressedState(PLAYER_BUTTON_5);
 
+		debugInput[1] = isPressedState(TILE_TYPE);
+		debugInput[0] = isPressedState(BUILD_MODE);
+
 	}
 
 	public static void resetInput() {
@@ -105,8 +113,6 @@ public class InputState implements InputProcessor {
 	}
 
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-
-		
 
 		return false;
 	}

@@ -181,5 +181,10 @@ public class Tile {
 	public void setID(char id) {
 		this.id = id;
 	}
+	
+	
 
+	public Vector2 getRenderCoordinates() {
+		return new Vector2(bounds.getX(), bounds.getY());
+	}
 }

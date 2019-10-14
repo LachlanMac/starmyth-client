@@ -12,12 +12,12 @@ public class CombatState extends State {
 
 	@Override
 	public void leaveState() {
-
+		fsm.getOwner().resetSpeed();
 	}
 
 	@Override
 	public void enterState() {
-		System.out.println("Entering Combat State");
+
 	}
 
 	@Override

@@ -22,7 +22,7 @@ public class ServerLauncher {
 				HEADLESS = true;
 			}
 		}
-		HEADLESS = true;
+		HEADLESS = false;
 		ServerLauncher launcher = new ServerLauncher();
 		launcher.registerFonts();
 		

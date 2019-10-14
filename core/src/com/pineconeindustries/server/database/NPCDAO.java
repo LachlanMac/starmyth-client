@@ -74,7 +74,6 @@ public class NPCDAO {
 				NPC n = new NPC(npcID, name, new Vector2(localX, localY), Galaxy.getInstance().getSectorByID(sectorID),
 						id, layer, factionID, type);
 
-				n.setStats(new Stats());
 				npcs.add(n);
 				Log.dbLog("Loaded NPC [" + npcID + ":" + name + "]");
 			}

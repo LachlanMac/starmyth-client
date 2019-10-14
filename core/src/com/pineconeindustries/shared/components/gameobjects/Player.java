@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -18,11 +19,15 @@ import com.pineconeindustries.client.manager.InputState;
 import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.Net;
 import com.pineconeindustries.client.networking.packets.PacketFactory;
+import com.pineconeindustries.shared.components.structures.Structure;
+import com.pineconeindustries.shared.components.structures.Tile;
 import com.pineconeindustries.shared.components.ui.StatusBar;
 import com.pineconeindustries.shared.data.GameData;
+import com.pineconeindustries.shared.data.Global;
+import com.pineconeindustries.shared.text.Text;
 import com.pineconeindustries.shared.units.Units;
 
-public class Player extends Person {
+public class Player extends Entity {
 
 	// TEST
 
@@ -38,6 +43,13 @@ public class Player extends Person {
 	Chatbox chatbox;
 	Camera camera;
 
+	GridTile gridTileSelected = null;
+	Tile tileSelected = null;
+	int gridOrTile = 0;
+	boolean buildMode = false;
+	Texture gridTexture;
+	Texture tileTexture;
+
 	public Player(int id, String name, Vector2 loc, int sectorID, int structureID, int factionID, int layer,
 			Camera camera) {
 		super(id, name, loc, sectorID, structureID, layer, factionID);
@@ -45,6 +57,17 @@ public class Player extends Person {
 		projectiles = new ArrayList<Projectile>();
 		lastState = InputState.getDefaultState();
 		hb = new StatusBar(loc.x, loc.y);
+		if (!Global.isHeadlessServer()) {
+			textName = new Text(getName(), getCenter(), 64);
+			animSet = GameData.getInstance().Assets().getDefaultAnimations();
+			currentFrame = animSet.getAnimation(lastDirectionFaced, 0, getAnimationCode());
+			gridTexture = GameData.getInstance().Assets().get("textures/selectGridTile.png");
+			tileTexture = GameData.getInstance().Assets().get("textures/selectTile.png");
+
+		} else {
+
+			animSet = null;
+		}
 
 	}
 
@@ -81,6 +104,17 @@ public class Player extends Person {
 				velocity = 0;
 		}
 
+		if (gridTileSelected != null) {
+			Vector2 render = GridTile.getRenderCoordinates(gridTileSelected,
+					LogicController.getInstance().getSector().getStructureByID(this.getStructureID()));
+			b.draw(gridTexture, render.x, render.y);
+
+		}
+		if (tileSelected != null) {
+			Vector2 render = tileSelected.getRenderCoordinates();
+			b.draw(tileTexture, render.x, render.y);
+		}
+
 	}
 
 	public void dispose() {
@@ -89,6 +123,7 @@ public class Player extends Person {
 
 	public void update() {
 		InputState.update();
+		buildMode();
 		hover();
 
 		hb.update(renderLoc.x, renderLoc.y, stats.getCurrentHP() / stats.getHp(),
@@ -103,6 +138,52 @@ public class Player extends Person {
 
 		return "Pos:[" + loc.x + ", " + loc.y + "]";
 
+	}
+
+	public void buildMode() {
+
+		if (InputState.debugInput[0] == 1) {
+			if (buildMode) {
+				buildMode = false;
+				gridTileSelected = null;
+				tileSelected = null;
+				System.out.println("Build mode off");
+			} else {
+				System.out.println("Build mode on");
+				buildMode = true;
+			}
+		}
+
+		if (buildMode) {
+
+			if (InputState.debugInput[1] == 1) {
+				if (gridOrTile == 0)
+					gridOrTile = 1;
+				else
+					gridOrTile = 0;
+			}
+
+			if (InputState.leftClick()) {
+				Vector2 coordinates = InputManager.getMouseCoordinates(getCamera());
+				System.out.println(coordinates);
+				Structure s = LogicController.getInstance().getSector()
+						.getStructureByID(LogicController.getInstance().getPlayer().getStructureID());
+
+				if (gridOrTile == 0) {
+
+					gridTileSelected = s.getLayerByNumber(LogicController.getInstance().getPlayer().getLayer())
+							.getGridTileAt(coordinates.x, coordinates.y);
+
+					tileSelected = null;
+
+				} else {
+					tileSelected = s.getLayerByNumber(LogicController.getInstance().getPlayer().getLayer())
+							.getTileAt(coordinates.x, coordinates.y);
+					gridTileSelected = null;
+				}
+
+			}
+		}
 	}
 
 	public void move() {

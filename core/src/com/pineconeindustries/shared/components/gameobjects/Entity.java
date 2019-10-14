@@ -26,6 +26,7 @@ import com.pineconeindustries.shared.components.structures.Structure;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.log.Log;
+import com.pineconeindustries.shared.stats.Stats;
 import com.pineconeindustries.shared.text.Text;
 import com.pineconeindustries.shared.units.Units;
 
@@ -35,7 +36,7 @@ public abstract class Entity extends GameObject implements Comparable<Entity> {
 	protected float interval, velocity, speed;
 
 	protected int framesSinceLastMove, factionID;
-
+	protected float state;
 	AnimationSet animSet;
 	Animation<TextureRegion> currentFrame;
 	Vector2 renderLoc, lastDirectionFaced;
@@ -52,18 +53,8 @@ public abstract class Entity extends GameObject implements Comparable<Entity> {
 		speed = Units.ENTITY_SPEED;
 		renderLoc = loc;
 		lastDirectionFaced = loc;
-
+		stats = new Stats();
 		this.factionID = factionID;
-
-		if (!Global.isHeadlessServer()) {
-			textName = new Text(getName(), getCenter(), 64);
-			animSet = GameData.getInstance().Assets().getDefaultAnimations();
-			currentFrame = animSet.getAnimation(lastDirectionFaced, 0, getAnimationCode());
-
-		} else {
-
-			animSet = null;
-		}
 
 		if (!Global.isClient()) {
 			structure = Galaxy.getInstance().getSectorByID(sectorID).getStructureByID(structureID);
@@ -116,6 +107,10 @@ public abstract class Entity extends GameObject implements Comparable<Entity> {
 
 	public void setVelocity(float velocity) {
 		this.velocity = velocity;
+	}
+
+	public void resetSpeed() {
+		this.speed = Units.ENTITY_SPEED;
 	}
 
 	public float getSpeed() {

@@ -1,7 +1,7 @@
 type = "direct"
 damage = 5
 cost = 1
-cooldown = 0.1
+cooldown = 0.5
 accuracy = 90
 range = 700
 speed = 400

@@ -16,6 +16,8 @@ public class LAssetManager extends AssetManager {
 	Animation<TextureRegion> thrusterAnimation, targetAnimation, shotAnimation, shot2Animation;
 	Texture shipSS, elevator, ionThrusterSS, targetSS, shotSS, shot2SS, healthBarSS;
 
+	TextureRegion selectTile, selectGridTile;
+
 	TextureRegion[][] shipTiles, thrusterTiles, targetTiles, shotTiles, shot2Tiles, healthBar;
 
 	TextureRegion wall, wallDiagSW, wallDiagNE, wallDiagNW, wallDiagSE, hall, room, doorClosedEW, doorClosedNS,
@@ -24,7 +26,7 @@ public class LAssetManager extends AssetManager {
 	// unassigned
 	TextureRegion zoneClosedN, zoneClosedS, zoneOpenN, zoneOpenS;
 
-	Sound explosion, shipStart, shipStop, shipLoop;
+	Sound explosion, shipStart, shipStop, shipLoop, pew1, pew2, pew3;
 
 	TextureRegion healthBarFrame, healthBarGreen, healthBarRed, energyBarYellow, energyBarBlack;
 
@@ -49,6 +51,11 @@ public class LAssetManager extends AssetManager {
 		load("textures/playerSS.png", Texture.class);
 		load("textures/elevator.png", Texture.class);
 		load("textures/healthbar.png", Texture.class);
+		load("textures/path.png", Texture.class);
+		load("textures/start.png", Texture.class);
+		load("textures/end.png", Texture.class);
+		load("textures/selectTile.png", Texture.class);
+		load("textures/selectGridTile.png", Texture.class);
 
 	}
 
@@ -57,6 +64,10 @@ public class LAssetManager extends AssetManager {
 		shipStart = Gdx.audio.newSound(Gdx.files.internal("audio/effects/ship-start.wav"));
 		shipStop = Gdx.audio.newSound(Gdx.files.internal("audio/effects/ship-stop.wav"));
 		shipLoop = Gdx.audio.newSound(Gdx.files.internal("audio/effects/shiploop.wav"));
+
+		pew1 = Gdx.audio.newSound(Gdx.files.internal("audio/effects/pew1mod.mp3"));
+		pew2 = Gdx.audio.newSound(Gdx.files.internal("audio/effects/pew2mod.mp3"));
+		pew3 = Gdx.audio.newSound(Gdx.files.internal("audio/effects/pew3mod.mp3"));
 	}
 
 	public Sound getSoundEffect(String sound) {
@@ -75,12 +86,21 @@ public class LAssetManager extends AssetManager {
 		case "shiploop":
 			s = shipLoop;
 			break;
+		case "pew1":
+			s = pew1;
+			break;
+		case "pew2":
+			s = pew2;
+			break;
+		case "pew3":
+			s = pew3;
+			break;
 
 		}
 		return s;
 
 	}
-	
+
 	public Animation<TextureRegion> getTargetAnimation() {
 		return targetAnimation;
 	}

@@ -10,7 +10,7 @@ public class IdleState extends State {
 	}
 
 	final String key = "IDLE";
-	
+
 	@Override
 	public String getKey() {
 		return key;
@@ -30,7 +30,7 @@ public class IdleState extends State {
 
 	@Override
 	public void performAction() {
-		fsm.getOwner().setSpin(true);
+		// fsm.getOwner().setSpin(true);
 
 	}
 

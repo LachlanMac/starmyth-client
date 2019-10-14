@@ -1,7 +1,10 @@
 package com.pineconeindustries.shared.components.gameobjects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.server.ai.pathfinding.PathNode;
+import com.pineconeindustries.shared.components.structures.Structure;
+import com.pineconeindustries.shared.units.Units;
 
 public class GridTile {
 
@@ -44,4 +47,14 @@ public class GridTile {
 	public void render(SpriteBatch b) {
 
 	}
+
+	public static Vector2 getRenderCoordinates(GridTile g, Structure s) {
+		System.out.println("DD " + g.getX());
+		System.out.println("EE " + s.getRenderX());
+		float x = g.getX() * Units.GRID_INTERVAL + (s.getRenderX() * (Units.STRUCTURE_SIZE * Units.TILE_SIZE));
+		float y = g.getY() * Units.GRID_INTERVAL + (s.getRenderY() * (Units.STRUCTURE_SIZE * Units.TILE_SIZE));
+
+		return new Vector2(x, y);
+	}
+
 }

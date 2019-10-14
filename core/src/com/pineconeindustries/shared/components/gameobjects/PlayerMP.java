@@ -26,10 +26,11 @@ import com.pineconeindustries.shared.components.structures.Tile;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.stats.Stats;
+import com.pineconeindustries.shared.text.Text;
 import com.pineconeindustries.shared.units.Units;
 import com.pineconeindustries.shared.utils.VectorMath;
 
-public class PlayerMP extends Person {
+public class PlayerMP extends Entity {
 
 	int dcCount = 0;
 	boolean setToDisconnect = false;
@@ -53,8 +54,18 @@ public class PlayerMP extends Person {
 			actionSet.addAction(new Action((PickupAction) ActionManager.getInstance().getActionByID(6)));
 			goType = type.PLAYER;
 			addDefaultEntityPassives();
+
 		}
-		
+		if (!Global.isHeadlessServer()) {
+			textName = new Text(getName(), getCenter(), 64);
+			animSet = GameData.getInstance().Assets().getDefaultAnimations();
+			currentFrame = animSet.getAnimation(lastDirectionFaced, 0, getAnimationCode());
+
+		} else {
+
+			animSet = null;
+		}
+
 	}
 
 	public boolean[] getInputState() {

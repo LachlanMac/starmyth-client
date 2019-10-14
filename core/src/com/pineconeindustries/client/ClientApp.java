@@ -26,7 +26,6 @@ import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.data.Global.RUN_TYPE;
 import com.pineconeindustries.shared.text.TextManager;
 
-
 public class ClientApp extends ApplicationAdapter {
 
 	private float state;
@@ -35,6 +34,7 @@ public class ClientApp extends ApplicationAdapter {
 	ShapeRenderer shapeBatch;
 	Texture img, loadingScreen;
 	LocalPlayerData data;
+	TextManager textManager;
 
 	UserInterface ui;
 	TextureRegion bg;
@@ -49,6 +49,7 @@ public class ClientApp extends ApplicationAdapter {
 
 		Global.runType = RUN_TYPE.client;
 		this.data = data;
+		
 
 	}
 
@@ -75,6 +76,8 @@ public class ClientApp extends ApplicationAdapter {
 
 		GameData.getInstance().registerAssetManager(new LAssetManager());
 		GameData.getInstance().loadAssets();
+		
+		textManager = TextManager.getInstance();
 
 		Texture temp = GameData.getInstance().Assets().get("textures/galaxybg1.png");
 		bg = new TextureRegion(temp);
@@ -88,8 +91,6 @@ public class ClientApp extends ApplicationAdapter {
 		LogicController.getInstance().registerSector(s);
 		LogicController.getInstance().registerConnection(Connection.startConnection(data.getSector()));
 		LogicController.getInstance().registerCamera(cam);
-
-		player.enableTickRender();
 
 		// TESTLIGHTING
 
@@ -129,7 +130,7 @@ public class ClientApp extends ApplicationAdapter {
 		batch.begin();
 
 		LogicController.getInstance().getSector().render(batch);
-		TextManager.getInstance().render(batch);
+		textManager.render(batch);
 		batch.end();
 
 		ui.render();

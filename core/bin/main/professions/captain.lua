@@ -6,17 +6,22 @@ function _WORK(data)
 end
 
 function _COMBAT(data)
-	closest = data:getNPC():getClosestTarget()
-	if data:getNPC():lookAt(closest) then
-           data:getNPC():castDirectAction("shoot", closest)
+    
+    this = data:getNPC()
+    
+    this:setSpeed(120)
+    
+	closest = this:getClosestTarget()
+	
+	if this:lookAt(closest) and this:isInRange(closest, 300) then
+		   this:clearPath()
+           this:castDirectAction("shoot", closest)
 	else
-	   if data:getNPC():hasPath() then
-		print("moving on path")
-		data:getNPC():moveOnPath()	   
-           else
-		print("finding new path")
-	      data:getNPC():findPathTo(closest)
-           end
+	   if this:hasPath() then
+		this:moveOnPath()	   
+        else
+	      this:findPathTo(closest)
+        end
 	end
 	
 end
@@ -41,7 +46,6 @@ function _WANDER(data)
    if data:getNPC():hasPath() then
       data:getNPC():moveOnPath()
    end	
-   data:getNPC():setSpin(false);
 end
 
 

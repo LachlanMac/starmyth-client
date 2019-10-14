@@ -335,6 +335,7 @@ public abstract class GameObject implements Targetable {
 	}
 
 	public boolean isDowned() {
+
 		return getStats().getCurrentHP() <= 0;
 	}
 

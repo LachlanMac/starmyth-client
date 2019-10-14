@@ -8,11 +8,11 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.PriorityBlockingQueue;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.pineconeindustries.shared.components.gameobjects.Entity;
 import com.pineconeindustries.shared.components.gameobjects.NPC;
-import com.pineconeindustries.shared.components.gameobjects.Person;
 import com.pineconeindustries.shared.components.gameobjects.Player;
 import com.pineconeindustries.shared.components.gameobjects.PlayerMP;
 import com.pineconeindustries.shared.components.gameobjects.Projectile;
@@ -31,7 +31,7 @@ public class Sector {
 	private ArrayBlockingQueue<Projectile> projectiles;
 	private Player player;
 
-	private CopyOnWriteArrayList<Person> renderList;
+	private CopyOnWriteArrayList<Entity> renderList;
 
 	public Sector(Player player) {
 		this.port = player.getSectorID();
@@ -39,7 +39,7 @@ public class Sector {
 		npcs = new ArrayBlockingQueue<NPC>(128);
 		projectiles = new ArrayBlockingQueue<Projectile>(256);
 		structures = new ArrayBlockingQueue<Structure>(16);
-		renderList = new CopyOnWriteArrayList<Person>();
+		renderList = new CopyOnWriteArrayList<Entity>();
 		this.player = player;
 		renderList.add(player);
 
@@ -215,8 +215,10 @@ public class Sector {
 
 	public void addNPC(NPC npc) {
 		npcs.add(npc);
+		System.out.println(npc.getText());
 		TextManager.getInstance().addText(npc.getText());
 		renderList.add(npc);
+
 	}
 
 	public void addStructure(Structure structure) {

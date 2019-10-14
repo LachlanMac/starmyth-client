@@ -12,6 +12,7 @@ import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -35,14 +36,17 @@ import com.pineconeindustries.shared.components.gameobjects.GameObject.type;
 import com.pineconeindustries.shared.components.structures.Structure;
 import com.pineconeindustries.shared.components.structures.Tile;
 import com.pineconeindustries.shared.components.ui.StatusBar;
+import com.pineconeindustries.shared.data.DebugTexture;
 import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.professions.Profession;
 import com.pineconeindustries.shared.professions.ProfessionFactory;
+import com.pineconeindustries.shared.stats.Stats;
+import com.pineconeindustries.shared.text.Text;
 import com.pineconeindustries.shared.units.Units;
 import com.pineconeindustries.shared.utils.VectorMath;
 
-public class NPC extends Person {
+public class NPC extends Entity {
 
 	private final float AGGRO_RADIUS = 2000f;
 
@@ -69,10 +73,17 @@ public class NPC extends Person {
 
 	private StatusBar hb;
 
+	private Texture pathTexture;
+
+	private DebugTexture startTexture, endTexture;
+
 	// CLIENT CONSTRUCTOR
 	public NPC(int id, String name, Vector2 loc, int sectorID, int structureID, int layer, int factionID) {
 		super(id, name, loc, sectorID, structureID, layer, factionID);
 		hb = new StatusBar(loc.x, loc.y);
+		textName = new Text(getName(), getCenter(), 64);
+		animSet = GameData.getInstance().Assets().getDefaultAnimations();
+		currentFrame = animSet.getAnimation(lastDirectionFaced, 0, getAnimationCode());
 	}
 
 	// SERVER CONSTRUCTOR
@@ -82,6 +93,22 @@ public class NPC extends Person {
 		this.professionID = professionID;
 		this.sector = sector;
 		this.structure = sector.getStructureByID(structureID);
+		this.stats = new Stats();
+		if (!Global.isHeadlessServer()) {
+			textName = new Text(getName(), getCenter(), 64);
+			animSet = GameData.getInstance().Assets().getDefaultAnimations();
+			currentFrame = animSet.getAnimation(lastDirectionFaced, 0, getAnimationCode());
+			pathTexture = GameData.getInstance().Assets().get("textures/path.png");
+			Texture start = GameData.getInstance().Assets().get("textures/start.png");
+			Texture end = GameData.getInstance().Assets().get("textures/end.png");
+			startTexture = new DebugTexture(start, 0, 0);
+			endTexture = new DebugTexture(end, 0, 0);
+
+		} else {
+
+			animSet = null;
+		}
+
 		profession = ProfessionFactory.getProfessionByID(professionID);
 		fsm = new FiniteStateMachine(this);
 		aggroList = new ArrayBlockingQueue<Entity>(16);
@@ -137,6 +164,20 @@ public class NPC extends Person {
 				velocity = 0;
 		}
 
+		if (!Global.isHeadlessServer() && !Global.isClient()) {
+			if (!hasPath) {
+				return;
+			}
+			for (PathNode p : path) {
+				b.draw(pathTexture, p.getX() * 32, p.getY() * 32);
+
+				endTexture.render(b);
+
+				startTexture.render(b);
+
+			}
+		}
+
 	}
 
 	public void setLocation(Vector2 loc) {
@@ -156,7 +197,6 @@ public class NPC extends Person {
 	}
 
 	public void setDestination(Vector2 destination) {
-		System.out.println("SETTING DESTINATION!");
 		this.destination = destination;
 	}
 
@@ -187,7 +227,7 @@ public class NPC extends Person {
 			sendMoveData(VectorMath.getPacketDirection(directionX, directionY));
 
 			if (dest.dst(loc) <= 5) {
-				System.out.println("DESTINATION REACHED!");
+			
 				destinationReached = true;
 				destination = null;
 			}
@@ -227,7 +267,7 @@ public class NPC extends Person {
 	}
 
 	public void clearPath() {
-		System.out.println("Clearing Path!");
+
 		destinationReached = false;
 		path = null;
 		hasPath = false;
@@ -237,12 +277,22 @@ public class NPC extends Person {
 
 	public void findPathTo(GameObject obj) {
 		System.out.println("FIDNING PATH TO " + obj.getLoc());
+
+		endTexture.setOn();
+		startTexture.setOn();
 		Vector2 localVector = obj.getCenter();
 
 		GridTile t = obj.getStructure().getLayerByNumber(obj.getLayer()).getGridTileAt(localVector.x, localVector.y);
 
+		startTexture.setLoc(t.getX() * 32, t.getY() * 32);
+		System.out.println(t.getX() * 32 + ", " + t.getY() * 32);
+
 		PathNode n = t.getPathNode();
 
+		endTexture.setLoc(n.getX() * 32, n.getY() * 32);
+
+		
+		
 		pathfinder = new AStarPath(structure.getGridWidth(), structure.getGridHeight(),
 				new PathNode((int) (getLoc().x / Units.GRID_INTERVAL), (int) (getLoc().y / Units.GRID_INTERVAL)), n);
 		pathfinder.setBlocks(structure.getLayerByNumber(layer).getBlocked());
@@ -273,6 +323,10 @@ public class NPC extends Person {
 			}
 		}
 
+	}
+
+	public void resetSpeed() {
+		this.speed = Units.NPC_SPEED;
 	}
 
 	public void findRandomPath() {

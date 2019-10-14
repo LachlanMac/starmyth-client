@@ -201,6 +201,14 @@ public class StructureLayer {
 			}
 		}
 
+		for (int y = (Units.STRUCTURE_SIZE * 4 - 1); y >= 0; y--) {
+			for (int x = 0; x < Units.STRUCTURE_SIZE * 4; x++) {
+
+				grid[x][y] = new GridTile(x, y, true);
+
+			}
+		}
+
 		render = true;
 
 	}
@@ -237,8 +245,8 @@ public class StructureLayer {
 
 		// 16 * x = 8192
 
-		int tileX = (int) x / 64;
-		int tileY = (int) y / 64;
+		int tileX = (int) x / 32;
+		int tileY = (int) y / 32;
 
 		System.out.println(
 				"SO for [" + x + "," + y + "] gets tile {" + tileX + ", " + tileY + "} out of a max " + grid[0].length);
