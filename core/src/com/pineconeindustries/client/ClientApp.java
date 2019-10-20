@@ -10,21 +10,23 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.pineconeindustries.client.cameras.CameraController;
-import com.pineconeindustries.client.config.NetworkConfiguration;
 import com.pineconeindustries.client.data.LocalPlayerData;
 import com.pineconeindustries.client.galaxy.Sector;
 import com.pineconeindustries.client.manager.InputManager;
 import com.pineconeindustries.client.manager.InputState;
-import com.pineconeindustries.client.manager.LAssetManager;
 import com.pineconeindustries.client.manager.LightingManager;
 import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.networking.Connection;
 import com.pineconeindustries.client.ui.UserInterface;
+import com.pineconeindustries.server.ai.roles.RoleManager;
+import com.pineconeindustries.shared.actions.ActionManager;
 import com.pineconeindustries.shared.components.gameobjects.Player;
-import com.pineconeindustries.shared.data.GameData;
+import com.pineconeindustries.shared.data.Assets;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.data.Global.RUN_TYPE;
 import com.pineconeindustries.shared.text.TextManager;
+
+import box2dLight.PointLight;
 
 public class ClientApp extends ApplicationAdapter {
 
@@ -49,12 +51,7 @@ public class ClientApp extends ApplicationAdapter {
 
 		Global.runType = RUN_TYPE.client;
 		this.data = data;
-		
 
-	}
-
-	public void loadSettings() {
-		NetworkConfiguration.loadConfiguration();
 	}
 
 	@Override
@@ -74,12 +71,13 @@ public class ClientApp extends ApplicationAdapter {
 		Gdx.input.setInputProcessor(ui.getStage());
 		// Gdx.input.setInputProcessor(InputState.getInstance());
 
-		GameData.getInstance().registerAssetManager(new LAssetManager());
-		GameData.getInstance().loadAssets();
-		
+		Assets.getInstance().loadAssets();
+		RoleManager.getInstance();
+		ActionManager.getInstance();
+
 		textManager = TextManager.getInstance();
 
-		Texture temp = GameData.getInstance().Assets().get("textures/galaxybg1.png");
+		Texture temp = Assets.getInstance().getManager().get("textures/galaxybg1.png");
 		bg = new TextureRegion(temp);
 
 		Player player = new Player(data.getCharID(), data.getName(), new Vector2(data.getX(), data.getY()),
@@ -90,13 +88,7 @@ public class ClientApp extends ApplicationAdapter {
 		Sector s = new Sector(player);
 		LogicController.getInstance().registerSector(s);
 		LogicController.getInstance().registerConnection(Connection.startConnection(data.getSector()));
-		LogicController.getInstance().registerCamera(cam);
-
-		// TESTLIGHTING
-
-		// PointLight p1 = new PointLight(rh, 10, new Color(0.1f, 0, 0, 1), 2000, 4000,
-		// 750);
-		// p1.setSoft(true);
+		LogicController.getInstance().registerCamera(cam);	
 
 	}
 
@@ -131,12 +123,15 @@ public class ClientApp extends ApplicationAdapter {
 
 		LogicController.getInstance().getSector().render(batch);
 		textManager.render(batch);
+		
+	
+		
 		batch.end();
-
+		LightingManager.getInstance().render();
 		ui.render();
 		InputManager.updateMouse(LogicController.getInstance().getPlayerCamera());
 
-		LightingManager.getInstance().render();
+		
 
 	}
 

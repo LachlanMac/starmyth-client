@@ -1,12 +1,6 @@
 package com.pineconeindustries.shared.components.gameobjects;
-
-import java.util.ArrayList;
-import java.util.concurrent.ArrayBlockingQueue;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -23,7 +17,6 @@ import com.pineconeindustries.shared.actions.ActionSet;
 import com.pineconeindustries.shared.actions.effects.EffectOverTime;
 import com.pineconeindustries.shared.actions.types.DataPackage;
 import com.pineconeindustries.shared.components.structures.Structure;
-import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.log.Log;
 import com.pineconeindustries.shared.stats.Stats;

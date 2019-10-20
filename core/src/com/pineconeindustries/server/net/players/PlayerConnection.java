@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.Socket;
-import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.server.database.Database;
 import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.packets.modules.ConnectionModule;
@@ -15,7 +14,6 @@ import com.pineconeindustries.server.net.packets.types.Packets;
 import com.pineconeindustries.server.net.packets.types.TCPPacket;
 import com.pineconeindustries.server.net.packets.types.UDPPacket;
 import com.pineconeindustries.shared.components.gameobjects.PlayerMP;
-import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.log.Log;
 

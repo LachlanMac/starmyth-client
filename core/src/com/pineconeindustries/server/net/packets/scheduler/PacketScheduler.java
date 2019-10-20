@@ -2,11 +2,11 @@ package com.pineconeindustries.server.net.packets.scheduler;
 
 import java.util.ArrayList;
 
-import com.pineconeindustries.client.networking.packets.custom.CustomPacket;
-import com.pineconeindustries.client.networking.packets.custom.CustomTCPPacket;
-import com.pineconeindustries.client.networking.packets.custom.CustomUDPPacket;
 import com.pineconeindustries.server.clock.Clock;
 import com.pineconeindustries.server.galaxy.Sector;
+import com.pineconeindustries.server.net.packets.custom.CustomPacket;
+import com.pineconeindustries.server.net.packets.custom.CustomTCPPacket;
+import com.pineconeindustries.server.net.packets.custom.CustomUDPPacket;
 import com.pineconeindustries.server.net.packets.types.Packet;
 import com.pineconeindustries.shared.components.structures.Structure;
 import com.pineconeindustries.shared.data.Global;

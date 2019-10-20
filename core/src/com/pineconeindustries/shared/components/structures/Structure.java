@@ -3,19 +3,15 @@ package com.pineconeindustries.shared.components.structures;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ArrayBlockingQueue;
-
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.lighting.DarkenEffect;
-import com.pineconeindustries.client.manager.LightingManager;
 import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.manager.SoundEffectManager;
 import com.pineconeindustries.client.networking.packets.PacketFactory;
 import com.pineconeindustries.client.networking.packets.PacketRequester;
-import com.pineconeindustries.server.ai.pathfinding.PathNode;
 import com.pineconeindustries.server.galaxy.Galaxy;
 import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.packetdata.MoveData;
@@ -27,11 +23,9 @@ import com.pineconeindustries.server.net.players.PlayerConnection;
 import com.pineconeindustries.shared.components.gameobjects.Elevator;
 import com.pineconeindustries.shared.components.gameobjects.GridTile;
 import com.pineconeindustries.shared.components.gameobjects.NPC;
-import com.pineconeindustries.shared.components.gameobjects.PlayerMP;
 import com.pineconeindustries.shared.components.gameobjects.Projectile;
-import com.pineconeindustries.shared.data.GameData;
+import com.pineconeindustries.shared.data.Assets;
 import com.pineconeindustries.shared.data.Global;
-import com.pineconeindustries.shared.files.Files;
 import com.pineconeindustries.shared.log.Log;
 import com.pineconeindustries.shared.units.Units;
 
@@ -66,7 +60,7 @@ public abstract class Structure {
 	protected GridTile[][] grid;
 	protected Random rn = new Random(System.currentTimeMillis());
 	protected ArrayList<Elevator> elevators;
-	protected Sound engine = GameData.getInstance().Assets().getSoundEffect("shiploop");
+	protected Sound engine = Assets.getInstance().getSoundEffect("shiploop");
 
 	public Structure(String structureName, int structureID, int sectorID, int factionID, int renderX, int renderY,
 			float globalX, float globalY, int layers, STRUCTURE_STATE currentState) {
@@ -267,8 +261,7 @@ public abstract class Structure {
 	public void registerHitEvent(float strength, int tileX, int tileY, int layer) {
 		if (LogicController.getInstance().getPlayer().getStructureID() == this.structureID) {
 
-			SoundEffectManager.getInstance()
-					.playSoundEffect(GameData.getInstance().Assets().getSoundEffect("explosion"), 0.5f);
+			SoundEffectManager.getInstance().playSoundEffect(Assets.getInstance().getSoundEffect("explosion"), 0.5f);
 			LogicController.getInstance().getCameraController().setRumble(strength, 2);
 			new DarkenEffect(0.2f, 5);
 		}
@@ -276,8 +269,7 @@ public abstract class Structure {
 
 	public void registerShipStartEvent(float strength) {
 		if (LogicController.getInstance().getPlayer().getStructureID() == this.structureID) {
-			SoundEffectManager.getInstance()
-					.playSoundEffect(GameData.getInstance().Assets().getSoundEffect("shipstart"), 0.05f);
+			SoundEffectManager.getInstance().playSoundEffect(Assets.getInstance().getSoundEffect("shipstart"), 0.05f);
 			LogicController.getInstance().getCameraController().setRumble(1, 25);
 
 		}
@@ -287,8 +279,7 @@ public abstract class Structure {
 		if (LogicController.getInstance().getPlayer().getStructureID() == this.structureID) {
 			LogicController.getInstance().getCameraController().setRumble(1, 6);
 
-			SoundEffectManager.getInstance().playSoundEffect(GameData.getInstance().Assets().getSoundEffect("shipstop"),
-					0.05f);
+			SoundEffectManager.getInstance().playSoundEffect(Assets.getInstance().getSoundEffect("shipstop"), 0.05f);
 
 		}
 	}

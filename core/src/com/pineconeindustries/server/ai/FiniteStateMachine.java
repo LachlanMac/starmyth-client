@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.pineconeindustries.server.ai.pathfinding.AStarPath;
+import com.pineconeindustries.server.ai.roles.RoleSchedule;
 import com.pineconeindustries.server.ai.states.CombatState;
 import com.pineconeindustries.server.ai.states.DownedState;
 import com.pineconeindustries.server.ai.states.IdleState;
@@ -20,7 +21,6 @@ import com.pineconeindustries.shared.components.structures.Station;
 import com.pineconeindustries.shared.components.structures.Structure;
 import com.pineconeindustries.shared.files.Files;
 import com.pineconeindustries.shared.log.Log;
-import com.pineconeindustries.shared.professions.Schedule;
 
 public class FiniteStateMachine {
 
@@ -32,7 +32,7 @@ public class FiniteStateMachine {
 	State currentState;
 	State scheduleState;
 
-	Schedule schedule;
+	RoleSchedule schedule;
 
 	Structure structure;
 	DataPackage data;
@@ -42,7 +42,7 @@ public class FiniteStateMachine {
 
 		structure = Galaxy.getInstance().getSectorByID(owner.getSectorID()).getStructureByID(owner.getStructureID());
 		currentState = new IdleState(this);
-		schedule = Schedule.makeSchedule(owner.getProfession().getSchedule());
+		schedule = RoleSchedule.makeSchedule(owner.getProfession().getSchedule());
 		states = new HashMap<String, State>();
 		registerStates("WANDER", new WanderState(this));
 		registerStates("IDLE", new IdleState(this));
@@ -88,7 +88,7 @@ public class FiniteStateMachine {
 			return;
 		}
 
-		scheduleState = states.get(Schedule.getString(schedule.getCurrentSchedule()));
+		scheduleState = states.get(RoleSchedule.getString(schedule.getCurrentSchedule()));
 
 		if (!scheduleState.getKey().equals(currentState.getKey())) {
 			Log.aiStateLog(owner.getName() + " changing state to " + scheduleState.getKey());

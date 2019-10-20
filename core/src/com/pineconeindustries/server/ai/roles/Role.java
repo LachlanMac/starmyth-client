@@ -1,4 +1,4 @@
-package com.pineconeindustries.shared.professions;
+package com.pineconeindustries.server.ai.roles;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaError;
@@ -18,7 +18,7 @@ import com.pineconeindustries.shared.log.Log;
 import com.pineconeindustries.shared.scripting.GameScript;
 import com.pineconeindustries.shared.scripting.ScriptInterface;
 
-public class Profession extends GameScript {
+public class Role extends GameScript {
 
 	private ActionSet actions;
 
@@ -27,7 +27,7 @@ public class Profession extends GameScript {
 	private int[] _schedule;
 	private LuaFunction _WORK, _SLEEP, _IDLE, _DOWNED, _RECREATION, _ON_LOAD, _WANDER, _COMBAT;
 
-	public Profession(int id, String name) {
+	public Role(int id, String name) {
 		super(id, name);
 
 		loadScript();

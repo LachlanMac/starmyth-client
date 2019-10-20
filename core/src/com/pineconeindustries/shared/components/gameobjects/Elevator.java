@@ -14,7 +14,7 @@ import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.shared.components.behaviors.Targetable;
 import com.pineconeindustries.shared.components.structures.Structure;
 import com.pineconeindustries.client.ui.UserInterface;
-import com.pineconeindustries.shared.data.GameData;
+import com.pineconeindustries.shared.data.Assets;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.units.Units;
 
@@ -44,7 +44,7 @@ public class Elevator implements Targetable {
 
 		if (!Global.isHeadlessServer()) {
 
-			TextureRegion elevatorText = GameData.getInstance().Assets().getElevatorTile();
+			TextureRegion elevatorText = Assets.getInstance().getElevatorTile();
 			t = new Sprite(elevatorText);
 			this.rotation = getRotation();
 			t.setRotation(rotation);

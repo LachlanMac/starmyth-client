@@ -1,6 +1,7 @@
 package com.pineconeindustries.client.chat;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -83,6 +84,8 @@ public class Chatbox extends Table {
 					if (msg.charAt(0) == '!') {
 						sendAdminCmd(msg);
 
+					} else if (msg.charAt(0) == '#') {
+						sendLocalCmd(msg);
 					} else {
 
 						sendMessage(msg);
@@ -93,6 +96,17 @@ public class Chatbox extends Table {
 
 				}
 			}
+		}
+
+	}
+
+	public void sendLocalCmd(String msg) {
+
+		if (msg.equalsIgnoreCase("#loc")) {
+			Vector2 loc = LogicController.getInstance().getPlayer().getLoc();
+			String s = new String(loc.x + ", " + loc.y);
+			addMsg(s);
+
 		}
 
 	}

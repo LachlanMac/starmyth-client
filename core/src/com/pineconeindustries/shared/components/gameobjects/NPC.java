@@ -1,46 +1,31 @@
 package com.pineconeindustries.shared.components.gameobjects;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.concurrent.ArrayBlockingQueue;
-
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.lib.jse.CoerceJavaToLua;
-import org.luaj.vm2.lib.jse.JsePlatform;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.client.manager.LogicController;
-import com.pineconeindustries.client.models.AnimationSet;
 import com.pineconeindustries.server.ai.FiniteStateMachine;
 import com.pineconeindustries.server.ai.pathfinding.AStarPath;
 import com.pineconeindustries.server.ai.pathfinding.PathNode;
-import com.pineconeindustries.server.galaxy.Galaxy;
+import com.pineconeindustries.server.ai.roles.Role;
+import com.pineconeindustries.server.ai.roles.RoleManager;
 import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.packetdata.MoveData;
-import com.pineconeindustries.server.net.packets.types.Packets;
-import com.pineconeindustries.server.net.packets.types.UDPPacket;
-import com.pineconeindustries.shared.actions.ActionManager;
-import com.pineconeindustries.shared.actions.ActionSet;
-import com.pineconeindustries.shared.actions.effects.EffectOverTime;
 import com.pineconeindustries.shared.actions.types.Action;
 import com.pineconeindustries.shared.actions.types.DataPackage;
-import com.pineconeindustries.shared.components.gameobjects.GameObject.type;
 import com.pineconeindustries.shared.components.structures.Structure;
-import com.pineconeindustries.shared.components.structures.Tile;
 import com.pineconeindustries.shared.components.ui.StatusBar;
+import com.pineconeindustries.shared.data.Assets;
 import com.pineconeindustries.shared.data.DebugTexture;
-import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
-import com.pineconeindustries.shared.professions.Profession;
-import com.pineconeindustries.shared.professions.ProfessionFactory;
 import com.pineconeindustries.shared.stats.Stats;
 import com.pineconeindustries.shared.text.Text;
 import com.pineconeindustries.shared.units.Units;
@@ -54,7 +39,7 @@ public class NPC extends Entity {
 
 	private Sector sector;
 	private FiniteStateMachine fsm;
-	private Profession profession;
+	private Role profession;
 	private int professionID;
 	private Vector2 destination = null;
 	private boolean destinationReached = false;
@@ -82,7 +67,7 @@ public class NPC extends Entity {
 		super(id, name, loc, sectorID, structureID, layer, factionID);
 		hb = new StatusBar(loc.x, loc.y);
 		textName = new Text(getName(), getCenter(), 64);
-		animSet = GameData.getInstance().Assets().getDefaultAnimations();
+		animSet = Assets.getInstance().getDefaultAnimations();
 		currentFrame = animSet.getAnimation(lastDirectionFaced, 0, getAnimationCode());
 	}
 
@@ -96,11 +81,11 @@ public class NPC extends Entity {
 		this.stats = new Stats();
 		if (!Global.isHeadlessServer()) {
 			textName = new Text(getName(), getCenter(), 64);
-			animSet = GameData.getInstance().Assets().getDefaultAnimations();
+			animSet = Assets.getInstance().getDefaultAnimations();
 			currentFrame = animSet.getAnimation(lastDirectionFaced, 0, getAnimationCode());
-			pathTexture = GameData.getInstance().Assets().get("textures/path.png");
-			Texture start = GameData.getInstance().Assets().get("textures/start.png");
-			Texture end = GameData.getInstance().Assets().get("textures/end.png");
+			pathTexture = Assets.getInstance().getManager().get("textures/path.png");
+			Texture start = Assets.getInstance().getManager().get("textures/start.png");
+			Texture end = Assets.getInstance().getManager().get("textures/end.png");
 			startTexture = new DebugTexture(start, 0, 0);
 			endTexture = new DebugTexture(end, 0, 0);
 
@@ -109,7 +94,7 @@ public class NPC extends Entity {
 			animSet = null;
 		}
 
-		profession = ProfessionFactory.getProfessionByID(professionID);
+		profession = RoleManager.getProfessionByID(professionID);
 		fsm = new FiniteStateMachine(this);
 		aggroList = new ArrayBlockingQueue<Entity>(16);
 		actionSet = profession.getActionSetByProfession();
@@ -137,8 +122,8 @@ public class NPC extends Entity {
 
 			if (Global.isClient()) {
 				if (LogicController.getInstance().getPlayer().isPlayerTarget(this)) {
-					b.draw(GameData.getInstance().Assets().getTargetAnimation().getKeyFrame(state * 50, true),
-							renderLoc.x, renderLoc.y);
+					b.draw(Assets.getInstance().getTargetAnimation().getKeyFrame(state * 50, true), renderLoc.x,
+							renderLoc.y);
 
 				}
 				hb.render(b);
@@ -227,7 +212,7 @@ public class NPC extends Entity {
 			sendMoveData(VectorMath.getPacketDirection(directionX, directionY));
 
 			if (dest.dst(loc) <= 5) {
-			
+
 				destinationReached = true;
 				destination = null;
 			}
@@ -291,8 +276,6 @@ public class NPC extends Entity {
 
 		endTexture.setLoc(n.getX() * 32, n.getY() * 32);
 
-		
-		
 		pathfinder = new AStarPath(structure.getGridWidth(), structure.getGridHeight(),
 				new PathNode((int) (getLoc().x / Units.GRID_INTERVAL), (int) (getLoc().y / Units.GRID_INTERVAL)), n);
 		pathfinder.setBlocks(structure.getLayerByNumber(layer).getBlocked());
@@ -409,7 +392,7 @@ public class NPC extends Entity {
 		return "n";
 	}
 
-	public Profession getProfession() {
+	public Role getProfession() {
 		return profession;
 	}
 

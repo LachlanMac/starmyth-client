@@ -17,26 +17,18 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.pineconeindustries.client.manager.LAssetManager;
+import com.pineconeindustries.server.ai.roles.RoleManager;
 import com.pineconeindustries.server.database.Database;
 import com.pineconeindustries.server.galaxy.Galaxy;
 import com.pineconeindustries.server.net.packets.modules.StructureEventsModule;
-import com.pineconeindustries.shared.data.GameData;
+import com.pineconeindustries.shared.actions.ActionManager;
+import com.pineconeindustries.shared.data.Assets;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.data.Global.RUN_TYPE;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-
-import org.luaj.vm2.*;
-import org.luaj.vm2.lib.jse.*;
-
 public class ServerApp extends ApplicationAdapter {
 
-	public boolean headless = false;
 	private OrthographicCamera camera, fixedCamera;
-	private GameData gameData;
 	private Viewport viewport;
 	private Stage stage;
 	private SpriteBatch batch;
@@ -50,7 +42,6 @@ public class ServerApp extends ApplicationAdapter {
 	Sprite bg;
 
 	public ServerApp(boolean headless) {
-		this.headless = headless;
 
 		if (headless) {
 			Global.runType = RUN_TYPE.headless_server;
@@ -58,17 +49,16 @@ public class ServerApp extends ApplicationAdapter {
 			Global.runType = RUN_TYPE.server;
 		}
 	}
-	
+
 	@Override
 	public void create() {
-		gameData = GameData.getInstance();
-		gameData.setHeadless(headless);
-		gameData.registerAssetManager(new LAssetManager());
-		gameData.loadAssets();
 
+		Assets.getInstance().loadAssets();
+		RoleManager.getInstance();
+		ActionManager.getInstance();
 		Database.getInstance();
 
-		if (!headless) {
+		if (!Global.isHeadlessServer()) {
 
 			Box2D.init();
 			world = new World(new Vector2(0, 0), true);
@@ -83,23 +73,10 @@ public class ServerApp extends ApplicationAdapter {
 
 	}
 
-	public void runLua() {
-
-		Globals globals = JsePlatform.standardGlobals();
-		LuaValue instance = CoerceJavaToLua.coerce(Galaxy.getInstance());
-		globals.set("galaxy", instance);
-
-		// LuaValue chunk = globals.load("print( galaxy:toString() );");
-
-		LuaValue chunk = globals.loadfile("lua/test.lua");
-		chunk.call();
-
-	}
-
 	@Override
 	public void render() {
 
-		if (headless) {
+		if (Global.isHeadlessServer()) {
 
 			update();
 
@@ -133,10 +110,50 @@ public class ServerApp extends ApplicationAdapter {
 
 		galaxy.update();
 
-		if (headless)
+		if (Global.isHeadlessServer())
 			return;
 
 		camera.update();
+		debugInput();
+
+	}
+
+	@Override
+	public void dispose() {
+
+	}
+
+	@Override
+	public void resize(int width, int height) {
+
+		if (Global.isHeadlessServer()) {
+			return;
+		}
+
+		viewport.update(width, height);
+
+	}
+
+	public void createCamera() {
+
+		if (Global.isHeadlessServer()) {
+			return;
+		}
+
+		float aspectRatio = (float) Gdx.graphics.getHeight() / (float) Gdx.graphics.getWidth();
+		batch = new SpriteBatch();
+		debugRenderer = new ShapeRenderer();
+		camera = new OrthographicCamera();
+		fixedCamera = new OrthographicCamera();
+
+		viewport = new ScalingViewport(Scaling.fit, 1080, 1080 * aspectRatio, camera);
+		bg = new Sprite(new Texture("textures/lachlangalaxy.jpg"));
+		ScalingViewport scalingViewport = new ScalingViewport(Scaling.fit, 1080, 1080 * aspectRatio, fixedCamera);
+		scalingViewport.apply();
+		viewport.apply();
+	}
+
+	public void debugInput() {
 
 		if (Gdx.input.isKeyPressed(Input.Keys.NUM_8)) {
 			camera.zoom += 0.05;
@@ -171,42 +188,4 @@ public class ServerApp extends ApplicationAdapter {
 
 	}
 
-	@Override
-	public void dispose() {
-
-	}
-
-	@Override
-	public void resize(int width, int height) {
-
-		if (headless) {
-			return;
-		}
-
-		viewport.update(width, height);
-
-	}
-
-	public void createCamera() {
-
-		if (headless) {
-			return;
-		}
-
-		float aspectRatio = (float) Gdx.graphics.getHeight() / (float) Gdx.graphics.getWidth();
-		batch = new SpriteBatch();
-		debugRenderer = new ShapeRenderer();
-		camera = new OrthographicCamera();
-		fixedCamera = new OrthographicCamera();
-
-		viewport = new ScalingViewport(Scaling.fit, 1080, 1080 * aspectRatio, camera);
-		bg = new Sprite(new Texture("textures/lachlangalaxy.jpg"));
-		ScalingViewport scalingViewport = new ScalingViewport(Scaling.fit, 1080, 1080 * aspectRatio, fixedCamera);
-		scalingViewport.apply();
-		viewport.apply();
-	}
-
-	public boolean isHeadless() {
-		return headless;
-	}
 }

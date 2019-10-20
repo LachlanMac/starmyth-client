@@ -5,11 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-
-import com.badlogic.gdx.math.Vector2;
 import com.pineconeindustries.server.galaxy.Sector;
-import com.pineconeindustries.shared.components.gameobjects.PlayerMP;
-import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.log.Log;
 
 public class SectorDAO {

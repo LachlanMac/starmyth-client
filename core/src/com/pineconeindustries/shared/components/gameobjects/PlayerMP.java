@@ -1,31 +1,23 @@
 package com.pineconeindustries.shared.components.gameobjects;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.pineconeindustries.client.manager.LogicController;
-import com.pineconeindustries.client.models.AnimationSet;
 import com.pineconeindustries.server.galaxy.Galaxy;
 import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.packets.modules.MoveModule;
 import com.pineconeindustries.shared.actions.ActionManager;
 import com.pineconeindustries.shared.actions.ActionSet;
 import com.pineconeindustries.shared.actions.types.Action;
-import com.pineconeindustries.shared.actions.types.ActionBase;
 import com.pineconeindustries.shared.actions.types.DataPackage;
 import com.pineconeindustries.shared.actions.types.PickupAction;
 import com.pineconeindustries.shared.actions.types.DirectProjectileAction;
 import com.pineconeindustries.shared.actions.types.TargetedEffectAction;
-import com.pineconeindustries.shared.components.gameobjects.GameObject.type;
 import com.pineconeindustries.shared.components.structures.Tile;
-import com.pineconeindustries.shared.data.GameData;
+import com.pineconeindustries.shared.data.Assets;
 import com.pineconeindustries.shared.data.Global;
-import com.pineconeindustries.shared.stats.Stats;
 import com.pineconeindustries.shared.text.Text;
 import com.pineconeindustries.shared.units.Units;
 import com.pineconeindustries.shared.utils.VectorMath;
@@ -58,7 +50,7 @@ public class PlayerMP extends Entity {
 		}
 		if (!Global.isHeadlessServer()) {
 			textName = new Text(getName(), getCenter(), 64);
-			animSet = GameData.getInstance().Assets().getDefaultAnimations();
+			animSet = Assets.getInstance().getDefaultAnimations();
 			currentFrame = animSet.getAnimation(lastDirectionFaced, 0, getAnimationCode());
 
 		} else {
@@ -110,7 +102,7 @@ public class PlayerMP extends Entity {
 		}
 		if (Global.isClient()) {
 			if (LogicController.getInstance().getPlayer().isPlayerTarget(this)) {
-				b.draw(GameData.getInstance().Assets().getTargetAnimation().getKeyFrame(state * 50, true), renderLoc.x,
+				b.draw(Assets.getInstance().getTargetAnimation().getKeyFrame(state * 50, true), renderLoc.x,
 						renderLoc.y);
 
 			}

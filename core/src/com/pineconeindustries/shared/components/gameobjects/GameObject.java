@@ -33,6 +33,7 @@ public abstract class GameObject implements Targetable {
 	protected int DEFAULT_BOUNDS_WIDTH = 64;
 	protected int DEFAULT_BOUNDS_HEIGHT = 64;
 	protected float rotation;
+
 	private int boundsWidth = DEFAULT_BOUNDS_WIDTH;
 	private int boundsHeight = DEFAULT_BOUNDS_HEIGHT;
 	protected Rectangle bounds;

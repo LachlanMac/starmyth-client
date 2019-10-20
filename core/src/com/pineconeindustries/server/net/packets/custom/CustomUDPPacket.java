@@ -1,17 +1,18 @@
-package com.pineconeindustries.client.networking.packets.custom;
+package com.pineconeindustries.server.net.packets.custom;
 
 import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.packets.types.Packet;
-import com.pineconeindustries.server.net.packets.types.TCPPacket;
+import com.pineconeindustries.server.net.packets.types.UDPPacket;
 
-public abstract class CustomTCPPacket extends TCPPacket implements CustomPacket {
+public abstract class CustomUDPPacket extends UDPPacket implements CustomPacket {
 
 	private float sendEvery;
 	private float elapsedTime = 0f;
 
-	public CustomTCPPacket(int packetID, String data, float sendEvery) {
-		super(packetID, data);
+	public CustomUDPPacket(int packetID, String data, long packetNumber, float sendEvery) {
+		super(packetID, data, packetNumber);
 		this.sendEvery = sendEvery;
+
 	}
 
 	public void send(float delta, Sector sector) {

@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.pineconeindustries.shared.data.GameData;
+import com.pineconeindustries.shared.data.Assets;
 
 public class Tile {
 
@@ -125,12 +125,12 @@ public class Tile {
 			// donothing
 		} else if (id == 'l') {
 			state += Gdx.graphics.getDeltaTime();
-			b.draw(GameData.getInstance().Assets().getThursterAnimation().getKeyFrame(state * 20, true),
+			b.draw(Assets.getInstance().getThursterAnimation().getKeyFrame(state * 20, true),
 					(xLoc * TILE_SIZE) + multiplierX, (yLoc * TILE_SIZE) + multiplierY);
 
 		} else {
 
-			b.draw(GameData.getInstance().Assets().getTileID(id), (xLoc * TILE_SIZE) + multiplierX,
+			b.draw(Assets.getInstance().getTileID(id), (xLoc * TILE_SIZE) + multiplierX,
 					(yLoc * TILE_SIZE) + multiplierY);
 		}
 
@@ -181,8 +181,6 @@ public class Tile {
 	public void setID(char id) {
 		this.id = id;
 	}
-	
-	
 
 	public Vector2 getRenderCoordinates() {
 		return new Vector2(bounds.getX(), bounds.getY());

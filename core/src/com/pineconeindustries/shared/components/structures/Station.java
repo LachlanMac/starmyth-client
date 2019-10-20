@@ -1,24 +1,10 @@
 package com.pineconeindustries.shared.components.structures;
 
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.concurrent.ArrayBlockingQueue;
-
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.pineconeindustries.client.manager.LogicController;
-import com.pineconeindustries.server.ai.pathfinding.AStarPath;
-import com.pineconeindustries.server.ai.pathfinding.PathNode;
 import com.pineconeindustries.shared.components.gameobjects.Elevator;
-import com.pineconeindustries.shared.components.structures.Structure.STRUCTURE_STATE;
-import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.data.Global;
-import com.pineconeindustries.shared.files.Files;
-import com.pineconeindustries.shared.log.Log;
 
 public class Station extends Structure {
 
@@ -80,7 +66,7 @@ public class Station extends Structure {
 	@Override
 	public void debugRender(ShapeRenderer debugRenderer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

@@ -6,11 +6,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
-import com.pineconeindustries.shared.actions.ActionFactory;
+import com.pineconeindustries.server.ai.roles.Role;
+import com.pineconeindustries.server.ai.roles.RoleManager;
+import com.pineconeindustries.shared.actions.ActionManager;
 import com.pineconeindustries.shared.actions.types.ActionBase;
 import com.pineconeindustries.shared.data.Global;
-import com.pineconeindustries.shared.professions.Profession;
-import com.pineconeindustries.shared.professions.ProfessionFactory;
 
 public class Files {
 
@@ -27,7 +27,7 @@ public class Files {
 			while ((sCurrentLine = br.readLine()) != null) {
 
 				String data[] = sCurrentLine.split("-");
-				ActionBase a = ActionFactory.getAction(Integer.parseInt(data[0].trim()), data[1].trim(),
+				ActionBase a = ActionManager.getAction(Integer.parseInt(data[0].trim()), data[1].trim(),
 						data[2].trim());
 
 				actions.add(a);
@@ -41,11 +41,11 @@ public class Files {
 
 	}
 
-	public static ArrayList<Profession> loadProfessions() {
+	public static ArrayList<Role> loadProfessions() {
 
-		ArrayList<Profession> professions = new ArrayList<Profession>();
+		ArrayList<Role> professions = new ArrayList<Role>();
 		File f;
-		f = Gdx.files.internal("professions/professionlist.txt").file();
+		f = Gdx.files.internal("roles/professionlist.txt").file();
 
 		try (BufferedReader br = new BufferedReader(new FileReader(f))) {
 
@@ -53,10 +53,10 @@ public class Files {
 			while ((sCurrentLine = br.readLine()) != null) {
 
 				String data[] = sCurrentLine.split("-");
-				Profession p = ProfessionFactory.loadProfession(data[0].trim(), data[1].trim(), data[2].trim());
+				Role p = RoleManager.loadProfession(data[0].trim(), data[1].trim(), data[2].trim());
 				professions.add(p);
 			}
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

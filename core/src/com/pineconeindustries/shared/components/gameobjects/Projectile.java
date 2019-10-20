@@ -2,11 +2,14 @@ package com.pineconeindustries.shared.components.gameobjects;
 
 import java.text.DecimalFormat;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.pineconeindustries.client.lighting.DynamicLight;
+import com.pineconeindustries.client.manager.LightingManager;
 import com.pineconeindustries.client.manager.LogicController;
 import com.pineconeindustries.client.manager.SoundEffectManager;
 import com.pineconeindustries.server.galaxy.Galaxy;
@@ -14,17 +17,17 @@ import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.players.PlayerConnection;
 import com.pineconeindustries.shared.actions.types.ActionBase;
 import com.pineconeindustries.shared.actions.types.DataPackage;
-import com.pineconeindustries.shared.components.gameobjects.GameObject.type;
 import com.pineconeindustries.shared.components.structures.Structure;
 import com.pineconeindustries.shared.components.structures.Tile;
-import com.pineconeindustries.shared.data.GameData;
+import com.pineconeindustries.shared.data.Assets;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.units.Units;
 import com.pineconeindustries.shared.utils.PseudoRandom;
 import com.pineconeindustries.shared.utils.VectorMath;
 
 public class Projectile extends GameObject {
-
+	public static final int PROJECTILE_WIDTH = 16;
+	public static final int PROJECTILE_HEIGHT = 16;
 	private Vector2 direction;
 	private DecimalFormat df = new DecimalFormat("#.00");
 	private float speed;
@@ -41,6 +44,7 @@ public class Projectile extends GameObject {
 	private boolean setToRemove = false;
 	private Vector2 bounceDir = new Vector2(0, 0);
 	private DataPackage data;
+	private DynamicLight glow;
 
 	public Projectile(String name, Vector2 loc, Vector2 direction, int layer, int id, float speed, int sectorID,
 			int structureID, float life, ActionBase action, DataPackage data) {
@@ -54,7 +58,7 @@ public class Projectile extends GameObject {
 
 		if (Global.isServer()) {
 			if (!Global.isHeadlessServer()) {
-				currentFrame = GameData.getInstance().Assets().getShot2Animation();
+				currentFrame = Assets.getInstance().getShot2Animation();
 			}
 			goType = type.PROJECTILE;
 			serverSector = Galaxy.getInstance().getSectorByID(sectorID);
@@ -65,21 +69,24 @@ public class Projectile extends GameObject {
 			float distancePercent = distance / 600;
 			float volume = 1 - distancePercent;
 			int i = PseudoRandom.getInt(1, 4);
-			
+
 			if (i == 1) {
-				SoundEffectManager.getInstance().playSoundEffect(GameData.getInstance().Assets().getSoundEffect("pew1"),
-						volume);
+				SoundEffectManager.getInstance().playSoundEffect(Assets.getInstance().getSoundEffect("pew1"), volume);
 			} else if (i == 2) {
-				SoundEffectManager.getInstance().playSoundEffect(GameData.getInstance().Assets().getSoundEffect("pew2"),
-						volume);
+				SoundEffectManager.getInstance().playSoundEffect(Assets.getInstance().getSoundEffect("pew2"), volume);
 			} else {
-				SoundEffectManager.getInstance().playSoundEffect(GameData.getInstance().Assets().getSoundEffect("pew3"),
-						volume);
+				SoundEffectManager.getInstance().playSoundEffect(Assets.getInstance().getSoundEffect("pew3"), volume);
 			}
 
-			currentFrame = GameData.getInstance().Assets().getShot2Animation();
-
+			currentFrame = Assets.getInstance().getShot2Animation();
+			glow = new DynamicLight(this, new Color(0, 250, 0, 250), 10, 40f, renderLoc.x, renderLoc.y);
+			LightingManager.getInstance().addLight(glow);
 		}
+	}
+
+	public Vector2 getCenterRenderLoc() {
+		return new Vector2(renderLoc.x + (PROJECTILE_WIDTH / 2), renderLoc.y + (PROJECTILE_HEIGHT / 2));
+
 	}
 
 	@Override
@@ -166,21 +173,7 @@ public class Projectile extends GameObject {
 							setToRemove = true;
 							this.loc = collide;
 						}
-						/*
-						 * String dirString = VectorMath.getDirectionLetter(collide.x, collide.y); if
-						 * (dirString.equals("n") || dirString.equals("s")) {
-						 * 
-						 * bounceDir = new Vector2(direction.x, -direction.y); setToBounce = true;
-						 * 
-						 * } else {
-						 * 
-						 * bounceDir = new Vector2(-direction.x, direction.y); setToBounce = true;
-						 * 
-						 * }
-						 * 
-						 * this.loc = collide;
-						 */
-
+				
 					}
 				}
 			}
@@ -221,7 +214,10 @@ public class Projectile extends GameObject {
 		}
 
 		if (Global.isClient()) {
+
+			glow.updateLocation();
 			if (framesSinceUpdate >= 6) {
+				LightingManager.getInstance().removeLight(glow);
 				LogicController.getInstance().getSector().removeProjectile(this);
 			}
 		}

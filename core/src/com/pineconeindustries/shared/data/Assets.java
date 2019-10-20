@@ -1,4 +1,4 @@
-package com.pineconeindustries.client.manager;
+package com.pineconeindustries.shared.data;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -7,55 +7,74 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.pineconeindustries.client.models.AnimationSet;
-import com.pineconeindustries.shared.data.GameData;
 import com.pineconeindustries.shared.log.Log;
 
-public class LAssetManager extends AssetManager {
+public class Assets {
+	private AssetManager assetManager;
+	private static Assets instance;
 
 	AnimationSet playerAnimations;
 	Animation<TextureRegion> thrusterAnimation, targetAnimation, shotAnimation, shot2Animation;
 	Texture shipSS, elevator, ionThrusterSS, targetSS, shotSS, shot2SS, healthBarSS;
-
 	TextureRegion selectTile, selectGridTile;
-
 	TextureRegion[][] shipTiles, thrusterTiles, targetTiles, shotTiles, shot2Tiles, healthBar;
-
 	TextureRegion wall, wallDiagSW, wallDiagNE, wallDiagNW, wallDiagSE, hall, room, doorClosedEW, doorClosedNS,
 			doorOpenEW, doorOpenNS, zoneClosedE, zoneClosedW, zoneOpenE, zoneOpenW, thrusterOff, thruster1, thruster2,
 			thruster3, thruster4, elevatorTile;
 	// unassigned
 	TextureRegion zoneClosedN, zoneClosedS, zoneOpenN, zoneOpenS;
-
 	Sound explosion, shipStart, shipStop, shipLoop, pew1, pew2, pew3;
-
 	TextureRegion healthBarFrame, healthBarGreen, healthBarRed, energyBarYellow, energyBarBlack;
 
-	public LAssetManager() {
+	private Assets() {
+		assetManager = new AssetManager();
+	}
+
+	public static Assets getInstance() {
+		if (instance == null) {
+			instance = new Assets();
+		}
+		return instance;
+	}
+
+	public void loadAssets() {
+
+		if (Global.isHeadlessServer()) {
+			return;
+		}
+
+		loadTextures();
+		assetManager.finishLoading();
+		loadAnimations();
+		loadSoundEffects();
+		assetManager.finishLoading();
+		assetManager.update();
+		loadShipTiles();
 
 	}
 
 	public void loadTextures() {
-		load("textures/targetSS.png", Texture.class);
-		load("textures/healthbarSS.png", Texture.class);
-		load("textures/shotSS.png", Texture.class);
-		load("textures/shot2SS.png", Texture.class);
-		load("textures/galaxybg1.png", Texture.class);
-		load("textures/plasma.png", Texture.class);
-		load("textures/shiptiles/shipSS.png", Texture.class);
-		load("textures/shiptiles/ionthrusterSS.png", Texture.class);
-		load("textures/playerfront.png", Texture.class);
-		load("textures/shiptiles/diagwall.png", Texture.class);
-		load("textures/shiptiles/floor.png", Texture.class);
-		load("textures/shiptiles/hall.png", Texture.class);
-		load("textures/shiptiles/wall.png", Texture.class);
-		load("textures/playerSS.png", Texture.class);
-		load("textures/elevator.png", Texture.class);
-		load("textures/healthbar.png", Texture.class);
-		load("textures/path.png", Texture.class);
-		load("textures/start.png", Texture.class);
-		load("textures/end.png", Texture.class);
-		load("textures/selectTile.png", Texture.class);
-		load("textures/selectGridTile.png", Texture.class);
+		assetManager.load("textures/targetSS.png", Texture.class);
+		assetManager.load("textures/healthbarSS.png", Texture.class);
+		assetManager.load("textures/shotSS.png", Texture.class);
+		assetManager.load("textures/shot2SS.png", Texture.class);
+		assetManager.load("textures/galaxybg1.png", Texture.class);
+		assetManager.load("textures/plasma.png", Texture.class);
+		assetManager.load("textures/shiptiles/shipSS.png", Texture.class);
+		assetManager.load("textures/shiptiles/ionthrusterSS.png", Texture.class);
+		assetManager.load("textures/playerfront.png", Texture.class);
+		assetManager.load("textures/shiptiles/diagwall.png", Texture.class);
+		assetManager.load("textures/shiptiles/floor.png", Texture.class);
+		assetManager.load("textures/shiptiles/hall.png", Texture.class);
+		assetManager.load("textures/shiptiles/wall.png", Texture.class);
+		assetManager.load("textures/playerSS.png", Texture.class);
+		assetManager.load("textures/elevator.png", Texture.class);
+		assetManager.load("textures/healthbar.png", Texture.class);
+		assetManager.load("textures/path.png", Texture.class);
+		assetManager.load("textures/start.png", Texture.class);
+		assetManager.load("textures/end.png", Texture.class);
+		assetManager.load("textures/selectTile.png", Texture.class);
+		assetManager.load("textures/selectGridTile.png", Texture.class);
 
 	}
 
@@ -64,7 +83,6 @@ public class LAssetManager extends AssetManager {
 		shipStart = Gdx.audio.newSound(Gdx.files.internal("audio/effects/ship-start.wav"));
 		shipStop = Gdx.audio.newSound(Gdx.files.internal("audio/effects/ship-stop.wav"));
 		shipLoop = Gdx.audio.newSound(Gdx.files.internal("audio/effects/shiploop.wav"));
-
 		pew1 = Gdx.audio.newSound(Gdx.files.internal("audio/effects/pew1mod.mp3"));
 		pew2 = Gdx.audio.newSound(Gdx.files.internal("audio/effects/pew2mod.mp3"));
 		pew3 = Gdx.audio.newSound(Gdx.files.internal("audio/effects/pew3mod.mp3"));
@@ -115,7 +133,7 @@ public class LAssetManager extends AssetManager {
 
 	public void loadTarget() {
 
-		targetSS = get("textures/targetSS.png");
+		targetSS = assetManager.get("textures/targetSS.png");
 		targetTiles = TextureRegion.split(targetSS, targetSS.getWidth() / 2, targetSS.getHeight() / 2);
 		targetAnimation = new Animation<TextureRegion>(5,
 				new TextureRegion[] { targetTiles[0][0], targetTiles[0][1], targetTiles[1][0], targetTiles[1][1] });
@@ -124,12 +142,12 @@ public class LAssetManager extends AssetManager {
 
 	public void loadShot() {
 
-		shotSS = get("textures/shotSS.png");
+		shotSS = assetManager.get("textures/shotSS.png");
 		shotTiles = TextureRegion.split(shotSS, shotSS.getWidth() / 2, shotSS.getHeight() / 2);
 		shotAnimation = new Animation<TextureRegion>(5,
 				new TextureRegion[] { shotTiles[0][0], shotTiles[0][1], shotTiles[1][0], shotTiles[1][1] });
 
-		shot2SS = get("textures/shot2SS.png");
+		shot2SS = assetManager.get("textures/shot2SS.png");
 		shot2Tiles = TextureRegion.split(shot2SS, shot2SS.getWidth() / 1, shot2SS.getHeight() / 2);
 		shot2Animation = new Animation<TextureRegion>(5, new TextureRegion[] { shot2Tiles[0][0], shot2Tiles[1][0] });
 
@@ -137,7 +155,7 @@ public class LAssetManager extends AssetManager {
 
 	public void loadHealthBar() {
 
-		Texture hbSS = get("textures/healthbarSS.png");
+		Texture hbSS = assetManager.get("textures/healthbarSS.png");
 
 		healthBar = TextureRegion.split(hbSS, hbSS.getWidth(), hbSS.getHeight() / 5);
 
@@ -171,7 +189,7 @@ public class LAssetManager extends AssetManager {
 
 	public void loadShipTiles() {
 
-		shipSS = get("textures/shiptiles/shipSS.png");
+		shipSS = assetManager.get("textures/shiptiles/shipSS.png");
 		shipTiles = TextureRegion.split(shipSS, shipSS.getWidth() / 4, shipSS.getHeight() / 4);
 		wall = shipTiles[0][0];
 		wallDiagSE = shipTiles[0][1];
@@ -190,7 +208,7 @@ public class LAssetManager extends AssetManager {
 		zoneOpenW = shipTiles[1][2];
 		room = shipTiles[0][3];
 
-		ionThrusterSS = get("textures/shiptiles/ionthrusterSS.png");
+		ionThrusterSS = assetManager.get("textures/shiptiles/ionthrusterSS.png");
 		thrusterTiles = TextureRegion.split(ionThrusterSS, ionThrusterSS.getWidth() / 2, ionThrusterSS.getHeight() / 3);
 
 		thrusterOff = thrusterTiles[0][0];
@@ -325,10 +343,10 @@ public class LAssetManager extends AssetManager {
 	}
 
 	public void loadAnimations() {
-		if (GameData.getInstance().isHeadless()) {
+		if (Global.isHeadlessServer()) {
 			return;
 		}
-		Texture t = get("textures/playerSS.png");
+		Texture t = assetManager.get("textures/playerSS.png");
 
 		playerAnimations = new AnimationSet(t);
 		playerAnimations.loadAnimations();
@@ -336,11 +354,11 @@ public class LAssetManager extends AssetManager {
 	}
 
 	public AnimationSet getDefaultAnimations() {
-		if (GameData.getInstance().isHeadless()) {
+		if (Global.isHeadlessServer()) {
 			return null;
 		}
 
-		Texture t = get("textures/playerSS.png");
+		Texture t = assetManager.get("textures/playerSS.png");
 		AnimationSet p = new AnimationSet(t);
 		p.loadAnimations();
 
@@ -349,16 +367,20 @@ public class LAssetManager extends AssetManager {
 	}
 
 	public AnimationSet getPlayerAnimations() {
-		if (GameData.getInstance().isHeadless()) {
+		if (Global.isHeadlessServer()) {
 			return null;
 		}
 
-		Texture t = get("textures/playerSS.png");
+		Texture t = assetManager.get("textures/playerSS.png");
 
 		AnimationSet p = new AnimationSet(t);
 		p.loadAnimations();
 
 		return p;
+	}
+
+	public AssetManager getManager() {
+		return assetManager;
 	}
 
 }

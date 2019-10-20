@@ -3,15 +3,15 @@ package com.pineconeindustries.shared.components.ui;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.pineconeindustries.shared.components.gameobjects.GameObject;
-import com.pineconeindustries.shared.data.GameData;
+import com.pineconeindustries.shared.data.Assets;
 
 public class StatusBar {
 	private final float Y_OFFSET = 64;
-	TextureRegion r = GameData.getInstance().Assets().getHealthBarRed();
-	TextureRegion g = GameData.getInstance().Assets().getHealthBarGreen();
-	TextureRegion f = GameData.getInstance().Assets().getHealthBarFrame();
-	TextureRegion e = GameData.getInstance().Assets().getEnergyBarYellow();
-	TextureRegion be = GameData.getInstance().Assets().getEnergyBarBlack();
+	TextureRegion r = Assets.getInstance().getHealthBarRed();
+	TextureRegion g = Assets.getInstance().getHealthBarGreen();
+	TextureRegion f = Assets.getInstance().getHealthBarFrame();
+	TextureRegion e = Assets.getInstance().getEnergyBarYellow();
+	TextureRegion be = Assets.getInstance().getEnergyBarBlack();
 	private int barWidth;
 
 	float x, y, hpPercentage, energyPercentage;

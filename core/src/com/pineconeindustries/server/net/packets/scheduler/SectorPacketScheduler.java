@@ -1,7 +1,7 @@
 package com.pineconeindustries.server.net.packets.scheduler;
 
-import com.pineconeindustries.client.networking.packets.custom.CustomPacket;
 import com.pineconeindustries.server.galaxy.Sector;
+import com.pineconeindustries.server.net.packets.custom.CustomPacket;
 import com.pineconeindustries.server.net.packets.types.Packet;
 import com.pineconeindustries.shared.data.Global;
 

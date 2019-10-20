@@ -30,7 +30,7 @@ public class ScriptInterface {
 
 	public Globals loadProfessionScript(String name) {
 		Globals globals = JsePlatform.standardGlobals();
-		LuaValue v = globals.loadfile("professions/" + name + ".lua");
+		LuaValue v = globals.loadfile("roles/" + name + ".lua");
 		v.call();
 		return globals;
 	}

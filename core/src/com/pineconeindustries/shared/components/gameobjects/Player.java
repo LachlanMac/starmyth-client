@@ -1,28 +1,21 @@
 package com.pineconeindustries.shared.components.gameobjects;
 
 import java.util.ArrayList;
-
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
-import com.pineconeindustries.client.cameras.CameraController;
 import com.pineconeindustries.client.chat.Chatbox;
 import com.pineconeindustries.client.manager.InputManager;
 import com.pineconeindustries.client.manager.InputState;
 import com.pineconeindustries.client.manager.LogicController;
-import com.pineconeindustries.client.networking.Net;
 import com.pineconeindustries.client.networking.packets.PacketFactory;
 import com.pineconeindustries.shared.components.structures.Structure;
 import com.pineconeindustries.shared.components.structures.Tile;
 import com.pineconeindustries.shared.components.ui.StatusBar;
-import com.pineconeindustries.shared.data.GameData;
+import com.pineconeindustries.shared.data.Assets;
 import com.pineconeindustries.shared.data.Global;
 import com.pineconeindustries.shared.text.Text;
 import com.pineconeindustries.shared.units.Units;
@@ -59,10 +52,10 @@ public class Player extends Entity {
 		hb = new StatusBar(loc.x, loc.y);
 		if (!Global.isHeadlessServer()) {
 			textName = new Text(getName(), getCenter(), 64);
-			animSet = GameData.getInstance().Assets().getDefaultAnimations();
+			animSet = Assets.getInstance().getDefaultAnimations();
 			currentFrame = animSet.getAnimation(lastDirectionFaced, 0, getAnimationCode());
-			gridTexture = GameData.getInstance().Assets().get("textures/selectGridTile.png");
-			tileTexture = GameData.getInstance().Assets().get("textures/selectTile.png");
+			gridTexture = Assets.getInstance().getManager().get("textures/selectGridTile.png");
+			tileTexture = Assets.getInstance().getManager().get("textures/selectTile.png");
 
 		} else {
 

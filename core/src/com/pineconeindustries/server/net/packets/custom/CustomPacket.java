@@ -1,4 +1,4 @@
-package com.pineconeindustries.client.networking.packets.custom;
+package com.pineconeindustries.server.net.packets.custom;
 
 import com.pineconeindustries.server.galaxy.Sector;
 import com.pineconeindustries.server.net.packets.types.Packet;

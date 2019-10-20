@@ -1,8 +1,8 @@
 package com.pineconeindustries.server.net.packets.modules;
 
-import com.pineconeindustries.client.networking.packets.custom.CustomTCPPacket;
-import com.pineconeindustries.client.networking.packets.custom.CustomUDPPacket;
 import com.pineconeindustries.server.galaxy.Sector;
+import com.pineconeindustries.server.net.packets.custom.CustomTCPPacket;
+import com.pineconeindustries.server.net.packets.custom.CustomUDPPacket;
 import com.pineconeindustries.server.net.packets.types.Packet;
 import com.pineconeindustries.server.net.packets.types.Packets;
 import com.pineconeindustries.server.net.players.PlayerConnection;

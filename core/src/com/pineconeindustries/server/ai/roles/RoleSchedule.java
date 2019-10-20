@@ -1,15 +1,8 @@
-package com.pineconeindustries.shared.professions;
-
-import com.pineconeindustries.server.ai.states.DownedState;
-import com.pineconeindustries.server.ai.states.IdleState;
-import com.pineconeindustries.server.ai.states.MoveState;
-import com.pineconeindustries.server.ai.states.SleepState;
-import com.pineconeindustries.server.ai.states.WanderState;
-import com.pineconeindustries.server.ai.states.WorkState;
+package com.pineconeindustries.server.ai.roles;
 import com.pineconeindustries.server.clock.Clock;
 import com.pineconeindustries.server.clock.Time;
 
-public class Schedule {
+public class RoleSchedule {
 	public static final int SLEEP = 0;
 	public static final int GUARD = 1;
 	public static final int PATROL = 2;
@@ -21,12 +14,12 @@ public class Schedule {
 
 	private int[] schedule;
 
-	private Schedule(int[] schedule) {
+	private RoleSchedule(int[] schedule) {
 		this.schedule = schedule;
 	}
 
-	public static Schedule makeSchedule(int[] schedule) {
-		return new Schedule(schedule);
+	public static RoleSchedule makeSchedule(int[] schedule) {
+		return new RoleSchedule(schedule);
 	}
 
 	public int getCurrentSchedule() {
